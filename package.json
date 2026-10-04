@@ -1,0 +1,42 @@
+{
+  "name": "bengkel-gps-motor",
+  "version": "1.0.0",
+  "description": "Bengkel Mobil GPS Motor Kediri - Multi-Tenant Workshop Management & Public Tracking Web Application",
+  "type": "module",
+  "scripts": {
+    "dev:server": "node server/index.js",
+    "dev:client": "vite",
+    "dev": "vite",
+    "start": "node server/index.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "seed": "node server/db/seed.js",
+    "test": "node test/verify.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "lucide-react": "^0.475.0",
+    "multer": "^1.4.5-lts.1",
+    "pdfkit": "^0.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.2",
+    "supertest": "^7.0.0",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.1.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@11.10.0": true,
+    "esbuild@0.25.12": true
+  }
+}

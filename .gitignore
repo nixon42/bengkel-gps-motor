@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Production build
+dist/
+
+# SQLite Database
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.db*
+!data/.gitkeep
+
+# Uploads
+uploads/*
+uploads/inventory/*
+uploads/ro/*
+uploads/receipts/*
+uploads/general/*
+!uploads/.gitkeep
+!uploads/inventory/.gitkeep
+!uploads/ro/.gitkeep
+!uploads/receipts/.gitkeep
+!uploads/general/.gitkeep
+
+# Environment variables
+.env
+.env.local
+
+# Agent metadata
+.agents/
+
+# Logs & temp
+*.log
+npm-debug.log*
+
+# System
+.DS_Store
+Thumbs.db
