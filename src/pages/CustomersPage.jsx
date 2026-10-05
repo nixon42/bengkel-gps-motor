@@ -16,7 +16,10 @@ import {
   X,
   Check,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  MessageCircle,
+  Send,
+  ExternalLink
 } from 'lucide-react';
 
 export default function CustomersPage() {
@@ -35,6 +38,12 @@ export default function CustomersPage() {
   const [activeCustomer, setActiveCustomer] = useState(null);
   const [customerHistory, setCustomerHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+
+  // WhatsApp Promo Modal states
+  const [promoModalOpen, setPromoModalOpen] = useState(false);
+  const [selectedCustomerForPromo, setSelectedCustomerForPromo] = useState(null);
+  const [promoTemplate, setPromoTemplate] = useState('PROMO');
+  const [promoMessage, setPromoMessage] = useState('');
 
   // Form states
   const [formData, setFormData] = useState({
@@ -251,6 +260,62 @@ export default function CustomersPage() {
     }
   };
 
+  // WhatsApp Promo & Marketing Handlers
+  const generatePromoMessage = (customer, templateType) => {
+    if (!customer) return '';
+    const name = customer.name || 'Pelanggan Setia';
+    const primaryVehicle = customer.vehicles && customer.vehicles.length > 0
+      ? `${customer.vehicles[0].brand} ${customer.vehicles[0].model} (${customer.vehicles[0].plate_number})`
+      : 'kendaraan Anda';
+    const lastVisit = customer.last_visit || 'beberapa waktu lalu';
+
+    if (templateType === 'PROMO') {
+      return `Halo Bapak/Ibu *${name}*,\n\nAda kabar gembira dari *Bengkel Mobil GPS Motor Kediri*! 🚗✨\n\nKami sedang ada *Promo Spesial Servis & Tune-Up*: Dapatkan diskon jasa servis 15% serta gratis pengecekan 25 titik komponen (rem, kelistrikan, oli, pendingin) untuk mobil kesayangan Anda *${primaryVehicle}*.\n\n📍 Lokasi: Sambiresik, Kec. Gampengrejo, Kab. Kediri\n📞 Booking & Konsultasi: 0856-0330-7330\n\nPromo berlaku terbatas. Balas pesan ini untuk booking antrian servis Anda sekarang ya!`;
+    }
+
+    if (templateType === 'REMINDER') {
+      return `Halo Bapak/Ibu *${name}*,\n\nSemoga selalu sehat dan lancar beraktivitas. Mengingat kunjungan servis terakhir untuk mobil *${primaryVehicle}* tercatat pada *${lastVisit}*, kini saatnya untuk jadwal perawatan berkala & ganti oli rutin agar tarikan mesin tetap enteng, hemat BBM, dan prima di jalan.\n\nKami siap melayani Anda di *Bengkel Mobil GPS Motor Kediri*:\n📍 Sambiresik, Kec. Gampengrejo, Kab. Kediri\n📞 Booking Antrian: 0856-0330-7330\n\nTerima kasih telah setia mempercayakan mobil Anda pada kami! 🙏`;
+    }
+
+    if (templateType === 'FOLLOWUP') {
+      return `Halo Bapak/Ibu *${name}*,\n\nSalam dari *Bengkel Mobil GPS Motor Kediri*! 🙏\n\nKami ingin menanyakan bagaimana performa dan kenyamanan mobil *${primaryVehicle}* setelah dilakukan servis di bengkel kami? Semoga tarikannya makin nyaman dan tidak ada kendala ya.\n\nKenyamanan dan kepuasan berkendara Anda adalah prioritas utama kami. Jika ada hal yang ingin ditanyakan atau butuh pengecekan ulang, jangan ragu untuk menghubungi kami kapan saja.\n\nTerima kasih banyak atas kepercayaannya!`;
+    }
+
+    return `Halo Bapak/Ibu *${name}*,\n\nSalam hangat dari *Bengkel Mobil GPS Motor Kediri* terkait kendaraan Anda *${primaryVehicle}*.\n\n`;
+  };
+
+  const handleOpenWhatsAppPromo = (customer) => {
+    setSelectedCustomerForPromo(customer);
+    setPromoTemplate('PROMO');
+    setPromoMessage(generatePromoMessage(customer, 'PROMO'));
+    setPromoModalOpen(true);
+  };
+
+  const handleSelectPromoTemplate = (templateType) => {
+    setPromoTemplate(templateType);
+    setPromoMessage(generatePromoMessage(selectedCustomerForPromo, templateType));
+  };
+
+  const handleSendWhatsApp = () => {
+    if (!selectedCustomerForPromo) return;
+    const rawPhone = (selectedCustomerForPromo.phone || '').trim();
+    if (!rawPhone) {
+      alert('Nomor WhatsApp pelanggan belum terdaftar');
+      return;
+    }
+    let cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.slice(1);
+    } else if (cleanPhone.startsWith('8')) {
+      cleanPhone = '62' + cleanPhone;
+    }
+    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(promoMessage)}`;
+    window.open(url, '_blank');
+    setPromoModalOpen(false);
+    setSuccessMsg(`Membuka WhatsApp untuk mengirim pesan ke ${selectedCustomerForPromo.name}`);
+    setTimeout(() => setSuccessMsg(''), 4000);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header and Summary */}
@@ -266,13 +331,30 @@ export default function CustomersPage() {
             </p>
           </div>
 
-          <button
-            onClick={handleOpenCreate}
-            className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center justify-center space-x-2 transition-colors self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Tambah Pelanggan</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => {
+                if (customers.length > 0) {
+                  handleOpenWhatsAppPromo(customers[0]);
+                } else {
+                  alert('Belum ada pelanggan terdaftar.');
+                }
+              }}
+              className="touch-target px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors self-start sm:self-auto shadow-none"
+              title="Kirim pesan promosi WhatsApp ke pelanggan"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Kirim Promo WA</span>
+            </button>
+
+            <button
+              onClick={handleOpenCreate}
+              className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center justify-center space-x-2 transition-colors self-start sm:self-auto shadow-none"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Tambah Pelanggan</span>
+            </button>
+          </div>
         </div>
 
         {/* Search Input */}
@@ -376,7 +458,16 @@ export default function CustomersPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                      <button
+                        onClick={() => handleOpenWhatsAppPromo(c)}
+                        className="touch-target px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center space-x-1 transition-colors shadow-none"
+                        title="Kirim pesan promosi / WhatsApp ke pelanggan ini"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>Kirim WA</span>
+                      </button>
+
                       <button
                         onClick={() => handleOpenHistory(c)}
                         className="touch-target px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded text-xs font-bold flex items-center space-x-1"
@@ -725,6 +816,151 @@ export default function CustomersPage() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Kirim WhatsApp Promosi */}
+      {promoModalOpen && selectedCustomerForPromo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-xl w-full p-6 space-y-4 my-8">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    Kirim WhatsApp Pelanggan
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Kirim pesan promosi, pengingat servis, atau follow-up secara personal
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPromoModalOpen(false)}
+                className="touch-target text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Recipient Details Card */}
+            <div className="bg-slate-50 dark:bg-slate-750 p-3.5 rounded border border-slate-200 dark:border-slate-700 text-xs space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-800 dark:text-slate-100 text-sm">
+                  {selectedCustomerForPromo.name}
+                </span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                  {selectedCustomerForPromo.phone}
+                </span>
+              </div>
+              <div className="text-slate-500 dark:text-slate-400 text-[11px] flex items-center space-x-2">
+                <span>
+                  Kendaraan:{' '}
+                  {selectedCustomerForPromo.vehicles && selectedCustomerForPromo.vehicles.length > 0
+                    ? `${selectedCustomerForPromo.vehicles[0].brand} ${selectedCustomerForPromo.vehicles[0].model} (${selectedCustomerForPromo.vehicles[0].plate_number})`
+                    : 'Belum ada mobil terdaftar'}
+                </span>
+                {selectedCustomerForPromo.last_visit && (
+                  <span>• Kunjungan: {selectedCustomerForPromo.last_visit}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Template Selector Pills */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                Pilih Jenis Pesan / Template:
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleSelectPromoTemplate('PROMO')}
+                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
+                    promoTemplate === 'PROMO'
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  🏷️ Promo Servis
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectPromoTemplate('REMINDER')}
+                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
+                    promoTemplate === 'REMINDER'
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  🛠️ Ganti Oli / Rutin
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectPromoTemplate('FOLLOWUP')}
+                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
+                    promoTemplate === 'FOLLOWUP'
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  🚗 Follow-up Servis
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectPromoTemplate('CUSTOM')}
+                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
+                    promoTemplate === 'CUSTOM'
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  ✍️ Pesan Bebas
+                </button>
+              </div>
+            </div>
+
+            {/* Editable Textarea */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Isi Pesan (Bisa diedit sebelum dikirim):
+                </label>
+                <span className="text-[11px] text-slate-400">
+                  {promoMessage.length} karakter
+                </span>
+              </div>
+              <textarea
+                rows={7}
+                value={promoMessage}
+                onChange={(e) => setPromoMessage(e.target.value)}
+                className="w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 text-slate-900 dark:text-white text-xs font-sans leading-relaxed focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                placeholder="Tulis pesan promosi atau sapaan untuk pelanggan..."
+              />
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => setPromoModalOpen(false)}
+                className="touch-target px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-xs font-bold transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSendWhatsApp}
+                className="touch-target px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center space-x-2 transition-colors shadow-none"
+              >
+                <Send className="w-4 h-4" />
+                <span>Buka WhatsApp & Kirim</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
