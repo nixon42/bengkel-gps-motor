@@ -1,147 +1,191 @@
-# Panduan Deployment: VPS Kentang (2 Core CPU, 2 GB RAM)
+# Panduan Deployment Standar Industri: VPS Kentang (2 Core CPU, 2 GB RAM)
 
-Panduan ini disusun khusus untuk menjalankan aplikasi **Bengkel Mobil GPS Motor Kediri** secara optimal, ringan, dan stabil tanpa resiko *Out-Of-Memory (OOM)* pada VPS dengan spesifikasi 2 Core CPU dan 2 GB RAM (misal: DigitalOcean \$12/mo, Contabo Cloud VPS, Linode, IdCloudHost, DomaiNesia, Biznet Gio, dll.).
-
----
-
-## 1. Arsitektur & Optimasi yang Sudah Diterapkan
-
-Aplikasi telah dilengkapi optimasi otomatis untuk batas memori 2 GB:
-1. **Node.js Heap Limit (`--max-old-space-size=512`)**:
-   - Membatasi konsumsi memory proses Node.js maksimal 512 MB.
-   - Sisa RAM (~1.5 GB) dialokasikan bebas untuk Kernel Linux, Buffer/Cache OS, dan Nginx.
-2. **Sharp / libvips Guard**:
-   - Concurrency dikunci ke 1 thread (`sharp.concurrency(1)`).
-   - Cache libvips dibatasi 32 MB (`sharp.cache({ memory: 32 })`).
-   - Mencegah lonjakan RAM drastis saat pengguna mengunggah foto repair order / nota.
-3. **SQLite WAL Pragmas**:
-   - Cache size dibatasi 16 MB (`cache_size = -16000`).
-   - Batas memory-mapped I/O 64 MB (`mmap_size = 64000000`).
-   - Performa query secepat in-memory tanpa memakan RAM server.
-4. **Salting Gambar di Disk Server (`IMAGE_STORAGE_SALT`)**:
-   - Gambar tersimpan di disk server dalam keadaan teracak (tidak bisa dibuka langsung).
-   - Serving ke browser sangat cepat menggunakan HTTP ETag & Cache (`304 Not Modified`) sehingga tidak membebani CPU 2-core secara berulang.
-   - Tersedia script restore offline: `node scripts/restore-images.js --restore`.
+Panduan ini disusun khusus untuk menjalankan aplikasi **Bengkel Mobil GPS Motor Kediri (SPP Bengkel)** dengan arsitektur standar industri Linux:
+- **Dedicated System User**: Service berjalan di bawah user non-root `bengkel:bengkel` dengan hak akses minimal (*least-privilege*).
+- **Production Systemd Service**: Auto-restart on failure, flapper protection, memory/CPU bounds, dan Linux sandboxing.
+- **Dedicated Production Logging**: Log terpisah ke `/var/log/bengkel-gps-motor/app.log` dan `/var/log/bengkel-gps-motor/error.log`.
+- **Automatic Logrotate**: Rotasi log harian otomatis dengan kompresi gzip (retensi 14 hari).
+- **Reverse Proxy Nginx**: Rate limiting, Gzip, security headers, dan cache aset Vite.
+- **Salting Gambar di Server**: Berkas disk teracak ringan via `IMAGE_STORAGE_SALT` dengan ETag HTTP cache.
+- **Turnkey CLI (`bengkel-ctl`)**: Manajemen terpusat untuk restart, status, logs, backup, update, dan salt/restore gambar.
 
 ---
 
-## 2. Persiapan Server VPS (Sekali Saja)
+## 🚀 1. Instalasi Otomatis 1-Perintah (Turnkey Installer)
 
-Jalankan script optimasi Swap dan Kernel:
+Metode tercepat dan paling direkomendasikan. Script ini secara otomatis mengonfigurasi swap, kernel tuning, Node.js 20 LTS, Nginx, Systemd service, Logrotate, UFW firewall, dan menghasilkan kunci keamanan acak.
 
 ```bash
-# Clone atau upload repository ke VPS
+# 1. Masuk ke VPS dan clone repositori
 git clone <repo-url> /var/www/bengkel-gps-motor
 cd /var/www/bengkel-gps-motor
 
-# Jalankan script tuning Swap 2GB & vm.swappiness (harus sebagai root)
-sudo bash scripts/setup-vps.sh
+# 2. Jalankan installer turnkey sebagai root
+sudo bash install.sh
 ```
 
-Script di atas akan:
-- Membuat **2GB Swapfile** (sangat krusial untuk mencegah Linux OOM-killer saat proses `npm ci` atau build).
-- Mengatur `vm.swappiness=10` (mengutamakan RAM fisik dan hanya menggunakan swap saat darurat).
+**Apa yang dilakukan oleh script installer di atas?**
+1. **Memeriksa Spesifikasi VPS**: Mendeteksi core CPU & RAM. Jika RAM $\le$ 2.5GB, proteksi anti-OOM langsung diaktifkan.
+2. **Membuat Swapfile 2GB**: Jika swap belum ada, otomatis membuat `/swapfile` (2GB) dengan izin `600` dan mendaftarkannya ke `/etc/fstab`.
+3. **Kernel Tuning**: Menyetel `vm.swappiness=10` dan `vm.vfs_cache_pressure=50` di `/etc/sysctl.d/99-bengkel-vps.conf`.
+4. **Instalasi Paket**: Memasang `nginx`, `logrotate`, `build-essential`, `ufw`, `jq`, `tar`, `gzip`, dan `Node.js 20 LTS`.
+5. **Membuat User Terisolasi**: Membuat system user `bengkel` tanpa login shell (`/usr/sbin/nologin`).
+6. **Inisialisasi `.env` Otomatis**: Jika belum ada, script meng-copy `.env.example` dan men-generate random `SESSION_SECRET` (64 char) & `IMAGE_STORAGE_SALT` (48 char) via `openssl rand -hex`.
+7. **Build Aset Frontend**: Menjalankan `npm ci` dan `npm run build` dengan batas heap Node `--max-old-space-size=512`.
+8. **Inisialisasi Database**: Membuat schema SQLite WAL dan seed data awal.
+9. **Memasang Systemd Unit**: Memasang `/etc/systemd/system/bengkel-gps-motor.service` dengan auto-restart dan sandboxing.
+10. **Memasang Logrotate**: Memasang konfigurasi rotasi log di `/etc/logrotate.d/bengkel-gps-motor`.
+11. **Memasang Nginx Site**: Mengaktifkan reverse proxy di `/etc/nginx/sites-available/bengkel-gps-motor.conf` dan reload Nginx.
+12. **Memasang CLI `bengkel-ctl`**: Membuat shortcut global `/usr/local/bin/bengkel-ctl`.
 
 ---
 
-## 3. Konfigurasi Environment (`.env`)
+## 🛠 2. Manajemen Server dengan `bengkel-ctl`
 
-Salin template konfigurasi:
+Setelah instalasi selesai, kelola aplikasi semudah mengetik perintah berikut:
+
 ```bash
-cp .env.example .env
-nano .env
+# Cek status service, penggunaan RAM riil & healthcheck API
+bengkel-ctl status
+
+# Pantau log aplikasi secara real-time (live streaming)
+bengkel-ctl logs -f
+
+# Tampilkan 100 baris log error terakhir
+bengkel-ctl logs --error
+
+# Restart aplikasi dengan aman (graceful restart)
+sudo bengkel-ctl restart
+
+# Buat arsip cadangan (backup) database & uploads ke /var/backups/bengkel-gps-motor/
+sudo bengkel-ctl backup
+
+# Update aplikasi ke versi git terbaru (pull + build + restart)
+sudo bengkel-ctl update
+
+# Buka/restore seluruh foto di disk server ke format gambar normal
+sudo bengkel-ctl restore-images
+
+# Kunci/salt kembali seluruh foto di disk server
+sudo bengkel-ctl salt-images
 ```
 
-Pastikan variabel penting ini terisi:
+---
+
+## 🔒 3. Detail Konfigurasi Systemd Standar Industri
+
+File service berlokasi di `/etc/systemd/system/bengkel-gps-motor.service`:
+
 ```ini
-PORT=3000
-NODE_ENV=production
-SESSION_SECRET=buat_kunci_acak_yang_panjang_dan_rahasia_disini_2026
-IMAGE_STORAGE_SALT=kunci_rahasia_salt_gambar_di_server_anda_2026
-DB_PATH=./data/bengkel.db
-UPLOAD_DIR=./uploads
+[Unit]
+Description=Bengkel Mobil GPS Motor Kediri - Workshop Management Service
+After=network.target network-online.target systemd-sysctl.service
+Wants=network-online.target
+StartLimitIntervalSec=60s
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=bengkel
+Group=bengkel
+WorkingDirectory=/var/www/bengkel-gps-motor
+EnvironmentFile=-/var/www/bengkel-gps-motor/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=NODE_OPTIONS="--max-old-space-size=512"
+ExecStart=/usr/bin/node --max-old-space-size=512 server/index.js
+
+# Auto-Restart
+Restart=always
+RestartSec=5s
+KillSignal=SIGTERM
+TimeoutStopSec=15s
+
+# Dedicated Logging
+StandardOutput=append:/var/log/bengkel-gps-motor/app.log
+StandardError=append:/var/log/bengkel-gps-motor/error.log
+SyslogIdentifier=bengkel-gps-motor
+
+# Resource Guarding (VPS Kentang 2C/2GB)
+MemoryMax=700M
+MemoryHigh=600M
+CPUQuota=180%
+TasksMax=256
+
+# Enterprise Linux Security Sandboxing
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
+# Writable Paths
+ReadWritePaths=/var/www/bengkel-gps-motor/data /var/www/bengkel-gps-motor/uploads /var/log/bengkel-gps-motor
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 ---
 
-## 4. Opsi Deployment 1: Menggunakan Docker Compose (Direkomendasikan)
+## 📄 4. Detail Konfigurasi Logrotate
 
-Docker Compose sudah dikonfigurasi dengan `deploy.resources.limits`:
-- CPU: `1.8 core`
-- RAM: `768 MB` (dengan reservasi minimal `128 MB`)
+File rotasi log berlokasi di `/etc/logrotate.d/bengkel-gps-motor`:
 
-Jalankan:
+```
+/var/log/bengkel-gps-motor/*.log {
+    daily
+    rotate 14
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+    create 0640 bengkel bengkel
+    dateext
+    dateformat -%Y%m%d
+}
+```
+
+- Log dirotasi setiap tengah malam.
+- Menyimpan riwayat selama 14 hari terakhir.
+- Log lama dikompresi otomatis (`.gz`) sehingga sangat hemat ruang disk.
+- Menggunakan `copytruncate` agar proses Node.js tidak perlu di-restart saat rotasi log berlangsung.
+
+---
+
+## 🌐 5. Pasang SSL Gratis (Let's Encrypt / HTTPS)
+
+Setelah domain Anda diarahkan (DNS A Record) ke IP VPS, pasang SSL gratis hanya dengan 2 perintah:
+
 ```bash
-# Build dan jalankan di background
+# 1. Install certbot untuk Nginx
+sudo apt-get install -y certbot python3-certbot-nginx
+
+# 2. Ambil dan pasang sertifikat SSL otomatis
+sudo certbot --nginx -d bengkel.domainanda.com
+```
+
+Certbot akan otomatis memperbarui konfigurasi Nginx menjadi HTTPS (`listen 443 ssl`), mengaktifkan HTTP/2, dan mengatur renewal otomatis setiap 90 hari.
+
+---
+
+## 🐳 6. Alternatif: Deployment via Docker Compose
+
+Jika Anda lebih memilih menjalankan via kontainer Docker:
+
+```bash
+# Build dan jalankan
 docker compose up -d --build
 
 # Cek logs
 docker compose logs -f
 
-# Cek konsumsi resource kontainer
+# Cek status resource
 docker stats
 ```
-
----
-
-## 5. Opsi Deployment 2: Native Node.js + PM2 / Systemd + Nginx
-
-Jika tidak ingin menggunakan Docker dan ingin langsung di host:
-
-### Langkah A: Build Frontend & Install Dependencies
-```bash
-# Install dependencies produksi
-npm ci --omit=dev
-
-# Build aset frontend (jalankan di local lalu upload dist/, atau build langsung di server jika swap aktif)
-npm run build
-```
-
-### Langkah B: Setup Nginx Reverse Proxy
-```bash
-sudo cp deploy/nginx.conf /etc/nginx/sites-available/bengkel-gps-motor.conf
-# Edit nama domain di /etc/nginx/sites-available/bengkel-gps-motor.conf
-sudo ln -s /etc/nginx/sites-available/bengkel-gps-motor.conf /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-### Langkah C: Jalankan via Systemd (dengan OOM Auto-Restart)
-```bash
-sudo cp deploy/bengkel.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable --now bengkel
-sudo systemctl status bengkel
-```
-
-Atau jika menggunakan **PM2**:
-```bash
-npm install -g pm2
-pm2 start server/index.js --name "bengkel-gps" --max-memory-restart 600M --node-args="--max-old-space-size=512"
-pm2 save
-pm2 startup
-```
-
----
-
-## 6. Operasional: Manajemen Gambar (Salt & Restore)
-
-Untuk memeriksa atau mengembalikan gambar yang tersimpan di disk:
-
-```bash
-# 1. Cek status berapa gambar yang ter-salt di disk
-node scripts/restore-images.js --status
-
-# 2. Kembalikan semua gambar ke format normal (misal untuk backup atau inspeksi)
-node scripts/restore-images.js --restore
-
-# 3. Kunci/salt kembali seluruh gambar di disk
-node scripts/restore-images.js --salt
-```
-
----
-
-## 7. Monitoring Kesehatan Server 2C / 2GB
-
-Untuk memastikan server tetap sehat dan stabil:
-- `htop` atau `free -h`: Pantau penggunaan RAM (seharusnya berkisar 400MB - 800MB dari total 2GB).
-- `curl http://localhost:3000/api/health`: Memastikan API berstatus `ok`.
+Docker compose telah dibatasi maksimal menggunakan RAM 768 MB dan CPU 1.8 core.

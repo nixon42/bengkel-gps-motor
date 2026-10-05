@@ -1,0 +1,58 @@
+[Unit]
+Description=Bengkel Mobil GPS Motor Kediri - Workshop Management Service
+Documentation=https://github.com/nixon/bengkel-gps-motor
+After=network.target network-online.target systemd-sysctl.service
+Wants=network-online.target
+
+# Flapping protection: max 5 restarts within 60 seconds
+StartLimitIntervalSec=60s
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=bengkel
+Group=bengkel
+WorkingDirectory=/var/www/bengkel-gps-motor
+
+# Load environment configuration
+EnvironmentFile=-/var/www/bengkel-gps-motor/.env
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=NODE_OPTIONS="--max-old-space-size=512"
+
+# Start Node.js with strict memory boundary for 2GB VPS
+ExecStart=/usr/bin/node --max-old-space-size=512 server/index.js
+
+# Auto-Restart Configuration
+Restart=always
+RestartSec=5s
+KillSignal=SIGTERM
+TimeoutStopSec=15s
+
+# Dedicated Production Logging (Captured to separate app.log & error.log)
+StandardOutput=append:/var/log/bengkel-gps-motor/app.log
+StandardError=append:/var/log/bengkel-gps-motor/error.log
+SyslogIdentifier=bengkel-gps-motor
+
+# Resource Guarding for VPS Kentang (2 Core CPU, 2 GB RAM)
+MemoryMax=700M
+MemoryHigh=600M
+CPUQuota=180%
+TasksMax=256
+
+# Enterprise Linux Security Sandboxing
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
+# Writable directories needed by SQLite, uploads, and logs
+ReadWritePaths=/var/www/bengkel-gps-motor/data /var/www/bengkel-gps-motor/uploads /var/log/bengkel-gps-motor
+
+[Install]
+WantedBy=multi-user.target

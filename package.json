@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "seed": "node server/db/seed.js",
     "test": "node test/verify.js",
-    "restore:images": "node scripts/restore-images.js"
+    "restore:images": "node scripts/restore-images.js",
+    "install:vps": "bash scripts/install-production.sh"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
