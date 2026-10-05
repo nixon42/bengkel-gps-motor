@@ -27,8 +27,16 @@ uploads/general/*
 .env
 .env.local
 
-# Agent metadata
+# Agent & Teamwork metadata artifacts
 .agents/
+ORIGINAL_REQUEST.md
+original_request.md
+TEST_INFRA.md
+test_infra.md
+TEST_READY.md
+test_ready.md
+PROJECT.md
+project.md
 
 # Logs & temp
 *.log
