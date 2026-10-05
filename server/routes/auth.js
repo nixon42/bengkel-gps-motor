@@ -16,8 +16,28 @@ export function authRoutes(db) {
   router.post('/mock-login', (req, res, next) => {
     try {
       const parsed = MockLoginSchema.parse(req.body || {});
-      const targetSlug = parsed.tenantSlug;
-      const targetEmail = parsed.email || (
+      const rawEmail = parsed.email ? parsed.email.trim().toLowerCase() : null;
+
+      // Check if user is already assigned to a tenant
+      let assignedUser = null;
+      if (rawEmail) {
+        assignedUser = db.prepare(`
+          SELECT u.*, t.slug as tenant_slug 
+          FROM users u 
+          JOIN tenants t ON u.tenant_id = t.id 
+          WHERE LOWER(u.email) = ? 
+          ORDER BY u.updated_at DESC, u.created_at DESC 
+          LIMIT 1
+        `).get(rawEmail);
+      }
+
+      // If user was assigned to a specific tenant workspace and caller did not explicitly specify a custom non-default slug
+      let targetSlug = parsed.tenantSlug;
+      if (assignedUser && (!req.body?.tenantSlug || req.body.tenantSlug === 'bengkel-gps-motor')) {
+        targetSlug = assignedUser.tenant_slug;
+      }
+
+      const targetEmail = rawEmail || (
         targetSlug === 'bengkel-gps-motor'
           ? 'admin@gpsmotor.local'
           : `admin@${targetSlug.toLowerCase().replace(/[^a-z0-9_-]/g, '')}.local`
@@ -60,13 +80,17 @@ export function authRoutes(db) {
         const userId = crypto.randomUUID();
         const userName = parsed.name || (isSuper ? 'Superadmin GPS Motor' : (targetEmail.includes('admin') ? 'Bambang GPS Motor' : 'Operator Demo'));
         db.prepare(`
-          INSERT INTO users (id, tenant_id, email, name, role, auth_provider)
-          VALUES (?, ?, ?, ?, ?, 'mock')
+          INSERT INTO users (id, tenant_id, email, name, role, auth_provider, last_login_at)
+          VALUES (?, ?, ?, ?, ?, 'mock', CURRENT_TIMESTAMP)
         `).run(userId, tenant.id, targetEmail, userName, userRole);
         user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
-      } else if (isSuper && user.role !== 'superadmin') {
-        db.prepare('UPDATE users SET role = ? WHERE id = ?').run('superadmin', user.id);
-        user.role = 'superadmin';
+      } else {
+        if (isSuper && user.role !== 'superadmin') {
+          db.prepare('UPDATE users SET role = ?, last_login_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run('superadmin', user.id);
+          user.role = 'superadmin';
+        } else {
+          db.prepare('UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?').run(user.id);
+        }
       }
 
       // 3. Create active session (7 days validity)
@@ -206,41 +230,64 @@ export function authRoutes(db) {
         googleId = 'mock-google-id-12345';
       }
 
-      // 1. Ensure default tenant exists
-      const targetSlug = 'bengkel-gps-motor';
-      let tenant = db.prepare('SELECT * FROM tenants WHERE slug = ?').get(targetSlug);
-      if (!tenant) {
-        const tenantId = crypto.randomUUID();
-        db.prepare(`
-          INSERT INTO tenants (id, slug, name, address, phone_wa, business_hours)
-          VALUES (?, ?, ?, ?, ?, ?)
-        `).run(
-          tenantId,
-          targetSlug,
-          'Bengkel Mobil GPS Motor Kediri',
-          'Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur',
-          '0856-0330-7330',
-          'Senin - Sabtu: 08:00 - 17:00 WIB'
-        );
-        tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(tenantId);
-        db.prepare(`
-          INSERT INTO tenant_settings (tenant_id, monthly_revenue_target)
-          VALUES (?, ?)
-        `).run(tenantId, 15000000);
+      const cleanEmail = email.toLowerCase().trim();
+
+      // 1. Check if user with this email is already assigned to a tenant
+      let user = db.prepare(`
+        SELECT u.*, t.slug as tenant_slug 
+        FROM users u 
+        JOIN tenants t ON u.tenant_id = t.id 
+        WHERE LOWER(u.email) = ? 
+        ORDER BY u.updated_at DESC, u.created_at DESC 
+        LIMIT 1
+      `).get(cleanEmail);
+
+      let tenant = null;
+      if (user) {
+        tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(user.tenant_id);
       }
 
-      // 2. Resolve or create user
-      let user = db.prepare('SELECT * FROM users WHERE email = ? AND tenant_id = ?').get(email, tenant.id);
+      // If user is not yet assigned to any tenant, fallback to default tenant
+      if (!tenant) {
+        const targetSlug = 'bengkel-gps-motor';
+        tenant = db.prepare('SELECT * FROM tenants WHERE slug = ?').get(targetSlug);
+        if (!tenant) {
+          const tenantId = crypto.randomUUID();
+          db.prepare(`
+            INSERT INTO tenants (id, slug, name, address, phone_wa, business_hours)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `).run(
+            tenantId,
+            targetSlug,
+            'Bengkel Mobil GPS Motor Kediri',
+            'Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur',
+            '0856-0330-7330',
+            'Senin - Sabtu: 08:00 - 17:00 WIB'
+          );
+          tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(tenantId);
+          db.prepare(`
+            INSERT INTO tenant_settings (tenant_id, monthly_revenue_target)
+            VALUES (?, ?)
+          `).run(tenantId, 15000000);
+        }
+      }
+
+      // 2. Resolve or create user in that tenant
       if (!user) {
         const userId = crypto.randomUUID();
         db.prepare(`
-          INSERT INTO users (id, tenant_id, email, name, role, auth_provider, google_id, avatar_url)
-          VALUES (?, ?, ?, ?, 'operator', 'google', ?, ?)
-        `).run(userId, tenant.id, email, name, googleId, avatarUrl);
+          INSERT INTO users (id, tenant_id, email, name, role, auth_provider, google_id, avatar_url, last_login_at)
+          VALUES (?, ?, ?, ?, 'operator', 'google', ?, ?, CURRENT_TIMESTAMP)
+        `).run(userId, tenant.id, cleanEmail, name, googleId, avatarUrl);
         user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
-      } else if (googleId && !user.google_id) {
+      } else {
         db.prepare(`
-          UPDATE users SET google_id = ?, avatar_url = COALESCE(?, avatar_url), auth_provider = 'google', updated_at = CURRENT_TIMESTAMP
+          UPDATE users 
+          SET google_id = COALESCE(?, google_id), 
+              avatar_url = COALESCE(?, avatar_url), 
+              auth_provider = 'google', 
+              last_login_at = CURRENT_TIMESTAMP, 
+              updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `).run(googleId, avatarUrl, user.id);
         user = db.prepare('SELECT * FROM users WHERE id = ?').get(user.id);

@@ -34,6 +34,13 @@ export function initDatabase(dbPath = DEFAULT_DB_PATH) {
   const schemaSql = fs.readFileSync(SCHEMA_PATH, 'utf-8');
   db.exec(schemaSql);
 
+  // Safe idempotent migration for last_login_at column on existing databases
+  try {
+    db.exec(`ALTER TABLE users ADD COLUMN last_login_at DATETIME;`);
+  } catch {
+    // Column already exists, ignore
+  }
+
   // Ensure default tenant and seed exist
   ensureDefaultSeed(db);
 

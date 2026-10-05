@@ -22,7 +22,12 @@ import {
   Search,
   Activity,
   Layers,
-  ArrowLeft
+  ArrowLeft,
+  Package,
+  ArrowDownRight,
+  ArrowUpRight,
+  UserPlus,
+  ArrowRightLeft
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -30,6 +35,23 @@ import { useTheme } from '../context/ThemeContext';
 function formatRupiah(val) {
   const num = Math.round(Number(val) || 0);
   return 'Rp ' + num.toLocaleString('id-ID');
+}
+
+function formatDateTime(dateStr) {
+  if (!dateStr) return 'Belum pernah';
+  try {
+    const d = new Date(dateStr.endsWith('Z') || dateStr.includes('T') ? dateStr : dateStr.replace(' ', 'T') + 'Z');
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleString('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) + ' WIB';
+  } catch {
+    return dateStr;
+  }
 }
 
 export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding }) {
@@ -56,6 +78,22 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
     monthlyRevenueTarget: 15000000
   });
   const [createSubmitting, setCreateSubmitting] = useState(false);
+
+  // Assign Email / User to Tenant Modal State
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [assignForm, setAssignForm] = useState({
+    email: '',
+    name: '',
+    tenantId: '',
+    role: 'operator'
+  });
+  const [assignSubmitting, setAssignSubmitting] = useState(false);
+
+  // Reassign User to Another Tenant Modal State
+  const [reassignModalOpen, setReassignModalOpen] = useState(false);
+  const [reassignUser, setReassignUser] = useState(null);
+  const [reassignTenantId, setReassignTenantId] = useState('');
+  const [reassignSubmitting, setReassignSubmitting] = useState(false);
 
   // Search in tables
   const [searchTenant, setSearchTenant] = useState('');
@@ -156,6 +194,101 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
       }
     } catch (err) {
       alert('Gagal mengubah role: ' + err.message);
+    }
+  };
+
+  // Open modal to assign email/user to tenant
+  const handleOpenAssignModal = (preselectedTenantId = '') => {
+    setAssignForm({
+      email: '',
+      name: '',
+      tenantId: preselectedTenantId || (tenants[0]?.id || ''),
+      role: 'operator'
+    });
+    setAssignModalOpen(true);
+  };
+
+  // Submit Assign User to Tenant
+  const handleAssignUserSubmit = async (e) => {
+    e.preventDefault();
+    if (!assignForm.email.trim() || !assignForm.tenantId) {
+      alert('Email akun dan bengkel wajib diisi.');
+      return;
+    }
+    try {
+      setAssignSubmitting(true);
+      const res = await fetch('/api/superadmin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(assignForm)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Gagal menambahkan email ke workspace');
+      }
+      showToast(data.message || 'Email berhasil dihubungkan ke workspace bengkel!');
+      setAssignModalOpen(false);
+      fetchData();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setAssignSubmitting(false);
+    }
+  };
+
+  // Open modal to reassign user to another tenant
+  const handleOpenReassignModal = (targetUser) => {
+    setReassignUser(targetUser);
+    setReassignTenantId(targetUser.tenant_id);
+    setReassignModalOpen(true);
+  };
+
+  // Submit Reassign User
+  const handleReassignTenantSubmit = async (e) => {
+    e.preventDefault();
+    if (!reassignUser || !reassignTenantId) return;
+    try {
+      setReassignSubmitting(true);
+      const res = await fetch(`/api/superadmin/users/${reassignUser.id}/tenant`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ tenantId: reassignTenantId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Gagal memindahkan workspace pengguna');
+      }
+      showToast(data.message || 'Workspace pengguna berhasil dipindahkan!');
+      setReassignModalOpen(false);
+      setReassignUser(null);
+      fetchData();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setReassignSubmitting(false);
+    }
+  };
+
+  // Delete user access
+  const handleDeleteUser = async (userId, userName) => {
+    if (!window.confirm(`Apakah Anda yakin ingin menghapus akses untuk pengguna "${userName}"?`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/superadmin/users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Gagal menghapus pengguna');
+      }
+      showToast(data.message || 'Akses pengguna berhasil dihapus.');
+      fetchData();
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -384,6 +517,42 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   </div>
                 </div>
 
+                {/* Inventory & Stock Movement Global Metrics */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+                      <span className="text-xs font-bold uppercase">Total Jenis Barang</span>
+                      <Package className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
+                      {stats.totalSpareparts || 0}
+                    </div>
+                    <span className="text-[11px] text-slate-500">Katalog SKU suku cadang aktif lintas bengkel</span>
+                  </div>
+
+                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+                      <span className="text-xs font-bold uppercase">Volume Barang Masuk</span>
+                      <ArrowDownRight className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+                      +{Number(stats.stockInQty || 0).toLocaleString('id-ID')} <span className="text-xs font-sans text-slate-500 font-normal">pcs</span>
+                    </div>
+                    <span className="text-[11px] text-slate-500">{stats.stockInCount || 0} kali transaksi restock</span>
+                  </div>
+
+                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                    <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+                      <span className="text-xs font-bold uppercase">Volume Barang Keluar</span>
+                      <ArrowUpRight className="w-5 h-5 text-rose-600" />
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 font-mono">
+                      -{Number(stats.stockOutQty || 0).toLocaleString('id-ID')} <span className="text-xs font-sans text-slate-500 font-normal">pcs</span>
+                    </div>
+                    <span className="text-[11px] text-slate-500">{stats.stockOutCount || 0} kali pemakaian servis / jual</span>
+                  </div>
+                </div>
+
                 {/* Repair Orders Lifecycle Distribution */}
                 <div className="p-5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
@@ -476,8 +645,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                         <th className="p-3">Kontak WA</th>
                         <th className="p-3 text-center">Teknisi</th>
                         <th className="p-3 text-center">Mobil (RO)</th>
+                        <th className="p-3 text-center">Jenis Barang</th>
+                        <th className="p-3 text-center">Mutasi Stok</th>
+                        <th className="p-3">Terakhir Login / Aktif</th>
                         <th className="p-3 text-right">Total Omset</th>
-                        <th className="p-3 text-right">Target Bulanan</th>
+                        <th className="p-3 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -493,11 +665,40 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                           <td className="p-3 font-mono">{t.phone_wa}</td>
                           <td className="p-3 text-center font-bold font-mono">{t.user_count}</td>
                           <td className="p-3 text-center font-bold font-mono">{t.ro_count}</td>
+                          <td className="p-3 text-center font-mono">
+                            <span className="font-bold text-slate-900 dark:text-white">{t.sparepart_count || 0}</span>
+                            <span className="text-[10px] text-slate-400 block font-sans">SKU</span>
+                          </td>
+                          <td className="p-3 text-center font-mono text-[11px]">
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded whitespace-nowrap" title={`${t.stock_in_count || 0} transaksi masuk`}>
+                                +{Number(t.stock_in_qty || 0).toLocaleString('id-ID')} pcs
+                              </span>
+                              <span className="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded whitespace-nowrap" title={`${t.stock_out_count || 0} transaksi keluar`}>
+                                -{Number(t.stock_out_qty || 0).toLocaleString('id-ID')} pcs
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center space-x-1.5 text-[11px]">
+                              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="font-mono text-slate-700 dark:text-slate-300">
+                                {formatDateTime(t.last_login_at)}
+                              </span>
+                            </div>
+                          </td>
                           <td className="p-3 text-right font-mono font-bold text-emerald-600">
                             {formatRupiah(t.total_revenue)}
                           </td>
-                          <td className="p-3 text-right font-mono text-slate-600 dark:text-slate-400">
-                            {formatRupiah(t.monthly_revenue_target)}
+                          <td className="p-3 text-center">
+                            <button
+                              onClick={() => handleOpenAssignModal(t.id)}
+                              className="touch-target px-2.5 py-1.5 rounded bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-[11px] font-bold flex items-center space-x-1 mx-auto"
+                              title="Hubungkan email baru ke bengkel ini"
+                            >
+                              <UserPlus className="w-3.5 h-3.5" />
+                              <span>+ Email</span>
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -510,7 +711,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
             {/* USERS TAB */}
             {activeTab === 'users' && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="relative flex-1 max-w-sm">
                     <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                     <input
@@ -521,9 +722,18 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                       className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs"
                     />
                   </div>
-                  <span className="text-xs text-slate-500 font-semibold">
-                    Total: {usersList.length} Pengguna
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-slate-500 font-semibold hidden sm:inline">
+                      Total: {usersList.length} Pengguna
+                    </span>
+                    <button
+                      onClick={() => handleOpenAssignModal()}
+                      className="touch-target px-3.5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-none"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      <span>+ Hubungkan Email ke Bengkel</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-x-auto">
@@ -532,9 +742,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                       <tr>
                         <th className="p-3">Nama</th>
                         <th className="p-3">Email Akun</th>
-                        <th className="p-3">Bengkel (Tenant)</th>
+                        <th className="p-3">Bengkel (Workspace Tenant)</th>
                         <th className="p-3">Role Hak Akses</th>
                         <th className="p-3">Tipe Login</th>
+                        <th className="p-3">Terakhir Login</th>
+                        <th className="p-3 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -547,8 +759,19 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                             {u.email}
                           </td>
                           <td className="p-3">
-                            <span className="font-semibold block">{u.tenant_name}</span>
-                            <span className="text-[10px] text-slate-400 font-mono">/{u.tenant_slug}</span>
+                            <div className="flex items-center justify-between space-x-2">
+                              <div>
+                                <span className="font-bold block text-slate-900 dark:text-white">{u.tenant_name}</span>
+                                <span className="text-[10px] text-slate-400 font-mono">/{u.tenant_slug}</span>
+                              </div>
+                              <button
+                                onClick={() => handleOpenReassignModal(u)}
+                                className="touch-target p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
+                                title="Pindahkan akun ini ke bengkel (tenant) lain"
+                              >
+                                <ArrowRightLeft className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </td>
                           <td className="p-3">
                             <select
@@ -565,6 +788,26 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                           </td>
                           <td className="p-3 font-mono uppercase text-[11px] text-slate-500">
                             {u.auth_provider}
+                          </td>
+                          <td className="p-3 font-mono text-[11px] text-slate-600 dark:text-slate-300">
+                            <div className="flex items-center space-x-1.5">
+                              <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span>{formatDateTime(u.last_login_at)}</span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <button
+                              onClick={() => handleDeleteUser(u.id, u.name || u.email)}
+                              disabled={user?.id === u.id}
+                              className={`touch-target p-1.5 rounded transition-colors ${
+                                user?.id === u.id
+                                  ? 'text-slate-300 dark:text-slate-600 cursor-not-allowed opacity-40'
+                                  : 'text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50'
+                              }`}
+                              title={user?.id === u.id ? 'Tidak dapat menghapus akun Anda sendiri' : 'Hapus akses pengguna'}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -750,6 +993,206 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   className="touch-target px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs"
                 >
                   {createSubmitting ? 'Mendaftarkan...' : 'Daftarkan Bengkel'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Hubungkan / Tambah Email ke Workspace Bengkel */}
+      {assignModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 relative my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <UserPlus className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    Hubungkan Email ke Bengkel
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Assign akun Google / operator ke workspace tenant tertentu
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAssignModalOpen(false)}
+                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAssignUserSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Email Akun Google / Login *
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="contoh: agus.bengkel@gmail.com"
+                  value={assignForm.email}
+                  onChange={(e) => setAssignForm({ ...assignForm, email: e.target.value })}
+                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
+                />
+                <span className="text-[10px] text-slate-400 block mt-1">
+                  Saat email ini login lewat Google atau Mock Login, otomatis langsung masuk ke workspace yang dipilih.
+                </span>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Nama Pengguna *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Agus Prasetyo"
+                  value={assignForm.name}
+                  onChange={(e) => setAssignForm({ ...assignForm, name: e.target.value })}
+                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Pilih Bengkel (Workspace Tenant) *
+                </label>
+                <select
+                  required
+                  value={assignForm.tenantId}
+                  onChange={(e) => setAssignForm({ ...assignForm, tenantId: e.target.value })}
+                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
+                >
+                  <option value="">-- Pilih Bengkel --</option>
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} (/{t.slug})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Role Hak Akses *
+                </label>
+                <select
+                  value={assignForm.role}
+                  onChange={(e) => setAssignForm({ ...assignForm, role: e.target.value })}
+                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
+                >
+                  <option value="operator">Operator (Kelola data servis & stok)</option>
+                  <option value="mechanic">Mekanik (Update progres servis mobil)</option>
+                  <option value="cashier">Kasir (Kelola kas & transaksi)</option>
+                  <option value="admin">Admin Bengkel (Akses penuh bengkel)</option>
+                  <option value="superadmin">Superadmin (Akses sistem global)</option>
+                </select>
+              </div>
+
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded text-slate-700 dark:text-slate-300 text-[11px]">
+                💡 <strong>Multi-Akun Tenant:</strong> Anda dapat mendaftarkan beberapa email berbeda ke satu workspace bengkel yang sama, sehingga pemilik bengkel dan para staf dapat mengakses dan berbagi data yang sama.
+              </div>
+
+              <div className="pt-3 flex items-center justify-end space-x-2 border-t border-slate-100 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setAssignModalOpen(false)}
+                  className="touch-target px-3.5 py-2 rounded border border-slate-300 dark:border-slate-600 text-xs font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={assignSubmitting}
+                  className="touch-target px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>{assignSubmitting ? 'Menghubungkan...' : 'Hubungkan ke Workspace'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Pindahkan Workspace Pengguna (Reassign Tenant) */}
+      {reassignModalOpen && reassignUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 relative my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <ArrowRightLeft className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    Pindahkan Workspace Pengguna
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Ganti bengkel yang diakses oleh akun ini
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReassignModalOpen(false)}
+                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleReassignTenantSubmit} className="space-y-4 text-xs">
+              <div className="bg-slate-50 dark:bg-slate-750 p-3 rounded border border-slate-200 dark:border-slate-700 space-y-1">
+                <div className="font-bold text-slate-900 dark:text-white">{reassignUser.name}</div>
+                <div className="font-mono text-slate-500 text-[11px]">{reassignUser.email}</div>
+                <div className="text-slate-400 text-[11px] pt-1">
+                  Workspace Saat Ini:{' '}
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                    {reassignUser.tenant_name} (/{reassignUser.tenant_slug})
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Pilih Bengkel (Workspace Baru) *
+                </label>
+                <select
+                  required
+                  value={reassignTenantId}
+                  onChange={(e) => setReassignTenantId(e.target.value)}
+                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
+                >
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} (/{t.slug})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-3 flex items-center justify-end space-x-2 border-t border-slate-100 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setReassignModalOpen(false)}
+                  className="touch-target px-3.5 py-2 rounded border border-slate-300 dark:border-slate-600 text-xs font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={reassignSubmitting}
+                  className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center space-x-1.5"
+                >
+                  <ArrowRightLeft className="w-4 h-4" />
+                  <span>{reassignSubmitting ? 'Memindahkan...' : 'Pindahkan Workspace'}</span>
                 </button>
               </div>
             </form>

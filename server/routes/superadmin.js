@@ -19,6 +19,19 @@ export function superadminRoutes(db) {
       const totalRepairOrders = db.prepare('SELECT COUNT(*) as count FROM repair_orders').get().count;
       const totalSpareparts = db.prepare('SELECT COUNT(*) as count FROM spareparts').get().count;
       
+      // Stock movement volumes (IN & OUT)
+      const stockInStats = db.prepare(`
+        SELECT COUNT(*) as count, COALESCE(SUM(quantity), 0) as total_qty 
+        FROM stock_movements 
+        WHERE type = 'IN'
+      `).get();
+
+      const stockOutStats = db.prepare(`
+        SELECT COUNT(*) as count, COALESCE(SUM(quantity), 0) as total_qty 
+        FROM stock_movements 
+        WHERE type = 'OUT'
+      `).get();
+
       const revRow = db.prepare(`
         SELECT COALESCE(SUM(amount), 0) as total_rev 
         FROM transactions 
@@ -53,6 +66,10 @@ export function superadminRoutes(db) {
           totalUsers,
           totalRepairOrders,
           totalSpareparts,
+          stockInCount: Number(stockInStats?.count || 0),
+          stockInQty: Number(stockInStats?.total_qty || 0),
+          stockOutCount: Number(stockOutStats?.count || 0),
+          stockOutQty: Number(stockOutStats?.total_qty || 0),
           totalRevenue,
           totalExpense,
           netBalance: totalRevenue - totalExpense,
@@ -82,6 +99,11 @@ export function superadminRoutes(db) {
           (SELECT COUNT(*) FROM users u WHERE u.tenant_id = t.id) as user_count,
           (SELECT COUNT(*) FROM repair_orders ro WHERE ro.tenant_id = t.id) as ro_count,
           (SELECT COUNT(*) FROM spareparts sp WHERE sp.tenant_id = t.id) as sparepart_count,
+          (SELECT COUNT(*) FROM stock_movements sm WHERE sm.tenant_id = t.id AND sm.type = 'IN') as stock_in_count,
+          (SELECT COALESCE(SUM(quantity), 0) FROM stock_movements sm WHERE sm.tenant_id = t.id AND sm.type = 'IN') as stock_in_qty,
+          (SELECT COUNT(*) FROM stock_movements sm WHERE sm.tenant_id = t.id AND sm.type = 'OUT') as stock_out_count,
+          (SELECT COALESCE(SUM(quantity), 0) FROM stock_movements sm WHERE sm.tenant_id = t.id AND sm.type = 'OUT') as stock_out_qty,
+          (SELECT MAX(created_at) FROM sessions WHERE tenant_id = t.id) as last_login_at,
           (SELECT COALESCE(SUM(amount), 0) FROM transactions tr WHERE tr.tenant_id = t.id AND tr.type = 'INCOME') as total_revenue
         FROM tenants t
         LEFT JOIN tenant_settings ts ON ts.tenant_id = t.id
@@ -232,6 +254,7 @@ export function superadminRoutes(db) {
           u.name,
           u.role,
           u.auth_provider,
+          COALESCE(u.last_login_at, (SELECT MAX(created_at) FROM sessions s WHERE s.user_id = u.id)) as last_login_at,
           u.created_at,
           t.id as tenant_id,
           t.name as tenant_name,
@@ -250,7 +273,109 @@ export function superadminRoutes(db) {
     }
   });
 
-  // 7. PUT /api/superadmin/users/:id/role — Change user role
+  // 7. POST /api/superadmin/users — Assign email / add user to a tenant workspace
+  const AssignUserSchema = z.object({
+    email: z.string().email('Format email tidak valid'),
+    name: z.string().min(2, 'Nama minimal 2 karakter').optional(),
+    tenantId: z.string().min(1, 'Tenant wajib dipilih'),
+    role: z.enum(['superadmin', 'admin', 'operator', 'mechanic', 'cashier']).default('operator')
+  });
+
+  router.post('/users', (req, res, next) => {
+    try {
+      const parsed = AssignUserSchema.parse(req.body);
+      const email = parsed.email.trim().toLowerCase();
+
+      // Check if tenant exists
+      const tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(parsed.tenantId);
+      if (!tenant) {
+        return res.status(404).json({ error: 'Tenant tidak ditemukan.' });
+      }
+
+      // Check if user with this email already exists in THIS tenant
+      const existingInTenant = db.prepare('SELECT * FROM users WHERE LOWER(email) = ? AND tenant_id = ?').get(email, parsed.tenantId);
+      if (existingInTenant) {
+        return res.status(409).json({
+          error: 'User Conflict',
+          message: `Email "${email}" sudah terdaftar di bengkel "${tenant.name}".`
+        });
+      }
+
+      // Check if user exists in another tenant (reassign to this tenant)
+      const existingElsewhere = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(email);
+      if (existingElsewhere) {
+        db.prepare(`
+          UPDATE users 
+          SET tenant_id = ?, role = ?, name = COALESCE(?, name), updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `).run(parsed.tenantId, parsed.role, parsed.name || null, existingElsewhere.id);
+
+        db.prepare('UPDATE sessions SET tenant_id = ? WHERE user_id = ?').run(parsed.tenantId, existingElsewhere.id);
+
+        const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(existingElsewhere.id);
+        return res.json({
+          success: true,
+          message: `Email "${email}" berhasil dipindahkan ke bengkel "${tenant.name}".`,
+          user: updated,
+          reassigned: true
+        });
+      }
+
+      // Create new user assigned to tenant
+      const userId = crypto.randomUUID();
+      const userName = parsed.name || email.split('@')[0];
+      db.prepare(`
+        INSERT INTO users (id, tenant_id, email, name, role, auth_provider)
+        VALUES (?, ?, ?, ?, ?, 'google')
+      `).run(userId, parsed.tenantId, email, userName, parsed.role);
+
+      const created = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+      res.status(201).json({
+        success: true,
+        message: `Email "${email}" berhasil didaftarkan ke bengkel "${tenant.name}". Pengguna dapat langsung login dengan akun Google atau Mock Login.`,
+        user: created
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // 8. PUT /api/superadmin/users/:id/tenant — Reassign user to another tenant workspace
+  router.put('/users/:id/tenant', (req, res, next) => {
+    try {
+      const { tenantId } = req.body;
+      if (!tenantId) {
+        return res.status(400).json({ error: 'Tenant ID tujuan wajib disertakan.' });
+      }
+
+      const tenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(tenantId);
+      if (!tenant) {
+        return res.status(404).json({ error: 'Tenant tujuan tidak ditemukan.' });
+      }
+
+      const targetUser = db.prepare('SELECT * FROM users WHERE id = ?').get(req.params.id);
+      if (!targetUser) {
+        return res.status(404).json({ error: 'Pengguna tidak ditemukan.' });
+      }
+
+      db.prepare(`
+        UPDATE users 
+        SET tenant_id = ?, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = ?
+      `).run(tenantId, req.params.id);
+
+      db.prepare('UPDATE sessions SET tenant_id = ? WHERE user_id = ?').run(tenantId, req.params.id);
+
+      res.json({
+        success: true,
+        message: `Pengguna "${targetUser.name}" (${targetUser.email}) berhasil dipindahkan ke bengkel "${tenant.name}".`
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // 9. PUT /api/superadmin/users/:id/role — Change user role
   router.put('/users/:id/role', (req, res, next) => {
     try {
       const { role } = req.body;
@@ -268,6 +393,36 @@ export function superadminRoutes(db) {
       res.json({
         success: true,
         message: `Role pengguna berhasil diubah menjadi ${role}.`
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // 10. DELETE /api/superadmin/users/:id — Remove user access
+  router.delete('/users/:id', (req, res, next) => {
+    try {
+      const targetUser = db.prepare('SELECT * FROM users WHERE id = ?').get(req.params.id);
+      if (!targetUser) {
+        return res.status(404).json({ error: 'Pengguna tidak ditemukan.' });
+      }
+
+      if (req.user && req.user.id === targetUser.id) {
+        return res.status(400).json({ error: 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif.' });
+      }
+
+      if (targetUser.role === 'superadmin') {
+        const superCount = db.prepare(`SELECT COUNT(*) as count FROM users WHERE role = 'superadmin'`).get().count;
+        if (superCount <= 1) {
+          return res.status(400).json({ error: 'Tidak dapat menghapus satu-satunya akun Superadmin di sistem.' });
+        }
+      }
+
+      db.prepare('DELETE FROM users WHERE id = ?').run(req.params.id);
+
+      res.json({
+        success: true,
+        message: `Akses pengguna "${targetUser.name}" (${targetUser.email}) berhasil dihapus.`
       });
     } catch (err) {
       next(err);

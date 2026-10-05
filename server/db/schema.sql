@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
   google_id TEXT,
   auth_provider TEXT NOT NULL DEFAULT 'mock', -- 'mock' | 'google'
   role TEXT NOT NULL DEFAULT 'operator',
+  last_login_at DATETIME,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(tenant_id, email)
