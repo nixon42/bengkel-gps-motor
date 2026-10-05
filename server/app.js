@@ -18,6 +18,7 @@ import { financeRoutes } from './routes/finance.js';
 import { repairOrdersRoutes } from './routes/repairOrders.js';
 import { customersRoutes } from './routes/customers.js';
 import { dashboardRoutes } from './routes/dashboard.js';
+import { superadminRoutes } from './routes/superadmin.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -91,6 +92,7 @@ export function createApp(databaseInstance) {
   app.use('/api/repair-orders', repairOrdersRoutes(db));
   app.use('/api/customers', customersRoutes(db));
   app.use('/api/dashboard', dashboardRoutes(db));
+  app.use('/api/superadmin', superadminRoutes(db));
 
   // Static public assets (favicon.svg, manifest.json, etc.)
   const publicDir = path.join(__dirname, '../public');

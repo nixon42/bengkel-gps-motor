@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 
 const PublicTrackingPage = lazy(() => import('./pages/PublicTrackingPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'));
 
 function PageFallback() {
   return (
@@ -26,6 +27,10 @@ export default function App() {
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
     const plate = params.get('plate') || '';
+
+    if (path.startsWith('/superadmin')) {
+      return { view: 'superadmin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '' };
+    }
 
     if (path.includes('cek-status')) {
       const match = path.match(/^\/([^\/]+)\/cek-status/);
@@ -58,6 +63,8 @@ export default function App() {
       newPath = `/${slug}/cek-status${query}`;
     } else if (view === 'admin') {
       newPath = '/admin';
+    } else if (view === 'superadmin') {
+      newPath = '/superadmin';
     } else {
       newPath = '/';
     }
@@ -74,6 +81,17 @@ export default function App() {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  if (currentRoute.view === 'superadmin') {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <SuperadminDashboard
+          onNavigateAdmin={() => navigateTo('admin')}
+          onNavigateLanding={() => navigateTo('landing')}
+        />
+      </Suspense>
+    );
+  }
 
   if (currentRoute.view === 'tracking') {
     return (
@@ -93,6 +111,7 @@ export default function App() {
         <AdminDashboard
           onNavigateLanding={() => navigateTo('landing')}
           onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
+          onNavigateSuperadmin={() => navigateTo('superadmin')}
         />
       </Suspense>
     );
@@ -102,6 +121,7 @@ export default function App() {
     <LandingPage
       onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
       onOpenAdmin={() => navigateTo('admin')}
+      onOpenSuperadmin={() => navigateTo('superadmin')}
     />
   );
 }

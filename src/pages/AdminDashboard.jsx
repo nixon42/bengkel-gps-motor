@@ -47,7 +47,7 @@ function TabFallback() {
   );
 }
 
-export default function AdminDashboard({ onNavigateLanding, onNavigateTracking }) {
+export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, onNavigateSuperadmin }) {
   const { user, tenant, loading, mockLogin, logout, updateSettings } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
@@ -127,6 +127,19 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking }
 
           {/* Right Actions */}
           <div className="flex items-center space-x-2">
+            {/* Superadmin Portal Link if user is superadmin */}
+            {user && (user.isSuperAdmin || user.role === 'superadmin') && (
+              <button
+                onClick={() => onNavigateSuperadmin ? onNavigateSuperadmin() : (window.location.pathname = '/superadmin')}
+                className="touch-target flex items-center space-x-1.5 px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors shadow-none"
+                title="Buka Portal Pengawasan Superadmin"
+              >
+                <ShieldCheck className="w-4 h-4 text-slate-950" />
+                <span className="hidden sm:inline">Portal Superadmin</span>
+                <span className="sm:hidden">Superadmin</span>
+              </button>
+            )}
+
             {/* View Landing Link */}
             <button
               onClick={onNavigateLanding}

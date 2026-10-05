@@ -43,13 +43,20 @@ export function authMiddleware(db) {
         return next();
       }
 
+      const superAdminEmail = (process.env.SUPERADMIN_EMAIL || '').trim().toLowerCase();
+      const isSuperAdmin = Boolean(
+        (superAdminEmail && row.email.toLowerCase() === superAdminEmail) || 
+        row.role === 'superadmin'
+      );
+
       req.sessionId = row.session_id;
       req.user = {
         id: row.user_id,
         tenant_id: row.tenant_id,
         email: row.email,
         name: row.name,
-        role: row.role,
+        role: isSuperAdmin ? 'superadmin' : row.role,
+        isSuperAdmin,
         avatar_url: row.avatar_url
       };
       req.tenant = {
@@ -79,3 +86,29 @@ export function requireAuth(req, res, next) {
   }
   next();
 }
+
+export function requireSuperAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({
+      error: 'Unauthenticated',
+      message: 'Akses ditolak. Silakan login terlebih dahulu.'
+    });
+  }
+
+  const superAdminEmail = (process.env.SUPERADMIN_EMAIL || '').trim().toLowerCase();
+  const isSuper = Boolean(
+    (superAdminEmail && req.user.email?.toLowerCase() === superAdminEmail) || 
+    req.user.role === 'superadmin' ||
+    req.user.isSuperAdmin
+  );
+
+  if (!isSuper) {
+    return res.status(403).json({
+      error: 'Forbidden',
+      message: 'Akses ditolak. Halaman ini khusus untuk Superadmin sistem.'
+    });
+  }
+
+  next();
+}
+

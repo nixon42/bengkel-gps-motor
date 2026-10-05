@@ -158,6 +158,16 @@ The database contains 14 relational tables with cascading foreign keys and optim
 - `GET /api/customers`: Customer database with vehicle history.
 - `GET /api/customers/search?q=...`: Quick autocomplete endpoint for new RO creation.
 
+### Superadmin & Multi-Tenant Observability (`/api/superadmin`)
+- `GET /api/superadmin/stats`: Global cross-tenant metrics (total tenants, users, ROs, gross revenue, active sessions).
+- `GET /api/superadmin/tenants`: Comprehensive list of workshops with live stats (mechanics, vehicles, revenue).
+- `POST /api/superadmin/tenants`: Provision new workshop tenant with auto-configured admin account.
+- `PUT /api/superadmin/tenants/:id`: Update tenant metadata and monthly revenue target.
+- `DELETE /api/superadmin/tenants/:id`: Safely remove tenant (default `bengkel-gps-motor` is protected).
+- `GET /api/superadmin/users`: Cross-tenant user directory with role assignment.
+- `PUT /api/superadmin/users/:id/role`: Change user role (`superadmin`, `admin`, `operator`, `mechanic`, `cashier`).
+- `GET /api/superadmin/system`: System runtime health and SQLite diagnostics (db size, WAL journal mode, foreign keys, memory RSS, uptime).
+
 ---
 
 ## 4. Development, Testing & Operations
@@ -179,7 +189,7 @@ npm run dev:server
 
 ### Automated E2E Verification
 ```bash
-# Run full 32/32 automated test suite covering all tiers and edge cases:
+# Run full 33/33 automated test suite covering all tiers and edge cases:
 npm test
 
 # Run with strict mode:
@@ -214,6 +224,7 @@ docker compose down
 
 ## 5. Security & Isolation Guidelines for Autonomous Agents
 
-1. **Always Enforce Multi-Tenancy**: Every SQL query must bind `WHERE tenant_id = ?`. Never query or mutate cross-tenant records.
-2. **Never Return Raw Customer Data in Public Routes**: Public tracking endpoints must pass payloads through `server/services/maskingService.js` to mask plates and names and omit buy prices, telephone numbers, and addresses.
-3. **Preserve Modern Flat Styling**: Never introduce `backdrop-blur` or glassmorphic filters in React components or CSS. Keep touch targets `>= 44x44px`.
+1. **Always Enforce Multi-Tenancy**: Every standard business SQL query must bind `WHERE tenant_id = ?`. Never mutate cross-tenant records in regular operator endpoints.
+2. **Superadmin Authority Boundary**: Superadmin endpoints (`/api/superadmin/*`) are guarded by `requireSuperAdmin` middleware. Access is granted only if user email matches `SUPERADMIN_EMAIL` configured in `.env` or has `role = 'superadmin'`.
+3. **Never Return Raw Customer Data in Public Routes**: Public tracking endpoints must pass payloads through `server/services/maskingService.js` to mask plates and names and omit buy prices, telephone numbers, and addresses.
+4. **Preserve Modern Flat Styling**: Never introduce `backdrop-blur` or glassmorphic filters in React components or CSS. Keep touch targets `>= 44x44px`.

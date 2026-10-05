@@ -473,6 +473,77 @@ export async function runTier1Features(options = {}) {
       }
     });
 
+    // ----------------------------------------------------
+    // T1.14: Superadmin Portal & Multi-tenant Observability
+    // ----------------------------------------------------
+    await test('T1.14: Superadmin access control, multi-tenant stats, and system diagnostics', async () => {
+      // 1. Unauthenticated access must be rejected with 401
+      const resUnauth = await request(app).get('/api/superadmin/stats');
+      assert.equal(resUnauth.status, 401, 'Unauthenticated request to superadmin must return 401');
+
+      // 2. Regular mechanic/operator must be rejected with 403
+      const regularUser = await loginUser(app, {
+        tenantSlug: 'bengkel-gps-motor',
+        email: 'operator-bengkel@example.com',
+        name: 'Operator Biasa'
+      });
+      // Force non-superadmin role in DB if needed
+      db.prepare(`UPDATE users SET role = 'operator' WHERE email = ?`).run('operator-bengkel@example.com');
+      const resForbidden = await request(app)
+        .get('/api/superadmin/stats')
+        .set('Cookie', regularUser.cookie);
+      assert.equal(resForbidden.status, 403, 'Regular operator must receive 403 Forbidden on superadmin endpoint');
+
+      // 3. Superadmin login
+      const superadminEmail = process.env.SUPERADMIN_EMAIL || 'superadmin@gpsmotor.id';
+      const superUser = await loginUser(app, {
+        tenantSlug: 'bengkel-gps-motor',
+        email: superadminEmail,
+        name: 'Super Admin GPS'
+      });
+      assert.equal(superUser.user.role, 'superadmin', 'User with SUPERADMIN_EMAIL should have superadmin role');
+      assert.equal(superUser.user.isSuperAdmin, true, 'isSuperAdmin flag should be true');
+
+      // 4. Access stats
+      const resStats = await request(app)
+        .get('/api/superadmin/stats')
+        .set('Cookie', superUser.cookie);
+      assert.equal(resStats.status, 200);
+      assert.ok(typeof resStats.body.stats.totalTenants === 'number');
+      assert.ok(typeof resStats.body.stats.totalUsers === 'number');
+      assert.ok(typeof resStats.body.stats.totalRevenue === 'number');
+
+      // 5. Access tenants list
+      const resTenants = await request(app)
+        .get('/api/superadmin/tenants')
+        .set('Cookie', superUser.cookie);
+      assert.equal(resTenants.status, 200);
+      assert.ok(Array.isArray(resTenants.body.tenants));
+      assert.ok(resTenants.body.tenants.length >= 1);
+
+      // 6. Access users list
+      const resUsers = await request(app)
+        .get('/api/superadmin/users')
+        .set('Cookie', superUser.cookie);
+      assert.equal(resUsers.status, 200);
+      assert.ok(Array.isArray(resUsers.body.users));
+
+      // 7. Access system diagnostics
+      const resSys = await request(app)
+        .get('/api/superadmin/system')
+        .set('Cookie', superUser.cookie);
+      assert.equal(resSys.status, 200);
+      assert.ok(resSys.body.system.nodeVersion);
+      assert.ok(resSys.body.system.sqlitePragmas);
+
+      // 8. Prevent deletion of default tenant
+      const resDelDefault = await request(app)
+        .delete('/api/superadmin/tenants/bengkel-gps-motor')
+        .set('Cookie', superUser.cookie);
+      assert.equal(resDelDefault.status, 400);
+      assert.ok(resDelDefault.body.error.includes('default'));
+    });
+
   } finally {
     cleanup();
   }

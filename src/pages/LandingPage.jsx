@@ -10,7 +10,7 @@ import FaqSection from '../components/Landing/FaqSection';
 import LocationSection from '../components/Landing/LocationSection';
 import Footer from '../components/Landing/Footer';
 
-export default function LandingPage({ onNavigateTracking, onOpenAdmin }) {
+export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSuperadmin }) {
   const { theme, toggleTheme } = useTheme();
   const { user, mockLogin, loading } = useAuth();
 
@@ -136,6 +136,7 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin }) {
       <Footer 
         onNavigateTracking={() => onNavigateTracking()} 
         onOpenLogin={handleLoginClick} 
+        onOpenSuperadmin={onOpenSuperadmin}
       />
     </div>
   );

@@ -49,14 +49,24 @@ export function authRoutes(db) {
 
       // 2. Resolve or create user
       let user = db.prepare('SELECT * FROM users WHERE email = ? AND tenant_id = ?').get(targetEmail, tenant.id);
+      const superAdminEmail = (process.env.SUPERADMIN_EMAIL || '').trim().toLowerCase();
+      const isSuper = Boolean(
+        (superAdminEmail && targetEmail.toLowerCase() === superAdminEmail) || 
+        targetEmail.toLowerCase().includes('superadmin')
+      );
+      const userRole = isSuper ? 'superadmin' : 'operator';
+
       if (!user) {
         const userId = crypto.randomUUID();
-        const userName = parsed.name || (targetEmail.includes('admin') ? 'Bambang GPS Motor' : 'Operator Demo');
+        const userName = parsed.name || (isSuper ? 'Superadmin GPS Motor' : (targetEmail.includes('admin') ? 'Bambang GPS Motor' : 'Operator Demo'));
         db.prepare(`
           INSERT INTO users (id, tenant_id, email, name, role, auth_provider)
-          VALUES (?, ?, ?, ?, 'operator', 'mock')
-        `).run(userId, tenant.id, targetEmail, userName);
+          VALUES (?, ?, ?, ?, ?, 'mock')
+        `).run(userId, tenant.id, targetEmail, userName, userRole);
         user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+      } else if (isSuper && user.role !== 'superadmin') {
+        db.prepare('UPDATE users SET role = ? WHERE id = ?').run('superadmin', user.id);
+        user.role = 'superadmin';
       }
 
       // 3. Create active session (7 days validity)
@@ -85,6 +95,7 @@ export function authRoutes(db) {
           email: user.email,
           name: user.name,
           role: user.role,
+          isSuperAdmin: isSuper || user.role === 'superadmin',
           avatar_url: user.avatar_url
         },
         tenant: {

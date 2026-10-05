@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wrench, MapPin, Phone, Clock, ShieldCheck, Heart } from 'lucide-react';
 
-export default function Footer({ onNavigateTracking, onOpenLogin }) {
+export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadmin }) {
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -75,6 +75,17 @@ export default function Footer({ onNavigateTracking, onOpenLogin }) {
                   Masuk Operator Bengkel
                 </button>
               </li>
+              {onOpenSuperadmin && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={onOpenSuperadmin}
+                    className="text-amber-400 hover:text-amber-300 font-semibold"
+                  >
+                    Portal Superadmin
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
 
