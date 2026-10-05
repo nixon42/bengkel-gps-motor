@@ -22,14 +22,15 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV DB_PATH=/app/data/bengkel.db
 ENV UPLOAD_DIR=/app/uploads
+ENV TZ=Asia/Jakarta
 
-# Install native build dependencies for better-sqlite3 compilation in Alpine
-RUN apk add --no-cache python3 make g++
+# Install tzdata (for Asia/Jakarta WIB timezone) and native build dependencies for better-sqlite3 compilation
+RUN apk add --no-cache tzdata python3 make g++
 
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-# Remove compiler toolchain to maintain minimal image size
+# Remove compiler toolchain to maintain minimal image size (keeping tzdata intact)
 RUN apk del python3 make g++
 
 # Copy precompiled frontend assets from Stage 1

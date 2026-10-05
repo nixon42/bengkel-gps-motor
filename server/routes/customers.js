@@ -330,10 +330,10 @@ export function customersRoutes(db) {
           address = ?,
           notes = ?,
           updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `).run(name, phone, email, address, notes, customer.id);
+        WHERE id = ? AND tenant_id = ?
+      `).run(name, phone, email, address, notes, customer.id, tenantId);
 
-      const updated = db.prepare('SELECT * FROM customers WHERE id = ?').get(customer.id);
+      const updated = db.prepare('SELECT * FROM customers WHERE id = ? AND tenant_id = ?').get(customer.id, tenantId);
 
       res.json({
         success: true,
@@ -355,7 +355,7 @@ export function customersRoutes(db) {
         return res.status(404).json({ error: 'Pelanggan tidak ditemukan.' });
       }
 
-      db.prepare('DELETE FROM customers WHERE id = ?').run(customer.id);
+      db.prepare('DELETE FROM customers WHERE id = ? AND tenant_id = ?').run(customer.id, tenantId);
 
       res.json({
         success: true,

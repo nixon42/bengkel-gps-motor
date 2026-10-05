@@ -34,25 +34,47 @@ const storage = multer.diskStorage({
     cb(null, targetDir);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
+    const mime = (file.mimetype || '').toLowerCase();
+    const allowedExts = ALLOWED_MIME_EXTENSIONS[mime] || ['.jpg'];
+    let ext = path.extname(file.originalname || '').toLowerCase();
+    if (!allowedExts.includes(ext)) {
+      ext = SAFE_EXTENSION_DEFAULT[mime] || '.jpg';
+    }
     const uniqueSuffix = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}`;
     cb(null, `${uniqueSuffix}${ext}`);
   }
 });
 
+const ALLOWED_MIME_EXTENSIONS = {
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/jpg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/webp': ['.webp'],
+  'application/pdf': ['.pdf']
+};
+
+const SAFE_EXTENSION_DEFAULT = {
+  'image/jpeg': '.jpg',
+  'image/jpg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'application/pdf': '.pdf'
+};
+
 const fileFilter = (req, file, cb) => {
-  const allowedMimes = [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/jpg',
-    'application/pdf'
-  ];
-  if (allowedMimes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Tipe file tidak didukung. Harap upload gambar (JPG, PNG, WebP) atau PDF.'));
+  const mime = (file.mimetype || '').toLowerCase();
+  const allowedExts = ALLOWED_MIME_EXTENSIONS[mime];
+
+  if (!allowedExts) {
+    return cb(new Error('Tipe file tidak didukung. Harap upload gambar (JPG, PNG, WebP) atau PDF.'));
   }
+
+  const ext = path.extname(file.originalname || '').toLowerCase();
+  if (ext && !allowedExts.includes(ext)) {
+    return cb(new Error(`Ekstensi file "${ext}" tidak diizinkan untuk tipe konten ${mime}. Harap unggah format gambar (JPG, PNG, WebP) atau PDF yang sesuai.`));
+  }
+
+  cb(null, true);
 };
 
 export const upload = multer({

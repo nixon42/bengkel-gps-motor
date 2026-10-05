@@ -708,10 +708,10 @@ export function inventoryRoutes(db) {
       }
 
       // Check if linked to RO
-      const roUsage = db.prepare('SELECT COUNT(*) AS count FROM ro_spareparts WHERE sparepart_id = ?').get(id);
+      const roUsage = db.prepare('SELECT COUNT(*) AS count FROM ro_spareparts WHERE sparepart_id = ? AND tenant_id = ?').get(id, tenantId);
       if (roUsage && roUsage.count > 0) {
         // Soft delete
-        db.prepare('UPDATE spareparts SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(id);
+        db.prepare('UPDATE spareparts SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?').run(id, tenantId);
         return res.json({
           success: true,
           message: 'Sparepart dinonaktifkan (karena memiliki riwayat pengerjaan RO).'
@@ -719,9 +719,9 @@ export function inventoryRoutes(db) {
       }
 
       // If has stock movements, soft delete to preserve financial audit trail
-      const movementUsage = db.prepare('SELECT COUNT(*) AS count FROM stock_movements WHERE sparepart_id = ?').get(id);
+      const movementUsage = db.prepare('SELECT COUNT(*) AS count FROM stock_movements WHERE sparepart_id = ? AND tenant_id = ?').get(id, tenantId);
       if (movementUsage && movementUsage.count > 0) {
-        db.prepare('UPDATE spareparts SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(id);
+        db.prepare('UPDATE spareparts SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?').run(id, tenantId);
         return res.json({
           success: true,
           message: 'Sparepart dinonaktifkan (karena memiliki riwayat mutasi stok).'

@@ -91,11 +91,11 @@ export function stockMovementsRoutes(db) {
 
       // Atomic transaction: update stock & insert movement
       const tx = db.transaction(() => {
-        db.prepare('UPDATE spareparts SET stock = stock + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(qty, partId);
+        db.prepare('UPDATE spareparts SET stock = stock + ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?').run(qty, partId, tenantId);
 
         // Optionally update buy_price if provided > 0
         if (buyPrice > 0) {
-          db.prepare('UPDATE spareparts SET buy_price = ? WHERE id = ?').run(buyPrice, partId);
+          db.prepare('UPDATE spareparts SET buy_price = ? WHERE id = ? AND tenant_id = ?').run(buyPrice, partId, tenantId);
         }
 
         db.prepare(`
@@ -113,8 +113,8 @@ export function stockMovementsRoutes(db) {
 
       tx();
 
-      const updatedPart = db.prepare('SELECT * FROM spareparts WHERE id = ?').get(partId);
-      const movement = db.prepare('SELECT * FROM stock_movements WHERE id = ?').get(movementId);
+      const updatedPart = db.prepare('SELECT * FROM spareparts WHERE id = ? AND tenant_id = ?').get(partId, tenantId);
+      const movement = db.prepare('SELECT * FROM stock_movements WHERE id = ? AND tenant_id = ?').get(movementId, tenantId);
 
       res.status(201).json({
         success: true,
@@ -165,7 +165,7 @@ export function stockMovementsRoutes(db) {
 
       // Atomic transaction: decrement stock & insert movement
       const tx = db.transaction(() => {
-        db.prepare('UPDATE spareparts SET stock = stock - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(qty, partId);
+        db.prepare('UPDATE spareparts SET stock = stock - ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?').run(qty, partId, tenantId);
 
         db.prepare(`
           INSERT INTO stock_movements (
@@ -181,8 +181,8 @@ export function stockMovementsRoutes(db) {
 
       tx();
 
-      const updatedPart = db.prepare('SELECT * FROM spareparts WHERE id = ?').get(partId);
-      const movement = db.prepare('SELECT * FROM stock_movements WHERE id = ?').get(movementId);
+      const updatedPart = db.prepare('SELECT * FROM spareparts WHERE id = ? AND tenant_id = ?').get(partId, tenantId);
+      const movement = db.prepare('SELECT * FROM stock_movements WHERE id = ? AND tenant_id = ?').get(movementId, tenantId);
 
       res.status(201).json({
         success: true,
@@ -505,7 +505,7 @@ export function stockOpnameRoutes(db) {
       // Atomic adjustment
       const tx = db.transaction(() => {
         // Adjust item stock to exact physical count
-        db.prepare('UPDATE spareparts SET stock = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(physicalStock, partId);
+        db.prepare('UPDATE spareparts SET stock = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND tenant_id = ?').run(physicalStock, partId, tenantId);
 
         // Record in stock_opnames table
         db.prepare(`
@@ -533,8 +533,8 @@ export function stockOpnameRoutes(db) {
 
       tx();
 
-      const opnameRecord = db.prepare('SELECT * FROM stock_opnames WHERE id = ?').get(opnameId);
-      const updatedPart = db.prepare('SELECT * FROM spareparts WHERE id = ?').get(partId);
+      const opnameRecord = db.prepare('SELECT * FROM stock_opnames WHERE id = ? AND tenant_id = ?').get(opnameId, tenantId);
+      const updatedPart = db.prepare('SELECT * FROM spareparts WHERE id = ? AND tenant_id = ?').get(partId, tenantId);
 
       res.status(201).json({
         success: true,

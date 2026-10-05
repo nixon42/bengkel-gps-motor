@@ -63,7 +63,12 @@ export function createApp(databaseInstance) {
   if (!fs.existsSync(roUploadDir)) {
     fs.mkdirSync(roUploadDir, { recursive: true });
   }
-  app.use('/uploads', express.static(uploadDir));
+  app.use('/uploads', express.static(uploadDir, {
+    dotfiles: 'ignore',
+    setHeaders: (res) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+    }
+  }));
 
   // Context Resolvers (Auth & Tenant)
   app.use(authMiddleware(db));

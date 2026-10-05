@@ -598,10 +598,10 @@ export function repairOrdersRoutes(db) {
           estimated_completion = ?,
           notes = ?,
           updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `).run(serviceFee, discount, totalCost, complaint, mechanicName, estimatedCompletion, notes, ro.id);
+        WHERE id = ? AND tenant_id = ?
+      `).run(serviceFee, discount, totalCost, complaint, mechanicName, estimatedCompletion, notes, ro.id, tenantId);
 
-      const updated = db.prepare('SELECT * FROM repair_orders WHERE id = ?').get(ro.id);
+      const updated = db.prepare('SELECT * FROM repair_orders WHERE id = ? AND tenant_id = ?').get(ro.id, tenantId);
 
       res.json({
         success: true,
@@ -655,8 +655,8 @@ export function repairOrdersRoutes(db) {
         db.prepare(`
           UPDATE repair_orders
           SET status = ?, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `).run(targetStatus, ro.id);
+          WHERE id = ? AND tenant_id = ?
+        `).run(targetStatus, ro.id, tenantId);
 
         // 2. Insert audit log
         const logId = crypto.randomUUID();
@@ -837,8 +837,8 @@ export function repairOrdersRoutes(db) {
         db.prepare(`
           UPDATE spareparts
           SET stock = stock - ?, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `).run(qty, part.id);
+          WHERE id = ? AND tenant_id = ?
+        `).run(qty, part.id, tenantId);
 
         // 2. Insert stock_movements OUT
         db.prepare(`
@@ -894,8 +894,8 @@ export function repairOrdersRoutes(db) {
         db.prepare(`
           UPDATE repair_orders
           SET sparepart_fee = ?, total_cost = ?, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `).run(newSparepartFee, newTotalCost, ro.id);
+          WHERE id = ? AND tenant_id = ?
+        `).run(newSparepartFee, newTotalCost, ro.id, tenantId);
       });
 
       attachTx();
@@ -960,8 +960,8 @@ export function repairOrdersRoutes(db) {
         db.prepare(`
           UPDATE spareparts
           SET stock = stock + ?, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `).run(attachedItem.quantity, attachedItem.sparepart_id);
+          WHERE id = ? AND tenant_id = ?
+        `).run(attachedItem.quantity, attachedItem.sparepart_id, tenantId);
 
         // 2. Remove matching stock_movements OUT record portably
         const matchingMovement = db.prepare(`
@@ -972,11 +972,11 @@ export function repairOrdersRoutes(db) {
         `).get(tenantId, ro.id, attachedItem.sparepart_id, attachedItem.quantity);
 
         if (matchingMovement) {
-          db.prepare('DELETE FROM stock_movements WHERE id = ?').run(matchingMovement.id);
+          db.prepare('DELETE FROM stock_movements WHERE id = ? AND tenant_id = ?').run(matchingMovement.id, tenantId);
         }
 
         // 3. Remove ro_spareparts entry
-        db.prepare('DELETE FROM ro_spareparts WHERE id = ?').run(attachedItem.id);
+        db.prepare('DELETE FROM ro_spareparts WHERE id = ? AND tenant_id = ?').run(attachedItem.id, tenantId);
 
         // 4. Recalculate repair_orders totals
         const sumRow = db.prepare(`
@@ -993,8 +993,8 @@ export function repairOrdersRoutes(db) {
         db.prepare(`
           UPDATE repair_orders
           SET sparepart_fee = ?, total_cost = ?, updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `).run(newSparepartFee, newTotalCost, ro.id);
+          WHERE id = ? AND tenant_id = ?
+        `).run(newSparepartFee, newTotalCost, ro.id, tenantId);
       });
 
       detachTx();
@@ -1062,22 +1062,33 @@ export function repairOrdersRoutes(db) {
       const targetId = req.params.id;
       const photoId = req.params.photoId;
 
+      const ro = db.prepare(`
+        SELECT id FROM repair_orders
+        WHERE tenant_id = ? AND (id = ? OR ro_number = ?)
+        LIMIT 1
+      `).get(tenantId, targetId, targetId);
+
+      if (!ro) {
+        return res.status(404).json({ error: 'Repair Order tidak ditemukan.' });
+      }
+
       const photo = db.prepare(`
         SELECT * FROM ro_photos
         WHERE tenant_id = ? AND repair_order_id = ? AND id = ?
-      `).get(tenantId, targetId, photoId);
+      `).get(tenantId, ro.id, photoId);
 
       if (!photo) {
         return res.status(404).json({ error: 'Foto tidak ditemukan.' });
       }
 
-      db.prepare('DELETE FROM ro_photos WHERE id = ?').run(photo.id);
+      db.prepare('DELETE FROM ro_photos WHERE id = ? AND tenant_id = ?').run(photo.id, tenantId);
 
       if (photo.photo_url) {
-        const fullPath = path.join(process.cwd(), photo.photo_url.replace(/^\//, ''));
-        if (fs.existsSync(fullPath)) {
+        const uploadsBase = path.resolve(process.cwd(), 'uploads');
+        const safePath = path.resolve(process.cwd(), photo.photo_url.replace(/^\//, ''));
+        if (safePath.startsWith(uploadsBase) && fs.existsSync(safePath)) {
           try {
-            fs.unlinkSync(fullPath);
+            fs.unlinkSync(safePath);
           } catch {
             // Ignore error on unlinking
           }

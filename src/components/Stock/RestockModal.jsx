@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, ArrowDownRight, Save, AlertCircle, Calendar, Hash, Truck, FileText } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, ArrowDownRight, Save, AlertCircle, Calendar, Hash, Truck, FileText, Camera, UploadCloud, Trash2 } from 'lucide-react';
 
 export default function RestockModal({ isOpen, onClose, onSaved, initialPartId = null, spareparts = [] }) {
   const [formData, setFormData] = useState({
@@ -12,6 +12,11 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
     invoiceNumber: '',
     catatan: ''
   });
+
+  const [proofPhotoFile, setProofPhotoFile] = useState(null);
+  const [proofPhotoPreview, setProofPhotoPreview] = useState('');
+  const cameraInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +37,8 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
         invoiceNumber: '',
         catatan: ''
       });
+      setProofPhotoFile(null);
+      setProofPhotoPreview('');
       setError('');
     }
   }, [isOpen, initialPartId, spareparts]);
@@ -69,6 +76,22 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
     }));
   };
 
+  const handlePhotoSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setProofPhotoFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setProofPhotoPreview(previewUrl);
+  };
+
+  const handleRemovePhoto = () => {
+    setProofPhotoFile(null);
+    if (proofPhotoPreview) {
+      URL.revokeObjectURL(proofPhotoPreview);
+    }
+    setProofPhotoPreview('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -84,6 +107,22 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
 
     try {
       setSaving(true);
+
+      let uploadedPhotoUrl = undefined;
+      if (proofPhotoFile) {
+        const uploadData = new FormData();
+        uploadData.append('receipt', proofPhotoFile);
+        const upRes = await fetch('/api/finance/upload', {
+          method: 'POST',
+          body: uploadData,
+          credentials: 'include'
+        });
+        if (upRes.ok) {
+          const upJson = await upRes.json();
+          uploadedPhotoUrl = upJson.url;
+        }
+      }
+
       const res = await fetch('/api/stock-movements/in', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -95,7 +134,8 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
           totalPrice: formData.totalPrice,
           supplier: formData.supplier.trim() || undefined,
           invoiceNumber: formData.invoiceNumber.trim() || undefined,
-          catatan: formData.catatan.trim() || undefined
+          catatan: formData.catatan.trim() || undefined,
+          proofPhotoUrl: uploadedPhotoUrl
         }),
         credentials: 'include'
       });
@@ -274,6 +314,78 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
               onChange={e => setFormData({ ...formData, catatan: e.target.value })}
               className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs"
             />
+          </div>
+
+          {/* Foto Bukti Nota / Faktur */}
+          <div>
+            <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
+              <Camera className="w-3.5 h-3.5 text-slate-400" />
+              <span>Foto Bukti Nota / Faktur <span className="text-slate-400 font-normal">(Opsional)</span></span>
+            </label>
+
+            {proofPhotoPreview ? (
+              <div className="flex items-center space-x-3 p-2.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                <img
+                  src={proofPhotoPreview}
+                  alt="Preview Nota"
+                  className="w-14 h-14 object-cover rounded border border-slate-300 dark:border-slate-600 flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0 text-xs">
+                  <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">
+                    {proofPhotoFile ? proofPhotoFile.name : 'Bukti nota terlampir'}
+                  </p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Siap disimpan dengan stok masuk</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  className="touch-target w-9 h-9 flex items-center justify-center text-rose-500 hover:text-rose-700 rounded transition-colors"
+                  title="Hapus foto nota"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Buka Kamera (Foto Nota)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="touch-target px-3.5 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded text-xs font-semibold flex items-center space-x-1.5 transition-colors shadow-none"
+                  >
+                    <UploadCloud className="w-4 h-4 text-slate-500" />
+                    <span>Pilih dari Galeri</span>
+                  </button>
+                </div>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                  Ambil foto fisik nota pembelian langsung dari kamera HP atau unggah dari memori.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Actions */}
