@@ -284,8 +284,8 @@ export default function FinancePage() {
             <span>Kelola Kategori</span>
           </button>
 
-          {/* Export Dropdown / Buttons */}
-          <div className="flex items-center space-x-1 border-l border-slate-200 dark:border-slate-700 pl-2">
+          {/* Export Buttons */}
+          <div className="flex items-center gap-1.5 flex-wrap">
             <a
               href="/api/finance/export/csv"
               download
@@ -322,29 +322,31 @@ export default function FinancePage() {
       </div>
 
       {/* Period Filter Toggle */}
-      <div className="flex items-center space-x-1 bg-white dark:bg-slate-800 p-1.5 rounded border border-slate-200 dark:border-slate-700 overflow-x-auto">
-        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2">
-          Periode:
-        </span>
-        {[
-          { key: 'today', label: 'Hari Ini' },
-          { key: 'week', label: 'Minggu Ini' },
-          { key: 'month', label: 'Bulan Ini' },
-          { key: 'year', label: 'Tahun Ini' },
-          { key: 'all', label: 'Semua' }
-        ].map(p => (
-          <button
-            key={p.key}
-            onClick={() => setPeriod(p.key)}
-            className={`touch-target px-3.5 py-1.5 rounded text-xs font-bold transition-colors whitespace-nowrap ${
-              period === p.key
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
+      <div className="bg-slate-100 dark:bg-slate-800/80 p-2 rounded border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center gap-2">
+        <div className="flex items-center space-x-1.5 px-1 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider shrink-0">
+          <span>Periode:</span>
+        </div>
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {[
+            { key: 'today', label: 'Hari Ini' },
+            { key: 'week', label: 'Minggu Ini' },
+            { key: 'month', label: 'Bulan Ini' },
+            { key: 'year', label: 'Tahun Ini' },
+            { key: 'all', label: 'Semua' }
+          ].map(p => (
+            <button
+              key={p.key}
+              onClick={() => setPeriod(p.key)}
+              className={`touch-target shrink-0 px-3.5 py-1.5 rounded text-xs font-semibold whitespace-nowrap border transition-all ${
+                period === p.key
+                  ? 'bg-blue-600 border-blue-600 text-white font-bold shadow-sm'
+                  : 'bg-white dark:bg-slate-700/80 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Executive KPI Cards (4 Cards) */}

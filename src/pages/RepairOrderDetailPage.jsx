@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   Wrench,
@@ -74,6 +74,8 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
   const [photoCaption, setPhotoCaption] = useState('');
   const [photoFile, setPhotoFile] = useState(null);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const roCameraRef = useRef(null);
+  const roFileRef = useRef(null);
 
   // Cost editing
   const [editingCosts, setEditingCosts] = useState(false);
@@ -281,6 +283,8 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
       setPhotoFile(null);
       setPhotoCaption('');
+      if (roCameraRef.current) roCameraRef.current.value = '';
+      if (roFileRef.current) roFileRef.current.value = '';
       setSuccessMsg('Foto dokumentasi berhasil diunggah.');
       setTimeout(() => setSuccessMsg(''), 3000);
       fetchRoDetails();
@@ -611,47 +615,114 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
             </h3>
 
             {/* Upload Box */}
-            <form onSubmit={handleUploadPhoto} className="mb-6 p-4 bg-slate-50 dark:bg-slate-750 rounded border border-slate-200 dark:border-slate-700 flex flex-wrap items-center gap-3">
-              <div className="flex-1 min-w-[200px]">
-                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Pilih File Foto</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setPhotoFile(e.target.files[0])}
-                  className="w-full text-xs text-slate-600 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white"
-                />
+            <form onSubmit={handleUploadPhoto} className="mb-6 p-4 bg-slate-50 dark:bg-slate-750 rounded border border-slate-200 dark:border-slate-700 space-y-3">
+              {/* Hidden file inputs */}
+              <input
+                ref={roCameraRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setPhotoFile(e.target.files[0]);
+                  }
+                }}
+                className="hidden"
+              />
+              <input
+                ref={roFileRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setPhotoFile(e.target.files[0]);
+                  }
+                }}
+                className="hidden"
+              />
+
+              {/* Photo Source Buttons & Preview */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1.5">
+                  Sumber Foto Dokumentasi
+                </label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => roCameraRef.current?.click()}
+                    disabled={photoUploading}
+                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Buka Kamera (Jepret)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => roFileRef.current?.click()}
+                    disabled={photoUploading}
+                    className="touch-target px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Pilih Galeri / File</span>
+                  </button>
+
+                  {photoFile && (
+                    <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded px-2.5 py-1 text-xs text-blue-700 dark:text-blue-300">
+                      <span className="font-medium truncate max-w-[150px] sm:max-w-[200px]">
+                        {photoFile.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhotoFile(null);
+                          if (roCameraRef.current) roCameraRef.current.value = '';
+                          if (roFileRef.current) roFileRef.current.value = '';
+                        }}
+                        className="text-rose-500 hover:text-rose-700 p-0.5 rounded"
+                        title="Batal pilih foto"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="w-32">
-                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Tahap</label>
-                <select
-                  value={photoStage}
-                  onChange={(e) => setPhotoStage(e.target.value)}
-                  className="w-full text-xs p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-                >
-                  <option value="BEFORE">BEFORE (Awal)</option>
-                  <option value="PROGRESS">PROGRESS (Pengerjaan)</option>
-                  <option value="AFTER">AFTER (Selesai)</option>
-                </select>
-              </div>
-              <div className="flex-1 min-w-[150px]">
-                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Keterangan / Caption</label>
-                <input
-                  type="text"
-                  placeholder="Contoh: Kondisi busi lama aus"
-                  value={photoCaption}
-                  onChange={(e) => setPhotoCaption(e.target.value)}
-                  className="w-full text-xs p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-                />
-              </div>
-              <div className="pt-5">
-                <button
-                  type="submit"
-                  disabled={!photoFile || photoUploading}
-                  className="touch-target px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded text-xs font-bold flex items-center space-x-1.5"
-                >
-                  <Upload className="w-4 h-4" />
-                  <span>{photoUploading ? 'Mengunggah...' : 'Unggah'}</span>
-                </button>
+
+              {/* Stage & Caption Inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+                <div className="sm:col-span-4">
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Tahap Servis</label>
+                  <select
+                    value={photoStage}
+                    onChange={(e) => setPhotoStage(e.target.value)}
+                    className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                  >
+                    <option value="BEFORE">BEFORE (Kondisi Awal)</option>
+                    <option value="PROGRESS">PROGRESS (Saat Dikerjakan)</option>
+                    <option value="AFTER">AFTER (Hasil Selesai)</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-5">
+                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Keterangan / Caption</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Kondisi busi lama aus / ganti oli"
+                    value={photoCaption}
+                    onChange={(e) => setPhotoCaption(e.target.value)}
+                    className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                  />
+                </div>
+                <div className="sm:col-span-3 flex items-end">
+                  <button
+                    type="submit"
+                    disabled={!photoFile || photoUploading}
+                    className="touch-target w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>{photoUploading ? 'Mengunggah...' : 'Unggah Foto'}</span>
+                  </button>
+                </div>
               </div>
             </form>
 

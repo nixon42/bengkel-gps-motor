@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, ArrowDownLeft, ArrowUpRight, Upload, Trash2, Calendar, FileText, DollarSign, CreditCard, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, ArrowDownLeft, ArrowUpRight, Upload, Trash2, Calendar, FileText, DollarSign, CreditCard, AlertCircle, Camera } from 'lucide-react';
 
 function formatRupiahPreview(val) {
   const num = Number(val);
@@ -25,6 +25,8 @@ export default function TransactionModal({
   const [receiptPreview, setReceiptPreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const cameraInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Synchronize state when modal opens or initialData changes
   useEffect(() => {
@@ -80,6 +82,8 @@ export default function TransactionModal({
   const handleRemoveReceipt = () => {
     setReceiptFile(null);
     setReceiptPreview(null);
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e) => {
@@ -340,16 +344,45 @@ export default function TransactionModal({
                 </button>
               </div>
             ) : (
-              <label className="touch-target border border-dashed border-slate-300 dark:border-slate-600 hover:border-blue-500 rounded p-3 flex items-center justify-center space-x-2 text-xs text-slate-600 dark:text-slate-300 cursor-pointer bg-slate-50/50 dark:bg-slate-700/30 transition-colors">
-                <Upload className="w-4 h-4 text-slate-400" />
-                <span>Pilih Foto Bukti Struk (JPG, PNG, WebP)</span>
+              <div className="space-y-2">
                 <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="hidden"
                 />
-              </label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>Buka Kamera (Foto Nota)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="touch-target px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Pilih Galeri / File</span>
+                  </button>
+                </div>
+                <span className="block text-[11px] text-slate-400">
+                  Ambil foto nota langsung dari kamera ponsel atau pilih dari galeri
+                </span>
+              </div>
             )}
           </div>
 

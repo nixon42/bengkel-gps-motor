@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, Image as ImageIcon, AlertCircle, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Save, Image as ImageIcon, AlertCircle, TrendingUp, TrendingDown, DollarSign, Camera, Upload, Trash2 } from 'lucide-react';
 
 const COMMON_CATEGORIES = [
   'Oli',
@@ -38,6 +38,8 @@ export default function PartFormModal({ isOpen, onClose, onSaved, initialData = 
   const [photoPreview, setPhotoPreview] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const cameraInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (initialData) {
@@ -396,7 +398,7 @@ export default function PartFormModal({ isOpen, onClose, onSaved, initialData = 
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               Foto Sparepart <span className="text-slate-400 font-normal">(Opsional)</span>
             </label>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-start space-x-3.5">
               <div className="w-16 h-16 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
                 {photoPreview ? (
                   <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
@@ -404,15 +406,64 @@ export default function PartFormModal({ isOpen, onClose, onSaved, initialData = 
                   <ImageIcon className="w-6 h-6 text-slate-400" />
                 )}
               </div>
-              <div className="flex-1">
+
+              <div className="flex-1 space-y-2">
+                {/* Hidden File Inputs */}
                 <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+                <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   onChange={handlePhotoUpload}
-                  className="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 dark:file:bg-slate-700 file:text-slate-700 dark:file:text-slate-200 hover:file:bg-slate-200"
+                  className="hidden"
                 />
-                <span className="block text-[11px] text-slate-400 mt-1">
-                  {uploading ? 'Mengunggah gambar...' : 'Format JPG, PNG, atau WebP (Maks 5MB)'}
+
+                {/* Mobile Camera and Gallery Buttons */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    disabled={uploading}
+                    className="touch-target px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Buka Kamera</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="touch-target px-3 py-1.5 rounded border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition-colors"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Pilih Galeri</span>
+                  </button>
+
+                  {photoPreview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPhotoPreview('');
+                        setFormData(prev => ({ ...prev, photo_url: '' }));
+                      }}
+                      className="touch-target p-1.5 rounded text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs"
+                      title="Hapus foto"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <span className="block text-[11px] text-slate-400">
+                  {uploading ? 'Mengunggah gambar...' : 'Langsung jepret dari kamera HP atau pilih dari galeri foto (Maks 5MB)'}
                 </span>
               </div>
             </div>
