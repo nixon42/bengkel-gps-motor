@@ -92,6 +92,12 @@ export function createApp(databaseInstance) {
   app.use('/api/customers', customersRoutes(db));
   app.use('/api/dashboard', dashboardRoutes(db));
 
+  // Static public assets (favicon.svg, manifest.json, etc.)
+  const publicDir = path.join(__dirname, '../public');
+  if (fs.existsSync(publicDir)) {
+    app.use(express.static(publicDir));
+  }
+
   // Static frontend assets in production / when dist exists
   const distDir = path.join(__dirname, '../dist');
   if (fs.existsSync(distDir)) {

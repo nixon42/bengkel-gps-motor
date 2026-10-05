@@ -1,0 +1,18 @@
+{
+  "name": "Bengkel Mobil GPS Motor Kediri",
+  "short_name": "GPS Motor",
+  "description": "Sistem Pengelolaan Bengkel & Tracking Status Servis Mobil Kediri",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#2563EB",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
