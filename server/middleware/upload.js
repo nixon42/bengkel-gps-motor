@@ -3,6 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -80,19 +81,85 @@ const fileFilter = (req, file, cb) => {
 export const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 15 * 1024 * 1024 // 15MB limit before compression
   },
   fileFilter
 });
 
+/**
+ * Optimizes an uploaded image file:
+ * - Resizes to max 1280px (bounding box) without enlargement
+ * - Auto-orients based on EXIF and strips metadata for privacy
+ * - Compresses with target ~100KB (2-pass adaptive compression)
+ * - Safely skips non-images (e.g. PDFs) or unparseable buffers (unit test mocks)
+ */
+export async function optimizeUploadedImage(filePath, mimeType, targetBytes = 100 * 1024) {
+  if (!filePath || !fs.existsSync(filePath)) return;
+  if (!mimeType || !mimeType.startsWith('image/')) return;
+
+  try {
+    const ext = path.extname(filePath).toLowerCase();
+
+    // First pass: 1280px max dimension, quality 80
+    let pipeline = sharp(filePath)
+      .rotate()
+      .resize({
+        width: 1280,
+        height: 1280,
+        fit: 'inside',
+        withoutEnlargement: true
+      });
+
+    if (ext === '.png') {
+      pipeline = pipeline.png({ compressionLevel: 9, quality: 80 });
+    } else if (ext === '.webp') {
+      pipeline = pipeline.webp({ quality: 80, effort: 4 });
+    } else {
+      pipeline = pipeline.jpeg({ quality: 80, mozjpeg: true });
+    }
+
+    let buffer = await pipeline.toBuffer();
+
+    // Second pass if still larger than target (100KB)
+    if (buffer.length > targetBytes) {
+      let secondPass = sharp(buffer)
+        .resize({
+          width: 1024,
+          height: 1024,
+          fit: 'inside',
+          withoutEnlargement: true
+        });
+
+      if (ext === '.png') {
+        secondPass = secondPass.png({ compressionLevel: 9, quality: 65, palette: true });
+      } else if (ext === '.webp') {
+        secondPass = secondPass.webp({ quality: 70, effort: 5 });
+      } else {
+        secondPass = secondPass.jpeg({ quality: 70, mozjpeg: true });
+      }
+
+      const secondBuffer = await secondPass.toBuffer();
+      if (secondBuffer.length < buffer.length) {
+        buffer = secondBuffer;
+      }
+    }
+
+    // Save optimized buffer back to file
+    fs.writeFileSync(filePath, buffer);
+  } catch (err) {
+    // If not a parseable image (e.g. mock test buffers), silently preserve original file
+  }
+}
+
 export function uploadSingle(subfolder = 'general', fieldName = 'file') {
   return (req, res, next) => {
     req.uploadSubfolder = subfolder;
-    upload.single(fieldName)(req, res, (err) => {
+    upload.single(fieldName)(req, res, async (err) => {
       if (err) {
         return res.status(400).json({ error: 'Upload Error', message: err.message });
       }
       if (req.file) {
+        await optimizeUploadedImage(req.file.path, req.file.mimetype);
         req.file.relativeUrl = `/uploads/${subfolder}/${req.file.filename}`;
       }
       next();
@@ -103,14 +170,17 @@ export function uploadSingle(subfolder = 'general', fieldName = 'file') {
 export function uploadMultiple(subfolder = 'general', fieldName = 'photos', maxCount = 5) {
   return (req, res, next) => {
     req.uploadSubfolder = subfolder;
-    upload.array(fieldName, maxCount)(req, res, (err) => {
+    upload.array(fieldName, maxCount)(req, res, async (err) => {
       if (err) {
         return res.status(400).json({ error: 'Upload Error', message: err.message });
       }
-      if (req.files) {
-        req.files.forEach(f => {
-          f.relativeUrl = `/uploads/${subfolder}/${f.filename}`;
-        });
+      if (req.files && req.files.length > 0) {
+        await Promise.all(
+          req.files.map(async (f) => {
+            await optimizeUploadedImage(f.path, f.mimetype);
+            f.relativeUrl = `/uploads/${subfolder}/${f.filename}`;
+          })
+        );
       }
       next();
     });

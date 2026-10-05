@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, ArrowDownLeft, ArrowUpRight, Upload, Trash2, Calendar, FileText, DollarSign, CreditCard, AlertCircle, Camera } from 'lucide-react';
+import { compressImageClient } from '../../utils/imageCompressor.js';
 
 function formatRupiahPreview(val) {
   const num = Number(val);
@@ -67,15 +68,16 @@ export default function TransactionModal({
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      setReceiptFile(file);
+      const compressed = await compressImageClient(file);
+      setReceiptFile(compressed);
       const reader = new FileReader();
       reader.onload = (ev) => {
         setReceiptPreview(ev.target.result);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(compressed);
     }
   };
 

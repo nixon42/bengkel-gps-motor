@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   Package
 } from 'lucide-react';
+import { compressImageClient } from '../utils/imageCompressor.js';
 
 const STAGE_ORDER = ['MASUK', 'DIAGNOSA', 'PENGERJAAN', 'MENUNGGU_PART', 'SELESAI', 'DIAMBIL'];
 
@@ -638,9 +639,10 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                 type="file"
                 accept="image/*"
                 capture="environment"
-                onChange={(e) => {
+                onChange={async (e) => {
                   if (e.target.files && e.target.files[0]) {
-                    setPhotoFile(e.target.files[0]);
+                    const compressed = await compressImageClient(e.target.files[0]);
+                    setPhotoFile(compressed);
                   }
                 }}
                 className="hidden"
@@ -649,9 +651,10 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                 ref={roFileRef}
                 type="file"
                 accept="image/*"
-                onChange={(e) => {
+                onChange={async (e) => {
                   if (e.target.files && e.target.files[0]) {
-                    setPhotoFile(e.target.files[0]);
+                    const compressed = await compressImageClient(e.target.files[0]);
+                    setPhotoFile(compressed);
                   }
                 }}
                 className="hidden"

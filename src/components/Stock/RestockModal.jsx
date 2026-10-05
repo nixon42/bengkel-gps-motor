@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, ArrowDownRight, Save, AlertCircle, Calendar, Hash, Truck, FileText, Camera, UploadCloud, Trash2 } from 'lucide-react';
+import { compressImageClient } from '../../utils/imageCompressor.js';
 
 export default function RestockModal({ isOpen, onClose, onSaved, initialPartId = null, spareparts = [] }) {
   const [formData, setFormData] = useState({
@@ -76,11 +77,12 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
     }));
   };
 
-  const handlePhotoSelect = (e) => {
+  const handlePhotoSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setProofPhotoFile(file);
-    const previewUrl = URL.createObjectURL(file);
+    const compressed = await compressImageClient(file);
+    setProofPhotoFile(compressed);
+    const previewUrl = URL.createObjectURL(compressed);
     setProofPhotoPreview(previewUrl);
   };
 

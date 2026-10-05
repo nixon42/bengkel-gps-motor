@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Image as ImageIcon, AlertCircle, TrendingUp, TrendingDown, DollarSign, Camera, Upload, Trash2 } from 'lucide-react';
+import { compressImageClient } from '../../utils/imageCompressor.js';
 
 const COMMON_CATEGORIES = [
   'Oli',
@@ -99,16 +100,19 @@ export default function PartFormModal({ isOpen, onClose, onSaved, initialData = 
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Client-side compress photo (target ~100KB)
+    const compressed = await compressImageClient(file);
+
     // Show local preview immediately
     const reader = new FileReader();
     reader.onload = (uploadEvent) => {
       setPhotoPreview(uploadEvent.target.result);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressed);
 
     // Upload to server
     const data = new FormData();
-    data.append('photo', file);
+    data.append('photo', compressed);
 
     try {
       setUploading(true);

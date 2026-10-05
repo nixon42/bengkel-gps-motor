@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
+import fs from 'node:fs';
+import path from 'node:path';
 import { createApp } from '../../server/app.js';
 import { initDatabase } from '../../server/db/index.js';
 
@@ -240,5 +242,38 @@ test('Security Hardening & Deep Defense Suite', async (t) => {
       .set('Cookie', cookieTenantA);
     assert.equal(resDelA.status, 200);
     assert.equal(resDelA.body.success, true);
+  });
+
+  // Image Resizing & Compression Test: Target <= 100KB
+  await t.test('8. Image Resizing & Compression: High-Res Upload Compressed to Target <= 100KB', async () => {
+    const samplePath = path.join(process.cwd(), 'uploads/ro/spark-plugs.jpg');
+    assert.ok(fs.existsSync(samplePath), 'Sample spark-plugs.jpg must exist');
+    const originalSize = fs.statSync(samplePath).size;
+    assert.ok(originalSize > 200 * 1024, `Original sample should be >200KB, got ${Math.round(originalSize / 1024)}KB`);
+
+    // Upload real 489KB photo to /api/finance/upload
+    const res = await request(app)
+      .post('/api/finance/upload')
+      .set('Cookie', cookieTenantA)
+      .attach('receipt', samplePath);
+
+    assert.equal(res.status, 200);
+    assert.ok(res.body.url);
+
+    // Read the saved file on disk
+    const savedPath = path.join(process.cwd(), res.body.url.replace(/^\//, ''));
+    assert.ok(fs.existsSync(savedPath), 'Saved file must exist on disk');
+
+    const compressedSize = fs.statSync(savedPath).size;
+    // Verify it is <= 100KB (100 * 1024 bytes)
+    assert.ok(
+      compressedSize <= 100 * 1024,
+      `Compressed image should be <= 100KB, got ${Math.round(compressedSize / 1024)}KB`
+    );
+
+    // Clean up test upload
+    try {
+      fs.unlinkSync(savedPath);
+    } catch {}
   });
 });
