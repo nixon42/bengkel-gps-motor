@@ -148,8 +148,8 @@ function ensureDefaultSeed(db) {
     if (!partBusi) {
       const partId = crypto.randomUUID();
       db.prepare(`
-        INSERT INTO spareparts (id, tenant_id, sku, name, category, unit, min_stock, stock, buy_price, sell_price)
-        VALUES (?, ?, 'IGN-BUSI-NGK-IR', 'Busi Iridium NGK Laser CPR6EAIX-9S', 'Busi', 'pcs', 6, 24, 45000, 75000)
+        INSERT INTO spareparts (id, tenant_id, sku, name, category, unit, min_stock, stock, buy_price, sell_price, photo_url)
+        VALUES (?, ?, 'IGN-BUSI-NGK-IR', 'Busi Iridium NGK Laser CPR6EAIX-9S', 'Busi', 'pcs', 6, 24, 45000, 75000, '/uploads/inventory/ngk-iridium.jpg')
       `).run(partId, tenant.id);
       partBusi = { id: partId };
     }

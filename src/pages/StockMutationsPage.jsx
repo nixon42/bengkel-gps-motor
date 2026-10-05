@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import RestockModal from '../components/Stock/RestockModal';
 import StockOutModal from '../components/Stock/StockOutModal';
+import StockMovementChart from '../components/Stock/StockMovementChart';
 
 export default function StockMutationsPage() {
   const [movements, setMovements] = useState([]);
@@ -246,6 +247,9 @@ export default function StockMutationsPage() {
           </div>
         </div>
       </div>
+
+      {/* Stock Mutation Flow Chart */}
+      <StockMovementChart movements={movements} />
 
       {/* Filter Bar */}
       <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 space-y-3">

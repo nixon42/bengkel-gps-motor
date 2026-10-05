@@ -7,6 +7,7 @@ const SERVICES = [
     title: 'Tune Up Mesin & Carbon Clean',
     category: 'Tune Up',
     icon: Gauge,
+    image: '/images/services/tune-up.jpg',
     badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300',
     description: 'Pembersihan ruang bakar secara menyeluruh, kalibrasi injektor, pembersihan throttle body, dan scan OBD2 komputer mesin untuk mengembalikan tarikan enteng dan hemat bahan bakar.',
     features: [
@@ -21,6 +22,7 @@ const SERVICES = [
     title: 'Servis Mobil Injeksi & EFI',
     category: 'Injeksi',
     icon: Cpu,
+    image: '/images/services/injeksi.jpg',
     badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
     description: 'Diagnosa dan perbaikan sensor EFI, lampu check engine (MIL) menyala, sensor oksigen, throttle position sensor, fuel pump, dan kalibrasi sistem bahan bakar injeksi elektronik.',
     features: [
@@ -35,6 +37,7 @@ const SERVICES = [
     title: 'Overhaul Mesin (Turun Mesin)',
     category: 'Overhaul',
     icon: Wrench,
+    image: '/images/services/overhaul.jpg',
     badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
     description: 'Solusi tuntas untuk mobil ngebul putih/hitam, oli berkurang drastis, kompresi bocor, bunyi mesin kasar, atau overheat akibat cylinder head melengkung.',
     features: [
@@ -49,6 +52,7 @@ const SERVICES = [
     title: 'Perbaikan Kaki-kaki & Suspensi',
     category: 'Kaki-kaki',
     icon: ShieldCheck,
+    image: '/images/services/kaki-kaki.jpg',
     badgeColor: 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300',
     description: 'Hilangkan bunyi glodakan dan getaran saat melibas jalan berlubang di Kediri. Pemeriksaan dan pergantian tierod, rack end, balljoint, bushing arm, dan shock absorber.',
     features: [
@@ -63,6 +67,7 @@ const SERVICES = [
     title: 'Kelistrikan Mobil & Starter',
     category: 'Kelistrikan',
     icon: Zap,
+    image: '/images/services/kelistrikan.jpg',
     badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300',
     description: 'Perbaikan urut kabel bodi korsleting, dinamo starter macet atau tidak mau memutar mesin, dinamo alternator pengisian drop, sistem lampu utama, dan kelistrikan aki.',
     features: [
@@ -77,6 +82,7 @@ const SERVICES = [
     title: 'Perawatan Berkala & Ganti Oli',
     category: 'Perawatan Berkala',
     icon: Clock,
+    image: '/images/services/ganti-oli.jpg',
     badgeColor: 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300',
     description: 'Paket ganti oli mesin berbagai viskositas (10W-40, 5W-30, 0W-20), kuras oli transmisi matic ATF/CVT, ganti oli gardan, kuras minyak rem, dan flushing radiator coolant.',
     features: [
@@ -113,19 +119,26 @@ export default function ServicesSection() {
             return (
               <div
                 key={srv.id}
-                className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 flex flex-col justify-between transition-colors hover:border-blue-400 dark:hover:border-blue-500"
+                className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 flex flex-col justify-between transition-colors hover:border-blue-400 dark:hover:border-blue-500 overflow-hidden"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      <Icon className="w-6 h-6" />
+                  {/* Photo Header */}
+                  <div className="relative h-44 w-full rounded overflow-hidden mb-4 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-750">
+                    <img 
+                      src={srv.image} 
+                      alt={srv.title} 
+                      loading="lazy" 
+                      className="w-full h-full object-cover" 
+                    />
+                    <div className="absolute top-2.5 left-2.5 w-9 h-9 rounded bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm">
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded ${srv.badgeColor}`}>
+                    <span className={`absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-200/50 shadow-sm ${srv.badgeColor}`}>
                       {srv.category}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2">
                     {srv.title}
                   </h3>
 

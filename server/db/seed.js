@@ -102,27 +102,27 @@ export function runSeed(customDb) {
     // ----------------------------------------------------
     const sparepartsData = [
       { sku: 'OLI-TMO-10W40', name: 'Oli Mesin TMO 10W-40 Synthetic 4L', category: 'Oli & Cairan', unit: 'galon', min_stock: 4, stock: 12, buy: 240000, sell: 320000, supplier: 'PT Toyota Astra Motor' },
-      { sku: 'OLI-SHL-HX7-4L', name: 'Oli Shell Helix HX7 10W-40 4L', category: 'Oli & Cairan', unit: 'galon', min_stock: 5, stock: 16, buy: 260000, sell: 345000, supplier: 'Distributor Shell Kediri' },
-      { sku: 'OLI-CAS-5W30-4L', name: 'Oli Castrol Magnatec Stop-Start 5W-30 4L', category: 'Oli & Cairan', unit: 'galon', min_stock: 3, stock: 8, buy: 330000, sell: 420000, supplier: 'Distributor Castrol Jatim' },
-      { sku: 'FLT-AVZ-DENSO', name: 'Filter Oli Toyota Avanza / Xenia Denso', category: 'Filter', unit: 'pcs', min_stock: 10, stock: 28, buy: 22000, sell: 38000, supplier: 'Denso Authorized Partner' },
-      { sku: 'FLT-HND-ORIG', name: 'Filter Oli Honda Brio / Mobilio Original', category: 'Filter', unit: 'pcs', min_stock: 6, stock: 18, buy: 35000, sell: 55000, supplier: 'Honda Genuine Parts' },
-      { sku: 'FLT-SZK-ERTIGA', name: 'Filter Oli Suzuki Ertiga SGP', category: 'Filter', unit: 'pcs', min_stock: 5, stock: 14, buy: 28000, sell: 45000, supplier: 'Suzuki Genuine Parts Kediri' },
-      { sku: 'FLT-UDR-AVANZA', name: 'Filter Udara Sakura Avanza Dual VVT-i', category: 'Filter', unit: 'pcs', min_stock: 4, stock: 10, buy: 48000, sell: 75000, supplier: 'Sakura Filter Distributor' },
-      { sku: 'FLT-AC-CARBON', name: 'Filter Kabin AC Sakura Bio-Carbon Avanza', category: 'Filter', unit: 'pcs', min_stock: 4, stock: 8, buy: 42000, sell: 65000, supplier: 'Sakura Filter Distributor' },
-      { sku: 'IGN-BUSI-NGK-IR', name: 'Busi Iridium NGK Laser CPR6EAIX-9S', category: 'Busi', unit: 'pcs', min_stock: 8, stock: 32, buy: 45000, sell: 75000, supplier: 'NGK Spark Plugs Indonesia' },
-      { sku: 'IGN-BUSI-IK20', name: 'Busi Denso Iridium Power IK20', category: 'Busi', unit: 'pcs', min_stock: 8, stock: 24, buy: 55000, sell: 90000, supplier: 'Denso Authorized Partner' },
-      { sku: 'BRK-BDX-AVZ-FRT', name: 'Kampas Rem Depan Bendix General CT Avanza', category: 'Rem', unit: 'set', min_stock: 3, stock: 7, buy: 185000, sell: 260000, supplier: 'Bendix Brakes Official' },
-      { sku: 'BRK-MK-TRM-AVZ', name: 'Kampas Rem Belakang Tromol MK Kashiyama', category: 'Rem', unit: 'set', min_stock: 3, stock: 5, buy: 135000, sell: 195000, supplier: 'Kashiyama Brake Center' },
-      { sku: 'BRK-DOT4-300ML', name: 'Minyak Rem Prestone DOT 4 (300ml)', category: 'Oli & Cairan', unit: 'botol', min_stock: 6, stock: 15, buy: 24000, sell: 38000, supplier: 'Prestone Indonesia' },
+      { sku: 'OLI-SHL-HX7-4L', name: 'Oli Shell Helix HX7 10W-40 4L', category: 'Oli & Cairan', unit: 'galon', min_stock: 5, stock: 16, buy: 260000, sell: 345000, supplier: 'Distributor Shell Kediri', photo: '/uploads/inventory/shell-helix-hx7.jpg' },
+      { sku: 'OLI-CAS-5W30-4L', name: 'Oli Castrol Magnatec Stop-Start 5W-30 4L', category: 'Oli & Cairan', unit: 'galon', min_stock: 3, stock: 8, buy: 330000, sell: 420000, supplier: 'Distributor Castrol Jatim', photo: '/uploads/inventory/shell-helix-hx7.jpg' },
+      { sku: 'FLT-AVZ-DENSO', name: 'Filter Oli Toyota Avanza / Xenia Denso', category: 'Filter', unit: 'pcs', min_stock: 10, stock: 28, buy: 22000, sell: 38000, supplier: 'Denso Authorized Partner', photo: '/uploads/inventory/filter-oli-denso.jpg' },
+      { sku: 'FLT-HND-ORIG', name: 'Filter Oli Honda Brio / Mobilio Original', category: 'Filter', unit: 'pcs', min_stock: 6, stock: 18, buy: 35000, sell: 55000, supplier: 'Honda Genuine Parts', photo: '/uploads/inventory/filter-oli-denso.jpg' },
+      { sku: 'FLT-SZK-ERTIGA', name: 'Filter Oli Suzuki Ertiga SGP', category: 'Filter', unit: 'pcs', min_stock: 5, stock: 14, buy: 28000, sell: 45000, supplier: 'Suzuki Genuine Parts Kediri', photo: '/uploads/inventory/filter-oli-denso.jpg' },
+      { sku: 'FLT-UDR-AVANZA', name: 'Filter Udara Sakura Avanza Dual VVT-i', category: 'Filter', unit: 'pcs', min_stock: 4, stock: 10, buy: 48000, sell: 75000, supplier: 'Sakura Filter Distributor', photo: '/uploads/inventory/filter-oli-denso.jpg' },
+      { sku: 'FLT-AC-CARBON', name: 'Filter Kabin AC Sakura Bio-Carbon Avanza', category: 'Filter', unit: 'pcs', min_stock: 4, stock: 8, buy: 42000, sell: 65000, supplier: 'Sakura Filter Distributor', photo: '/uploads/inventory/filter-oli-denso.jpg' },
+      { sku: 'IGN-BUSI-NGK-IR', name: 'Busi Iridium NGK Laser CPR6EAIX-9S', category: 'Busi', unit: 'pcs', min_stock: 8, stock: 32, buy: 45000, sell: 75000, supplier: 'NGK Spark Plugs Indonesia', photo: '/uploads/inventory/ngk-iridium.jpg' },
+      { sku: 'IGN-BUSI-IK20', name: 'Busi Denso Iridium Power IK20', category: 'Busi', unit: 'pcs', min_stock: 8, stock: 24, buy: 55000, sell: 90000, supplier: 'Denso Authorized Partner', photo: '/uploads/inventory/ngk-iridium.jpg' },
+      { sku: 'BRK-BDX-AVZ-FRT', name: 'Kampas Rem Depan Bendix General CT Avanza', category: 'Rem', unit: 'set', min_stock: 3, stock: 7, buy: 185000, sell: 260000, supplier: 'Bendix Brakes Official', photo: '/uploads/inventory/kampas-rem-bendix.jpg' },
+      { sku: 'BRK-MK-TRM-AVZ', name: 'Kampas Rem Belakang Tromol MK Kashiyama', category: 'Rem', unit: 'set', min_stock: 3, stock: 5, buy: 135000, sell: 195000, supplier: 'Kashiyama Brake Center', photo: '/uploads/inventory/kampas-rem-bendix.jpg' },
+      { sku: 'BRK-DOT4-300ML', name: 'Minyak Rem Prestone DOT 4 (300ml)', category: 'Oli & Cairan', unit: 'botol', min_stock: 6, stock: 15, buy: 24000, sell: 38000, supplier: 'Prestone Indonesia', photo: '/uploads/inventory/shell-helix-hx7.jpg' },
       { sku: 'CLT-PRS-GRN-4L', name: 'Air Radiator Coolant Prestone Hijau 4L', category: 'Pendingin', unit: 'galon', min_stock: 4, stock: 11, buy: 75000, sell: 110000, supplier: 'Prestone Indonesia' },
       { sku: 'BELT-6PK1810', name: 'Fan Belt / V-Belt Gates 6PK1810 Avanza', category: 'Mesin', unit: 'pcs', min_stock: 3, stock: 6, buy: 85000, sell: 130000, supplier: 'Gates Power Transmission' },
-      { sku: 'SUS-LNK-555-AVZ', name: 'Link Stabilizer Depan 555 Japan Avanza', category: 'Kaki-kaki', unit: 'set', min_stock: 2, stock: 4, buy: 210000, sell: 295000, supplier: 'Sankei 555 Japan' },
-      { sku: 'SUS-BLJ-555-AVZ', name: 'Ball Joint Bawah 555 Japan Avanza', category: 'Kaki-kaki', unit: 'set', min_stock: 2, stock: 2, buy: 230000, sell: 320000, supplier: 'Sankei 555 Japan' },
-      { sku: 'SHK-KYB-EXC-AVZ', name: 'Shockbreaker Depan Kayaba Excel-G Avanza', category: 'Kaki-kaki', unit: 'set', min_stock: 2, stock: 3, buy: 980000, sell: 1350000, supplier: 'Kayaba Indonesia' },
+      { sku: 'SUS-LNK-555-AVZ', name: 'Link Stabilizer Depan 555 Japan Avanza', category: 'Kaki-kaki', unit: 'set', min_stock: 2, stock: 4, buy: 210000, sell: 295000, supplier: 'Sankei 555 Japan', photo: '/uploads/inventory/shock-kayaba.jpg' },
+      { sku: 'SUS-BLJ-555-AVZ', name: 'Ball Joint Bawah 555 Japan Avanza', category: 'Kaki-kaki', unit: 'set', min_stock: 2, stock: 2, buy: 230000, sell: 320000, supplier: 'Sankei 555 Japan', photo: '/uploads/inventory/shock-kayaba.jpg' },
+      { sku: 'SHK-KYB-EXC-AVZ', name: 'Shockbreaker Depan Kayaba Excel-G Avanza', category: 'Kaki-kaki', unit: 'set', min_stock: 2, stock: 3, buy: 980000, sell: 1350000, supplier: 'Kayaba Indonesia', photo: '/uploads/inventory/shock-kayaba.jpg' },
       { sku: 'WPR-BSC-2016', name: 'Wiper Blade Bosch Advantage 20" + 16" Set', category: 'Aksesoris', unit: 'set', min_stock: 5, stock: 12, buy: 65000, sell: 95000, supplier: 'Bosch Automotive Aftermarket' },
-      { sku: 'AKI-GS-NS40ZL', name: 'Aki Mobil GS Astra Hybrid NS40ZL (35Ah)', category: 'Kelistrikan', unit: 'unit', min_stock: 2, stock: 1, buy: 680000, sell: 875000, supplier: 'GS Astra Kediri' },
+      { sku: 'AKI-GS-NS40ZL', name: 'Aki Mobil GS Astra Hybrid NS40ZL (35Ah)', category: 'Kelistrikan', unit: 'unit', min_stock: 2, stock: 1, buy: 680000, sell: 875000, supplier: 'GS Astra Kediri', photo: '/uploads/inventory/aki-gs-astra.jpg' },
       { sku: 'LMP-H4-OSRAM', name: 'Bohlam Lampu Depan Osram All Season H4 12V', category: 'Kelistrikan', unit: 'set', min_stock: 4, stock: 9, buy: 95000, sell: 145000, supplier: 'Osram Lighting Indonesia' },
-      { sku: 'TRN-RORED-1L', name: 'Oli Transmisi Manual Pertamina Rored 80W-90 1L', category: 'Oli & Cairan', unit: 'botol', min_stock: 6, stock: 18, buy: 48000, sell: 68000, supplier: 'Pertamina Lubricants' },
+      { sku: 'TRN-RORED-1L', name: 'Oli Transmisi Manual Pertamina Rored 80W-90 1L', category: 'Oli & Cairan', unit: 'botol', min_stock: 6, stock: 18, buy: 48000, sell: 68000, supplier: 'Pertamina Lubricants', photo: '/uploads/inventory/shell-helix-hx7.jpg' },
       { sku: 'CHM-BRK-CLN-500', name: 'Brake Cleaner Wurth Aerosol 500ml', category: 'Chemical', unit: 'kaleng', min_stock: 5, stock: 14, buy: 42000, sell: 65000, supplier: 'Wurth Indonesia' },
       { sku: 'GSK-KLEP-AVZ', name: 'Gasket Paking Tutup Klep Toyota Avanza', category: 'Mesin', unit: 'pcs', min_stock: 3, stock: 5, buy: 55000, sell: 85000, supplier: 'Toyota Genuine Parts' },
       { sku: 'SEL-KRUKAS-FRT', name: 'Seal Kruk As Depan Nok Japan Avanza', category: 'Mesin', unit: 'pcs', min_stock: 3, stock: 0, buy: 35000, sell: 60000, supplier: 'NOK Seals Distributor' }
@@ -130,8 +130,8 @@ export function runSeed(customDb) {
 
     const partMap = {};
     const insertPartStmt = db.prepare(`
-      INSERT INTO spareparts (id, tenant_id, sku, name, category, unit, min_stock, stock, buy_price, sell_price, supplier, is_active)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      INSERT INTO spareparts (id, tenant_id, sku, name, category, unit, min_stock, stock, buy_price, sell_price, supplier, photo_url, is_active)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
       ON CONFLICT(tenant_id, sku) DO UPDATE SET
         name = excluded.name,
         category = excluded.category,
@@ -140,13 +140,14 @@ export function runSeed(customDb) {
         stock = excluded.stock,
         buy_price = excluded.buy_price,
         sell_price = excluded.sell_price,
-        supplier = excluded.supplier
+        supplier = excluded.supplier,
+        photo_url = COALESCE(excluded.photo_url, spareparts.photo_url)
     `);
 
     for (const p of sparepartsData) {
       let partRow = db.prepare('SELECT id FROM spareparts WHERE tenant_id = ? AND sku = ?').get(tenantId, p.sku);
       const partId = partRow ? partRow.id : crypto.randomUUID();
-      insertPartStmt.run(partId, tenantId, p.sku, p.name, p.category, p.unit, p.min_stock, p.stock, p.buy, p.sell, p.supplier);
+      insertPartStmt.run(partId, tenantId, p.sku, p.name, p.category, p.unit, p.min_stock, p.stock, p.buy, p.sell, p.supplier, p.photo || null);
       partMap[p.sku] = partId;
     }
 

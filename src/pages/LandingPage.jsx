@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import HeroSection from '../components/Landing/HeroSection';
 import ServicesSection from '../components/Landing/ServicesSection';
+import GallerySection from '../components/Landing/GallerySection';
 import TestimonialsSection from '../components/Landing/TestimonialsSection';
 import FaqSection from '../components/Landing/FaqSection';
 import LocationSection from '../components/Landing/LocationSection';
@@ -58,6 +59,9 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin }) {
               <Search className="w-4 h-4 text-blue-600" />
               <span>Cek Status Servis</span>
             </button>
+            <a href="#fasilitas" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              Fasilitas
+            </a>
             <a href="#testimoni" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               Ulasan
             </a>
@@ -122,6 +126,7 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin }) {
       <main className="flex-1 w-full">
         <HeroSection onSearchPlate={handlePlateSearch} />
         <ServicesSection />
+        <GallerySection />
         <TestimonialsSection />
         <FaqSection />
         <LocationSection />

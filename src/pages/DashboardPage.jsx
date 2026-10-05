@@ -167,8 +167,11 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
   const donutCircumference = 2 * Math.PI * donutRadius; // ~ 376.99
   let accumulatedPercent = 0;
 
-  // Calculate SVG 30-day Trend Line Chart
-  const trendMaxRevenue = Math.max(...revenueTrend.map(t => Number(t.revenue) || 0), 1000000);
+  // Calculate SVG 30-day Trend Line Chart (Revenue & Expense)
+  const trendMaxRevenue = Math.max(
+    ...revenueTrend.map(t => Math.max(Number(t.revenue) || 0, Number(t.expense) || 0)), 
+    1000000
+  );
   const chartWidth = 600;
   const chartHeight = 160;
   const chartPaddingTop = 20;
@@ -178,11 +181,14 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
   const trendPoints = revenueTrend.map((item, index) => {
     const x = (index / Math.max(revenueTrend.length - 1, 1)) * (chartWidth - 40) + 20;
     const rev = Number(item.revenue) || 0;
-    const y = chartHeight - chartPaddingBottom - (rev / trendMaxRevenue) * chartUsableHeight;
-    return { x, y, rev, date: item.date };
+    const exp = Number(item.expense) || 0;
+    const yRev = chartHeight - chartPaddingBottom - (rev / trendMaxRevenue) * chartUsableHeight;
+    const yExp = chartHeight - chartPaddingBottom - (exp / trendMaxRevenue) * chartUsableHeight;
+    return { x, y: yRev, yExp, rev, exp, date: item.date };
   });
 
   const svgPolylinePoints = trendPoints.map(p => `${p.x},${p.y}`).join(' ');
+  const svgPolylineExpense = trendPoints.map(p => `${p.x},${p.yExp}`).join(' ');
   const svgAreaPoints = trendPoints.length > 0 
     ? `${trendPoints[0].x},${chartHeight - chartPaddingBottom} ${svgPolylinePoints} ${trendPoints[trendPoints.length - 1].x},${chartHeight - chartPaddingBottom}`
     : '';
@@ -494,19 +500,26 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
         {/* Right: Pure SVG 30-Day Revenue Trend Line Chart (7 cols) */}
         <div className="lg:col-span-7 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4 gap-2">
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                   <TrendingUp className="w-4 h-4 text-emerald-600" />
-                  <span>Tren Pendapatan 30 Hari Terakhir</span>
+                  <span>Tren Arus Kas 30 Hari Terakhir</span>
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Agregasi harian arus kas masuk dari jasa servis & penjualan sparepart
+                  Agregasi harian arus kas masuk (servis/part) vs pengeluaran operasional
                 </p>
               </div>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-mono">
-                Puncak: {formatRupiah(trendMaxRevenue)}
-              </span>
+              <div className="flex items-center space-x-3 text-xs">
+                <div className="flex items-center space-x-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" />
+                  <span className="text-slate-600 dark:text-slate-300 font-medium">Pemasukan</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block" />
+                  <span className="text-slate-600 dark:text-slate-300 font-medium">Pengeluaran</span>
+                </div>
+              </div>
             </div>
 
             {/* Pure SVG Responsive Line Chart */}
@@ -535,7 +548,7 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
                   className="stroke-slate-200 dark:stroke-slate-600" 
                 />
 
-                {/* Filled Area beneath the trend line */}
+                {/* Filled Area beneath the revenue trend line */}
                 {trendPoints.length > 0 && (
                   <polygon 
                     points={svgAreaPoints} 
@@ -543,7 +556,20 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
                   />
                 )}
 
-                {/* Polyline */}
+                {/* Expense Polyline (Rose dashed) */}
+                {trendPoints.length > 0 && (
+                  <polyline
+                    fill="none"
+                    stroke="#F43F5E"
+                    strokeWidth="2"
+                    strokeDasharray="3 3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    points={svgPolylineExpense}
+                  />
+                )}
+
+                {/* Revenue Polyline (Emerald solid) */}
                 {trendPoints.length > 0 && (
                   <polyline
                     fill="none"
@@ -557,18 +583,30 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
 
                 {/* Data Points */}
                 {trendPoints.map((pt, i) => (
-                  pt.rev > 0 ? (
-                    <circle
-                      key={i}
-                      cx={pt.x}
-                      cy={pt.y}
-                      r="3.5"
-                      className="fill-emerald-600 stroke-white dark:stroke-slate-900"
-                      strokeWidth="1.5"
-                    >
-                      <title>{`${pt.date}: ${formatRupiah(pt.rev)}`}</title>
-                    </circle>
-                  ) : null
+                  <g key={i}>
+                    {pt.rev > 0 && (
+                      <circle
+                        cx={pt.x}
+                        cy={pt.y}
+                        r="3.5"
+                        className="fill-emerald-600 stroke-white dark:stroke-slate-900"
+                        strokeWidth="1.5"
+                      >
+                        <title>{`${pt.date} - Pemasukan: ${formatRupiah(pt.rev)}`}</title>
+                      </circle>
+                    )}
+                    {pt.exp > 0 && (
+                      <circle
+                        cx={pt.x}
+                        cy={pt.yExp}
+                        r="3"
+                        className="fill-rose-500 stroke-white dark:stroke-slate-900"
+                        strokeWidth="1.5"
+                      >
+                        <title>{`${pt.date} - Pengeluaran: ${formatRupiah(pt.exp)}`}</title>
+                      </circle>
+                    )}
+                  </g>
                 ))}
 
                 {/* Date Labels across the bottom axis */}
