@@ -56,10 +56,19 @@ export function AuthProvider({ children }) {
         credentials: 'include',
         body: JSON.stringify({ tenantSlug, email })
       });
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Login gagal');
+        let msg = 'Login gagal';
+        try {
+          const errData = await res.json();
+          if (errData?.message || errData?.error) msg = errData.message || errData.error;
+        } catch {
+          if (res.status >= 500) {
+            msg = 'Server backend belum aktif (koneksi ke port 3000 gagal). Pastikan server backend sedang berjalan.';
+          }
+        }
+        throw new Error(msg);
       }
+      const data = await res.json();
       setUser(data.user);
       setTenant(data.tenant);
       return data;

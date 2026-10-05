@@ -80,11 +80,20 @@ export default function PublicTrackingPage({
         ? `token=${encodeURIComponent(token)}`
         : `plate=${encodeURIComponent(plate)}`;
       const res = await fetch(`/api/public/${slug}/tracking?${queryString}`);
-      const json = await res.json();
-
       if (!res.ok) {
-        throw new Error(json.error || 'Data perbaikan tidak ditemukan.');
+        let msg = 'Data perbaikan tidak ditemukan.';
+        try {
+          const errJson = await res.json();
+          if (errJson?.error) msg = errJson.error;
+        } catch {
+          if (res.status >= 500) {
+            msg = 'Koneksi ke backend terputus. Pastikan server backend Express (port 3000) sudah dijalankan.';
+          }
+        }
+        throw new Error(msg);
       }
+
+      const json = await res.json();
 
       setData(json);
       if (token && json.plate_masked && !plateQuery) {
