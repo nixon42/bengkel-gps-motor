@@ -661,42 +661,73 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
                 Belum ada data pemakaian sparepart pada repair order atau mutasi keluar.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
-                      <th className="pb-2 font-semibold">Sparepart</th>
-                      <th className="pb-2 font-semibold text-center">Kategori</th>
-                      <th className="pb-2 font-semibold text-center">Terpakai</th>
-                      <th className="pb-2 font-semibold text-right">Nilai Jual</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
-                    {topSpareparts.map((part, index) => (
-                      <tr key={part.id || index} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                        <td className="py-2.5 pr-2">
-                          <span className="font-bold text-slate-900 dark:text-white block truncate max-w-[180px]">
-                            {part.name}
-                          </span>
-                          <span className="font-mono text-[10px] text-slate-400">
-                            {part.sku}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-2 text-center">
-                          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-[10px]">
+              <div>
+                {/* Mobile Top Spareparts List (< 640px) */}
+                <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/60">
+                  {topSpareparts.map((part, index) => (
+                    <div key={part.id || index} className="py-2.5 flex items-center justify-between text-xs">
+                      <div className="min-w-0 pr-2">
+                        <div className="font-bold text-slate-900 dark:text-white truncate">
+                          {part.name}
+                        </div>
+                        <div className="flex items-center space-x-2 text-[10px] text-slate-400 font-mono mt-0.5">
+                          <span>{part.sku}</span>
+                          <span>•</span>
+                          <span className="font-sans px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                             {part.category}
                           </span>
-                        </td>
-                        <td className="py-2.5 px-2 text-center font-mono font-bold text-slate-900 dark:text-white">
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="font-mono font-bold text-slate-900 dark:text-white">
                           {part.total_used} {part.unit || 'pcs'}
-                        </td>
-                        <td className="py-2.5 pl-2 text-right font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+                        </div>
+                        <div className="text-[11px] font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                           {formatRupiah(part.total_revenue || (part.total_used * (part.sell_price || 0)))}
-                        </td>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Table View (>= 640px) */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                        <th className="pb-2 font-semibold">Sparepart</th>
+                        <th className="pb-2 font-semibold text-center">Kategori</th>
+                        <th className="pb-2 font-semibold text-center">Terpakai</th>
+                        <th className="pb-2 font-semibold text-right">Nilai Jual</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                      {topSpareparts.map((part, index) => (
+                        <tr key={part.id || index} className="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                          <td className="py-2.5 pr-2">
+                            <span className="font-bold text-slate-900 dark:text-white block truncate max-w-[180px]">
+                              {part.name}
+                            </span>
+                            <span className="font-mono text-[10px] text-slate-400">
+                              {part.sku}
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-2 text-center">
+                            <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-[10px]">
+                              {part.category}
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-2 text-center font-mono font-bold text-slate-900 dark:text-white">
+                            {part.total_used} {part.unit || 'pcs'}
+                          </td>
+                          <td className="py-2.5 pl-2 text-right font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+                            {formatRupiah(part.total_revenue || (part.total_used * (part.sell_price || 0)))}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>

@@ -529,45 +529,76 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                 Belum ada suku cadang yang dipasang pada order ini.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold uppercase">
-                    <tr>
-                      <th className="py-2.5 px-3">Nama Suku Cadang</th>
-                      <th className="py-2.5 px-3 text-center">Qty</th>
-                      <th className="py-2.5 px-3 text-right">Harga Satuan</th>
-                      <th className="py-2.5 px-3 text-right">Subtotal</th>
-                      <th className="py-2.5 px-3 text-center">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                    {spareparts.map((sp) => (
-                      <tr key={sp.id} className="hover:bg-slate-50 dark:hover:bg-slate-750">
-                        <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">
+              <div>
+                {/* Mobile Spareparts Card List (< 640px) */}
+                <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
+                  {spareparts.map((sp) => (
+                    <div key={sp.id} className="py-2.5 flex items-center justify-between gap-2 text-xs">
+                      <div className="min-w-0 pr-2">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                           {sp.item_name}
-                        </td>
-                        <td className="py-2.5 px-3 text-center font-bold text-slate-700 dark:text-slate-300">
-                          {sp.quantity}
-                        </td>
-                        <td className="py-2.5 px-3 text-right text-slate-600 dark:text-slate-400">
-                          Rp {Number(sp.unit_price).toLocaleString('id-ID')}
-                        </td>
-                        <td className="py-2.5 px-3 text-right font-bold text-slate-900 dark:text-white">
+                        </div>
+                        <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+                          {sp.quantity} × Rp {Number(sp.unit_price).toLocaleString('id-ID')}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2 shrink-0">
+                        <span className="font-bold font-mono text-slate-900 dark:text-white">
                           Rp {Number(sp.subtotal).toLocaleString('id-ID')}
-                        </td>
-                        <td className="py-2.5 px-3 text-center">
-                          <button
-                            onClick={() => handleRemoveSparepart(sp.id)}
-                            className="touch-target p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors"
-                            title="Lepas dan kembalikan stok"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
+                        </span>
+                        <button
+                          onClick={() => handleRemoveSparepart(sp.id)}
+                          className="touch-target p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors"
+                          title="Lepas dan kembalikan stok"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Table View (>= 640px) */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold uppercase">
+                      <tr>
+                        <th className="py-2.5 px-3">Nama Suku Cadang</th>
+                        <th className="py-2.5 px-3 text-center">Qty</th>
+                        <th className="py-2.5 px-3 text-right">Harga Satuan</th>
+                        <th className="py-2.5 px-3 text-right">Subtotal</th>
+                        <th className="py-2.5 px-3 text-center">Aksi</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                      {spareparts.map((sp) => (
+                        <tr key={sp.id} className="hover:bg-slate-50 dark:hover:bg-slate-750">
+                          <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">
+                            {sp.item_name}
+                          </td>
+                          <td className="py-2.5 px-3 text-center font-bold text-slate-700 dark:text-slate-300">
+                            {sp.quantity}
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-slate-600 dark:text-slate-400">
+                            Rp {Number(sp.unit_price).toLocaleString('id-ID')}
+                          </td>
+                          <td className="py-2.5 px-3 text-right font-bold text-slate-900 dark:text-white">
+                            Rp {Number(sp.subtotal).toLocaleString('id-ID')}
+                          </td>
+                          <td className="py-2.5 px-3 text-center">
+                            <button
+                              onClick={() => handleRemoveSparepart(sp.id)}
+                              className="touch-target p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors"
+                              title="Lepas dan kembalikan stok"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
