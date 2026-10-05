@@ -23,6 +23,9 @@ export default {
           900: '#1e3a8a',
           950: '#0f172a',
         },
+        slate: {
+          750: '#243044',
+        },
         surface: {
           light: '#ffffff',
           'light-subtle': '#f8fafc',

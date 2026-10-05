@@ -71,7 +71,7 @@ export default function FaqSection() {
                   type="button"
                   onClick={() => toggleFaq(faq.id)}
                   aria-expanded={isOpen}
-                  className="touch-target w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors"
+                  className="touch-target w-full flex items-center justify-between p-4 sm:p-5 text-left font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   <span className="flex items-center space-x-3 pr-2">
                     <HelpCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
