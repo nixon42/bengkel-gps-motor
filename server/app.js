@@ -28,8 +28,21 @@ export function createApp(databaseInstance) {
   app.db = db;
 
   // Global Middlewares
+  // CORS: whitelist from env, fallback to localhost in dev
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
   app.use(cors({
-    origin: true,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // In production, reject unknown origins; in dev/test allow all
+      if (process.env.NODE_ENV === 'production') {
+        return callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+      return callback(null, true);
+    },
     credentials: true
   }));
   app.use(cookieParser());

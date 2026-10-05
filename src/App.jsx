@@ -1,8 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
-import PublicTrackingPage from './pages/PublicTrackingPage';
-import AdminDashboard from './pages/AdminDashboard';
+
+const PublicTrackingPage = lazy(() => import('./pages/PublicTrackingPage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+
+function PageFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="flex flex-col items-center space-y-3">
+        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Memuat halaman...</p>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const { tenant } = useAuth();
@@ -65,20 +77,24 @@ export default function App() {
 
   if (currentRoute.view === 'tracking') {
     return (
-      <PublicTrackingPage
-        initialPlate={currentRoute.plate}
-        tenantSlug={currentRoute.slug || tenant?.slug || 'bengkel-gps-motor'}
-        onNavigateHome={() => navigateTo('landing')}
-      />
+      <Suspense fallback={<PageFallback />}>
+        <PublicTrackingPage
+          initialPlate={currentRoute.plate}
+          tenantSlug={currentRoute.slug || tenant?.slug || 'bengkel-gps-motor'}
+          onNavigateHome={() => navigateTo('landing')}
+        />
+      </Suspense>
     );
   }
 
   if (currentRoute.view === 'admin') {
     return (
-      <AdminDashboard
-        onNavigateLanding={() => navigateTo('landing')}
-        onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
-      />
+      <Suspense fallback={<PageFallback />}>
+        <AdminDashboard
+          onNavigateLanding={() => navigateTo('landing')}
+          onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
+        />
+      </Suspense>
     );
   }
 

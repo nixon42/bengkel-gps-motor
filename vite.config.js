@@ -18,6 +18,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    // Code splitting for HP kentang — reduces initial bundle by ~60%
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core — cached separately, rarely changes
+          'vendor-react': ['react', 'react-dom'],
+          // Icon library — large, shared across all pages
+          'vendor-icons': ['lucide-react'],
+        }
+      }
+    }
   }
 });

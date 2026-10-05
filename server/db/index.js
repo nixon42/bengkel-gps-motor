@@ -37,6 +37,23 @@ export function initDatabase(dbPath = DEFAULT_DB_PATH) {
   // Ensure default tenant and seed exist
   ensureDefaultSeed(db);
 
+  // Cleanup expired sessions — run once at startup, then every hour
+  const cleanupExpiredSessions = () => {
+    try {
+      const result = db.prepare(`DELETE FROM sessions WHERE expires_at <= datetime('now')`).run();
+      if (result.changes > 0) {
+        console.log(`[DB] Cleaned up ${result.changes} expired session(s)`);
+      }
+    } catch (err) {
+      console.error('[DB] Session cleanup error:', err.message);
+    }
+  };
+  cleanupExpiredSessions();
+  if (dbPath !== ':memory:') {
+    // Don't schedule interval for test in-memory DBs
+    setInterval(cleanupExpiredSessions, 60 * 60 * 1000).unref();
+  }
+
   activeDb = db;
   return db;
 }

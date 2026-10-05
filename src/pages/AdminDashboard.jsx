@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -18,24 +18,34 @@ import {
   MapPin, 
   Clock, 
   Save, 
-  X,
-  Layers,
-  FileText,
-  ExternalLink,
-  Search,
-  ArrowDownUp,
-  ClipboardCheck,
-  Wallet,
-  Users,
-  Car
+  X, 
+  Layers, 
+  FileText, 
+  ExternalLink, 
+  Search, 
+  ArrowDownUp, 
+  ClipboardCheck, 
+  Wallet, 
+  Users, 
+  Car 
 } from 'lucide-react';
-import InventoryPage from './InventoryPage';
-import StockMutationsPage from './StockMutationsPage';
-import StockOpnamePage from './StockOpnamePage';
-import FinancePage from './FinancePage';
-import RepairOrdersPage from './RepairOrdersPage';
-import CustomersPage from './CustomersPage';
-import DashboardPage from './DashboardPage';
+
+const InventoryPage = lazy(() => import('./InventoryPage'));
+const StockMutationsPage = lazy(() => import('./StockMutationsPage'));
+const StockOpnamePage = lazy(() => import('./StockOpnamePage'));
+const FinancePage = lazy(() => import('./FinancePage'));
+const RepairOrdersPage = lazy(() => import('./RepairOrdersPage'));
+const CustomersPage = lazy(() => import('./CustomersPage'));
+const DashboardPage = lazy(() => import('./DashboardPage'));
+
+function TabFallback() {
+  return (
+    <div className="py-20 flex flex-col items-center justify-center space-y-3">
+      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Memuat modul bengkel...</p>
+    </div>
+  );
+}
 
 export default function AdminDashboard({ onNavigateLanding, onNavigateTracking }) {
   const { user, tenant, loading, mockLogin, logout, updateSettings } = useAuth();
@@ -54,13 +64,27 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking }
 
   useEffect(() => {
     if (tenant) {
-      setFormData({
+      setFormData(prev => ({
+        ...prev,
         name: tenant.name || '',
         address: tenant.address || '',
         phoneWa: tenant.phone_wa || '',
-        businessHours: tenant.business_hours || '',
-        monthlyRevenueTarget: 15000000
-      });
+        businessHours: tenant.business_hours || ''
+      }));
+
+      // Fetch latest tenant settings for financial target
+      fetch('/api/tenant/settings', { credentials: 'include' })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.settings?.monthlyRevenueTarget || data?.settings?.monthly_revenue_target) {
+            const target = data.settings.monthlyRevenueTarget || data.settings.monthly_revenue_target;
+            setFormData(prev => ({
+              ...prev,
+              monthlyRevenueTarget: target
+            }));
+          }
+        })
+        .catch(() => {});
     }
   }, [tenant]);
 
@@ -259,22 +283,24 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking }
 
       {/* Main Body */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
-        {activeTab === 'repair-orders' && <RepairOrdersPage />}
-        {activeTab === 'customers' && <CustomersPage />}
-        {activeTab === 'inventory' && <InventoryPage />}
-        {activeTab === 'mutations' && <StockMutationsPage />}
-        {activeTab === 'opname' && <StockOpnamePage />}
-        {activeTab === 'finance' && <FinancePage />}
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            <DashboardPage 
-              onNavigateTab={setActiveTab}
-              onOpenSettings={() => setSettingsOpen(true)}
-              onNavigateLanding={onNavigateLanding}
-              onNavigateTracking={onNavigateTracking}
-            />
-          </div>
-        )}
+        <Suspense fallback={<TabFallback />}>
+          {activeTab === 'repair-orders' && <RepairOrdersPage />}
+          {activeTab === 'customers' && <CustomersPage />}
+          {activeTab === 'inventory' && <InventoryPage />}
+          {activeTab === 'mutations' && <StockMutationsPage />}
+          {activeTab === 'opname' && <StockOpnamePage />}
+          {activeTab === 'finance' && <FinancePage />}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              <DashboardPage 
+                onNavigateTab={setActiveTab}
+                onOpenSettings={() => setSettingsOpen(true)}
+                onNavigateLanding={onNavigateLanding}
+                onNavigateTracking={onNavigateTracking}
+              />
+            </div>
+          )}
+        </Suspense>
       </main>
 
       {/* Settings Modal */}
