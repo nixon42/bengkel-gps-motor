@@ -19,6 +19,7 @@ import { repairOrdersRoutes } from './routes/repairOrders.js';
 import { customersRoutes } from './routes/customers.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { superadminRoutes } from './routes/superadmin.js';
+import { desaltBuffer } from './services/imageSalter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,12 +64,74 @@ export function createApp(databaseInstance) {
   if (!fs.existsSync(roUploadDir)) {
     fs.mkdirSync(roUploadDir, { recursive: true });
   }
-  app.use('/uploads', express.static(uploadDir, {
-    dotfiles: 'ignore',
-    setHeaders: (res) => {
-      res.setHeader('X-Content-Type-Options', 'nosniff');
+  const MIME_MAP = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.pdf': 'application/pdf'
+  };
+
+  app.use('/uploads', (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      return next();
     }
-  }));
+
+    // Path Traversal Security Protection
+    const safePath = path.normalize(path.join(uploadDir, req.path));
+    if (!safePath.startsWith(path.resolve(uploadDir))) {
+      return res.status(403).json({ error: 'Access Denied', message: 'Invalid path' });
+    }
+
+    let stat;
+    try {
+      stat = fs.statSync(safePath);
+    } catch {
+      return res.status(404).json({ error: 'File Not Found' });
+    }
+
+    if (!stat.isFile()) {
+      return res.status(404).json({ error: 'File Not Found' });
+    }
+
+    // Fast ETag generation
+    const etag = `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}"`;
+    res.setHeader('ETag', etag);
+    res.setHeader('Last-Modified', stat.mtime.toUTCString());
+    res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+
+    // Conditional 304 Not Modified Check (Saves CPU & RAM on 2GB VPS)
+    if (req.headers['if-none-match'] === etag) {
+      return res.status(304).end();
+    }
+    if (req.headers['if-modified-since']) {
+      const clientTime = new Date(req.headers['if-modified-since']).getTime();
+      if (!isNaN(clientTime) && clientTime >= Math.floor(stat.mtimeMs / 1000) * 1000) {
+        return res.status(304).end();
+      }
+    }
+
+    if (req.method === 'HEAD') {
+      const ext = path.extname(safePath).toLowerCase();
+      res.setHeader('Content-Type', MIME_MAP[ext] || 'application/octet-stream');
+      return res.status(200).end();
+    }
+
+    try {
+      const raw = fs.readFileSync(safePath);
+      const output = desaltBuffer(raw, process.env.IMAGE_STORAGE_SALT);
+      const ext = path.extname(safePath).toLowerCase();
+      res.setHeader('Content-Type', MIME_MAP[ext] || 'application/octet-stream');
+      res.setHeader('Content-Length', output.length);
+      return res.send(output);
+    } catch (err) {
+      console.error('[Uploads] Error serving file:', err.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
   // Context Resolvers (Auth & Tenant)
   app.use(authMiddleware(db));

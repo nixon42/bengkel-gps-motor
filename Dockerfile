@@ -23,6 +23,7 @@ ENV PORT=3000
 ENV DB_PATH=/app/data/bengkel.db
 ENV UPLOAD_DIR=/app/uploads
 ENV TZ=Asia/Jakarta
+ENV NODE_OPTIONS="--max-old-space-size=512"
 
 # Install tzdata (for Asia/Jakarta WIB timezone) and native build dependencies for better-sqlite3 compilation
 RUN apk add --no-cache tzdata python3 make g++
@@ -36,8 +37,9 @@ RUN apk del python3 make g++
 # Copy precompiled frontend assets from Stage 1
 COPY --from=builder /app/dist ./dist
 
-# Copy backend server code
+# Copy backend server code and operational scripts
 COPY server ./server
+COPY scripts ./scripts
 
 # Ensure persistent storage volume mount points exist
 RUN mkdir -p /app/data /app/uploads/receipts /app/uploads/ro /app/uploads/inventory
@@ -46,4 +48,4 @@ VOLUME ["/app/data", "/app/uploads"]
 
 EXPOSE 3000
 
-CMD ["node", "server/index.js"]
+CMD ["node", "--max-old-space-size=512", "server/index.js"]

@@ -4,6 +4,12 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { saltFile } from '../services/imageSalter.js';
+
+// VPS Kentang (2 Core, 2GB RAM) resource guarding for libvips:
+// Limit concurrency to 1 thread and libvips memory cache to 32MB to prevent OOM
+sharp.concurrency(1);
+sharp.cache({ memory: 32, files: 20, items: 100 });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -160,6 +166,9 @@ export function uploadSingle(subfolder = 'general', fieldName = 'file') {
       }
       if (req.file) {
         await optimizeUploadedImage(req.file.path, req.file.mimetype);
+        if (req.file.mimetype && req.file.mimetype.startsWith('image/')) {
+          saltFile(req.file.path);
+        }
         req.file.relativeUrl = `/uploads/${subfolder}/${req.file.filename}`;
       }
       next();
@@ -178,6 +187,9 @@ export function uploadMultiple(subfolder = 'general', fieldName = 'photos', maxC
         await Promise.all(
           req.files.map(async (f) => {
             await optimizeUploadedImage(f.path, f.mimetype);
+            if (f.mimetype && f.mimetype.startsWith('image/')) {
+              saltFile(f.path);
+            }
             f.relativeUrl = `/uploads/${subfolder}/${f.filename}`;
           })
         );

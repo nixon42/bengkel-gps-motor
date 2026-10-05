@@ -1,0 +1,21 @@
+[Unit]
+Description=Bengkel Mobil GPS Motor Kediri Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/bengkel-gps-motor
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=NODE_OPTIONS="--max-old-space-size=512"
+ExecStart=/usr/bin/node --max-old-space-size=512 server/index.js
+Restart=always
+RestartSec=5
+
+# OOM Guard: jika proses Node melebihi batas 700MB di VPS 2GB, systemd me-restart service dengan aman
+MemoryMax=700M
+MemoryHigh=600M
+
+[Install]
+WantedBy=multi-user.target

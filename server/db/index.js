@@ -22,13 +22,16 @@ export function initDatabase(dbPath = DEFAULT_DB_PATH) {
 
   const db = new Database(dbPath);
 
-  // Apply pragmas
+  // Apply pragmas optimized for VPS (2 Core, 2GB RAM)
   db.pragma('foreign_keys = ON');
   if (dbPath !== ':memory:') {
     db.pragma('journal_mode = WAL');
   }
   db.pragma('busy_timeout = 5000');
   db.pragma('synchronous = NORMAL');
+  db.pragma('cache_size = -16000'); // 16MB cache limit to prevent memory spikes
+  db.pragma('mmap_size = 64000000'); // 64MB memory-mapped I/O limit
+  db.pragma('temp_store = MEMORY');
 
   // Execute schema
   const schemaSql = fs.readFileSync(SCHEMA_PATH, 'utf-8');

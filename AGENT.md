@@ -228,3 +228,11 @@ docker compose down
 2. **Superadmin Authority Boundary**: Superadmin endpoints (`/api/superadmin/*`) are guarded by `requireSuperAdmin` middleware. Access is granted only if user email matches `SUPERADMIN_EMAIL` configured in `.env` or has `role = 'superadmin'`.
 3. **Never Return Raw Customer Data in Public Routes**: Public tracking endpoints must pass payloads through `server/services/maskingService.js` to mask plates and names and omit buy prices, telephone numbers, and addresses.
 4. **Preserve Modern Flat Styling**: Never introduce `backdrop-blur` or glassmorphic filters in React components or CSS. Keep touch targets `>= 44x44px`.
+5. **Image Storage Salting (Lightweight Obfuscation)**: Uploaded images are stored with XOR obfuscation using `IMAGE_STORAGE_SALT` and prefix `SALTED\x01`. Raw files on disk cannot be directly opened by image viewers. The web server dynamically de-salts and serves them with HTTP caching (`ETag`, `304 Not Modified`). Offline restoration is available via `npm run restore:images -- --restore` or `node scripts/restore-images.js --restore`.
+6. **VPS Kentang (2 Core, 2GB RAM) Resource Guarding**: To avoid Out-Of-Memory (OOM) crashes:
+   - Node process is bound by `--max-old-space-size=512`.
+   - Sharp libvips is restricted to 1 thread (`sharp.concurrency(1)`) and 32MB cache.
+   - SQLite uses `cache_size = -16000` (16MB) and `mmap_size = 64000000` (64MB).
+   - Docker Compose enforces container memory limit of `768M`.
+   - A 2GB swapfile must be provisioned on host using `sudo bash scripts/setup-vps.sh`. See `VPS_DEPLOYMENT.md` for full instructions.
+

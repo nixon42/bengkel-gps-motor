@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { createApp } from '../../server/app.js';
 import { initDatabase } from '../../server/db/index.js';
+import { isSalted, desaltBuffer, saltFile, desaltFile } from '../../server/services/imageSalter.js';
 
 test('Security Hardening & Deep Defense Suite', async (t) => {
   const db = initDatabase(':memory:');
@@ -245,20 +247,29 @@ test('Security Hardening & Deep Defense Suite', async (t) => {
   });
 
   // Image Resizing & Compression Test: Target <= 100KB
+  let testUploadedUrl = '';
   await t.test('8. Image Resizing & Compression: High-Res Upload Compressed to Target <= 100KB', async () => {
     const samplePath = path.join(process.cwd(), 'uploads/ro/spark-plugs.jpg');
     assert.ok(fs.existsSync(samplePath), 'Sample spark-plugs.jpg must exist');
-    const originalSize = fs.statSync(samplePath).size;
+    
+    // Ensure the sample is an un-salted clean photo for upload
+    const rawSample = fs.readFileSync(samplePath);
+    const plainSample = isSalted(rawSample) ? desaltBuffer(rawSample) : rawSample;
+    const tempFile = path.join(os.tmpdir(), `test-upload-${Date.now()}.jpg`);
+    fs.writeFileSync(tempFile, plainSample);
+
+    const originalSize = fs.statSync(tempFile).size;
     assert.ok(originalSize > 200 * 1024, `Original sample should be >200KB, got ${Math.round(originalSize / 1024)}KB`);
 
-    // Upload real 489KB photo to /api/finance/upload
+    // Upload photo to /api/finance/upload
     const res = await request(app)
       .post('/api/finance/upload')
       .set('Cookie', cookieTenantA)
-      .attach('receipt', samplePath);
+      .attach('receipt', tempFile);
 
     assert.equal(res.status, 200);
     assert.ok(res.body.url);
+    testUploadedUrl = res.body.url;
 
     // Read the saved file on disk
     const savedPath = path.join(process.cwd(), res.body.url.replace(/^\//, ''));
@@ -271,9 +282,62 @@ test('Security Hardening & Deep Defense Suite', async (t) => {
       `Compressed image should be <= 100KB, got ${Math.round(compressedSize / 1024)}KB`
     );
 
-    // Clean up test upload
+    // Clean up temporary input file
     try {
-      fs.unlinkSync(savedPath);
+      fs.unlinkSync(tempFile);
+    } catch {}
+  });
+
+  // Disk Image Salting, HTTP Serving with ETag / 304, and Offline Restoration
+  await t.test('9. Disk Image Salting, HTTP Serving with ETag / 304, and Offline Restoration', async () => {
+    assert.ok(testUploadedUrl, 'Must have testUploadedUrl from test 8');
+    const savedDiskPath = path.join(process.cwd(), testUploadedUrl.replace(/^\//, ''));
+    assert.ok(fs.existsSync(savedDiskPath), 'Uploaded file must exist on disk');
+
+    // 9.1 Verify on-disk file is salted with SALTED\x01 signature
+    const diskBytes = fs.readFileSync(savedDiskPath);
+    assert.equal(isSalted(diskBytes), true, 'File on disk MUST be salted with SALTED\\x01 signature');
+    
+    // 9.2 Verify on-disk file does NOT have plain JPEG magic bytes (FF D8 FF)
+    const magicOnDisk = diskBytes.subarray(0, 3).toString('hex').toUpperCase();
+    assert.notEqual(magicOnDisk, 'FFD8FF', 'On-disk file must NOT start with plain JPEG magic bytes');
+
+    // 9.3 Verify GET /uploads/... serves clean de-salted image with HTTP 200 and image/jpeg
+    const getRes = await request(app).get(testUploadedUrl);
+    assert.equal(getRes.status, 200);
+    assert.equal(getRes.headers['content-type'], 'image/jpeg');
+    assert.ok(getRes.headers.etag, 'Response should include ETag');
+    assert.ok(getRes.headers['cache-control'], 'Response should include Cache-Control');
+    
+    // Verify body received by client has valid JPEG magic bytes (FF D8 FF)
+    const clientMagic = getRes.body.subarray(0, 3).toString('hex').toUpperCase();
+    assert.equal(clientMagic, 'FFD8FF', 'Client must receive valid JPEG with FF D8 FF magic bytes');
+
+    // 9.4 Verify conditional GET with If-None-Match returns HTTP 304 (saves bandwidth and CPU)
+    const cachedRes = await request(app)
+      .get(testUploadedUrl)
+      .set('If-None-Match', getRes.headers.etag);
+    assert.equal(cachedRes.status, 304);
+
+    // 9.5 Verify offline restoration via desaltFile restores plain image on disk
+    const restoreOk = desaltFile(savedDiskPath);
+    assert.equal(restoreOk, true, 'desaltFile should succeed');
+    const restoredDiskBytes = fs.readFileSync(savedDiskPath);
+    assert.equal(isSalted(restoredDiskBytes), false, 'Restored file should not be salted');
+    assert.equal(
+      restoredDiskBytes.subarray(0, 3).toString('hex').toUpperCase(),
+      'FFD8FF',
+      'Restored file on disk should directly have JPEG magic bytes'
+    );
+
+    // 9.6 Verify offline re-salting via saltFile
+    const saltAgainOk = saltFile(savedDiskPath);
+    assert.equal(saltAgainOk, true, 'saltFile should succeed');
+    assert.equal(isSalted(fs.readFileSync(savedDiskPath)), true, 'Re-salted file must have SALTED\\x01 header');
+
+    // Clean up test file
+    try {
+      fs.unlinkSync(savedDiskPath);
     } catch {}
   });
 });
