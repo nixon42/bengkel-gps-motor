@@ -99,9 +99,11 @@ export default function PublicTrackingPage({
       if (token && json.plate_masked && !plateQuery) {
         setPlateQuery(json.plate_masked);
       }
-      // Update browser URL query param cleanly without reload
+      // Update browser URL query param cleanly with token for privacy protection
       if (window.history && window.history.replaceState) {
-        const newUrl = `${window.location.pathname}?${queryString}`;
+        const trkToken = json.repairOrder?.tracking_token || json.repairOrder?.trackingToken;
+        const safeQuery = trkToken ? `token=${encodeURIComponent(trkToken)}` : queryString;
+        const newUrl = `${window.location.pathname}?${safeQuery}`;
         window.history.replaceState(null, '', newUrl);
       }
     } catch (err) {

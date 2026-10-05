@@ -4,18 +4,23 @@ import { Copy, Check, Share2, MessageCircle, Phone } from 'lucide-react';
 export default function ActionButtons({ trackingData }) {
   const [copied, setCopied] = useState(false);
 
+  const token = trackingData?.repairOrder?.tracking_token || trackingData?.repairOrder?.trackingToken;
+  const baseUrl = typeof window !== 'undefined' ? (window.location.origin + window.location.pathname) : '';
+  const secureTrackingUrl = token 
+    ? `${baseUrl}?token=${encodeURIComponent(token)}` 
+    : (trackingData?.trackingUrl || (typeof window !== 'undefined' ? window.location.href : ''));
+
   const handleCopyLink = () => {
-    const currentUrl = window.location.href;
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(currentUrl).then(() => {
+      navigator.clipboard.writeText(secureTrackingUrl).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }).catch(() => {
         // Fallback
-        fallbackCopy(currentUrl);
+        fallbackCopy(secureTrackingUrl);
       });
     } else {
-      fallbackCopy(currentUrl);
+      fallbackCopy(secureTrackingUrl);
     }
   };
 
@@ -38,7 +43,7 @@ export default function ActionButtons({ trackingData }) {
   const workshopName = trackingData?.tenant?.name || 'Bengkel Mobil GPS Motor Kediri';
   const workshopPhone = trackingData?.tenant?.phone_wa || '0856-0330-7330';
 
-  const shareText = `Halo, pantau proses servis kendaraan *${maskedPlate}* di *${workshopName}* secara live di link berikut:\n\n${window.location.href}`;
+  const shareText = `Halo, pantau proses servis kendaraan *${maskedPlate}* di *${workshopName}* secara live di link berikut:\n\n${secureTrackingUrl}`;
   const waShareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
 
   const cleanPhone = workshopPhone.replace(/[^0-9]/g, '');
