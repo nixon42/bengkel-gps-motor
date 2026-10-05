@@ -15,10 +15,10 @@ const FACILITIES = [
     description: 'Peralatan scanner digital multi-brand untuk membaca data live sensor mesin, menghapus kode DTC error, dan reset throttle position.'
   },
   {
-    title: 'Ruang Tunggu Nyaman & Ber-AC',
-    category: 'Kenyamanan',
-    image: '/images/gallery/facility-waiting.jpg',
-    description: 'Ruang tunggu ber-AC dengan Wi-Fi gratis, air mineral, dan area pantau langsung ke area pengerjaan servis mobil Anda.'
+    title: 'Toolkit & Peralatan Spesialis Mesin',
+    category: 'Peralatan Kerja',
+    image: '/images/gallery/facility-tools.jpg',
+    description: 'Peralatan mekanik presisi, kunci momen torsi, alat ukur kompresi, dan perkakas khusus perbaikan mesin mobil segala merek.'
   },
   {
     title: 'Stok Suku Cadang & Oli Terpercaya',
@@ -43,7 +43,7 @@ export default function GallerySection() {
             Standar Kerja Rapi & Peralatan Modern
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
-            Kami menjaga kebersihan workshop dan kenyamanan Anda saat mempercayakan mobil kesayangan di Sambiresik, Kediri.
+            Kami menjaga ketelitian kerja, kebersihan workshop, dan keandalan perbaikan mobil kesayangan Anda di Sambiresik, Kediri.
           </p>
         </div>
 

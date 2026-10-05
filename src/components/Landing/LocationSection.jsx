@@ -97,24 +97,32 @@ export default function LocationSection() {
             </div>
           </div>
 
-          {/* Right Map Container */}
-          <div className="lg:col-span-7 rounded border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-100 dark:bg-slate-800 min-h-[360px] flex flex-col">
+          {/* Right Map Container with Pin Marker */}
+          <div className="lg:col-span-7 rounded border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-100 dark:bg-slate-800 min-h-[380px] flex flex-col relative">
             <iframe
               title="Google Maps Lokasi Bengkel Mobil GPS Motor Kediri"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15812.306529932737!2d112.0205!3d-7.7812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78570000000000%3A0x0!2sSambiresik%2C%20Gampengrejo%2C%20Kediri!5e0!3m2!1sid!2sid!4v1696000000000!5m2!1sid!2sid"
-              className="w-full h-full flex-1 border-0 min-h-[360px]"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.08!2d112.0205!3d-7.7812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwNDYnNTIuMyJTIDExMsKwMDEnMTMuOCJF!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+              className="w-full h-full flex-1 border-0 min-h-[380px]"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-            <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
-              <span>📍 Sambiresik, Kec. Gampengrejo, Kab. Kediri</span>
+            {/* Overlay Pin Indicator */}
+            <div className="absolute top-3 right-3 z-10 hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded bg-white/95 dark:bg-slate-900/95 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+              <span>Titik: Bengkel Mobil GPS Motor</span>
+            </div>
+            <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
+              <span className="flex items-center space-x-1.5 font-medium">
+                <span className="text-red-600 font-bold">📍</span>
+                <span>Titik: Sambiresik, Kec. Gampengrejo, Kab. Kediri</span>
+              </span>
               <a
-                href="https://maps.google.com/?q=Bengkel+Mobil+GPS+Motor+Kediri+Sambiresik"
+                href="https://maps.google.com/?q=-7.7812,112.0205+(Bengkel+Mobil+GPS+Motor+Kediri)"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-semibold"
+                className="text-blue-600 dark:text-blue-400 hover:underline font-bold"
               >
-                Perbesar Peta
+                Buka di Google Maps ↗
               </a>
             </div>
           </div>
