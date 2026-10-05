@@ -337,7 +337,8 @@ export function stockMovementsRoutes(db) {
       res.json({
         success: true,
         sparepart: part,
-        movements: rows
+        movements: rows,
+        mutations: rows
       });
     } catch (err) {
       next(err);
@@ -430,6 +431,7 @@ export function stockMovementsRoutes(db) {
       res.json({
         success: true,
         movements: rows,
+        mutations: rows,
         data: rows,
         pagination: {
           page: pageNum,

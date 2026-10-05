@@ -72,6 +72,7 @@ export function createApp(databaseInstance) {
   app.use('/api/public', publicRoutes(db));
   app.use('/api/inventory', inventoryRoutes(db));
   app.use('/api/stock-movements', stockMovementsRoutes(db));
+  app.use('/api/stock-mutations', stockMovementsRoutes(db)); // Indonesian alias
   app.use('/api/stock-opname', stockOpnameRoutes(db));
   app.use('/api/finance', financeRoutes(db));
   app.use('/api/repair-orders', repairOrdersRoutes(db));

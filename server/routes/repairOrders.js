@@ -352,7 +352,8 @@ export function repairOrdersRoutes(db) {
         id: createdRo.id,
         tracking_token: createdRo.tracking_token,
         trackingToken: createdRo.tracking_token,
-        repair_order: createdRo
+        repair_order: createdRo,
+        repairOrder: createdRo
       });
     } catch (err) {
       next(err);
@@ -614,8 +615,8 @@ export function repairOrdersRoutes(db) {
   router.put('/:id/status', requireAuth, handleStatusTransition);
   router.patch('/:id/status', requireAuth, handleStatusTransition);
 
-  // 6. POST /api/repair-orders/:id/spareparts (Attach part, deduct inventory stock & log OUT)
-  router.post('/:id/spareparts', requireAuth, async (req, res, next) => {
+  // 6. POST /api/repair-orders/:id/spareparts & /parts (Attach part, deduct inventory stock & log OUT)
+  async function handleAttachSparepart(req, res, next) {
     try {
       const tenantId = getTenantId(req);
       const targetId = req.params.id;
@@ -769,6 +770,7 @@ export function repairOrdersRoutes(db) {
       res.status(201).json({
         success: true,
         id: attachedItemId,
+        roPart: responseItem,
         item: responseItem,
         sparepart_fee: newSparepartFee,
         total_cost: newTotalCost
@@ -776,10 +778,13 @@ export function repairOrdersRoutes(db) {
     } catch (err) {
       next(err);
     }
-  });
+  }
 
-  // 7. DELETE /api/repair-orders/:id/spareparts/:itemId (Detach part & restore inventory stock)
-  router.delete('/:id/spareparts/:itemId', requireAuth, async (req, res, next) => {
+  router.post('/:id/spareparts', requireAuth, handleAttachSparepart);
+  router.post('/:id/parts', requireAuth, handleAttachSparepart);
+
+  // 7. DELETE /api/repair-orders/:id/spareparts/:itemId & /parts/:itemId (Detach part & restore inventory stock)
+  async function handleDetachSparepart(req, res, next) {
     try {
       const tenantId = getTenantId(req);
       const targetId = req.params.id;
@@ -812,12 +817,17 @@ export function repairOrdersRoutes(db) {
           WHERE id = ?
         `).run(attachedItem.quantity, attachedItem.sparepart_id);
 
-        // 2. Remove matching stock_movements OUT record
-        db.prepare(`
-          DELETE FROM stock_movements
+        // 2. Remove matching stock_movements OUT record portably
+        const matchingMovement = db.prepare(`
+          SELECT id FROM stock_movements
           WHERE tenant_id = ? AND repair_order_id = ? AND sparepart_id = ? AND type = 'OUT' AND quantity = ?
+          ORDER BY created_at DESC
           LIMIT 1
-        `).run(tenantId, ro.id, attachedItem.sparepart_id, attachedItem.quantity);
+        `).get(tenantId, ro.id, attachedItem.sparepart_id, attachedItem.quantity);
+
+        if (matchingMovement) {
+          db.prepare('DELETE FROM stock_movements WHERE id = ?').run(matchingMovement.id);
+        }
 
         // 3. Remove ro_spareparts entry
         db.prepare('DELETE FROM ro_spareparts WHERE id = ?').run(attachedItem.id);
@@ -850,7 +860,10 @@ export function repairOrdersRoutes(db) {
     } catch (err) {
       next(err);
     }
-  });
+  }
+
+  router.delete('/:id/spareparts/:itemId', requireAuth, handleDetachSparepart);
+  router.delete('/:id/parts/:itemId', requireAuth, handleDetachSparepart);
 
   // 8. POST /api/repair-orders/:id/photos (Upload photo for BEFORE, PROGRESS, AFTER stage)
   router.post('/:id/photos', requireAuth, uploadSingle('ro', 'photo'), async (req, res, next) => {

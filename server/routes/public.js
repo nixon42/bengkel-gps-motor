@@ -283,9 +283,12 @@ export function publicRoutes(db) {
       });
 
       // Construct WhatsApp share link and direct tracking link
-      const trackingUrl = ro.tracking_token
+      const relativeTrackingUrl = ro.tracking_token
         ? `/${tenant.slug}/cek-status?token=${encodeURIComponent(ro.tracking_token)}`
         : `/${tenant.slug}/cek-status?plate=${encodeURIComponent(ro.plate_number || rawQuery)}`;
+      const baseUrl = process.env.APP_URL || (req.get('host') ? `${req.protocol}://${req.get('host')}` : '');
+      const trackingUrl = baseUrl ? `${baseUrl}${relativeTrackingUrl}` : relativeTrackingUrl;
+
       const cleanPhone = (tenant.phone_wa || '085603307330').replace(/[^0-9]/g, '');
       const waNumber = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
       
@@ -315,6 +318,7 @@ export function publicRoutes(db) {
           businessHours: tenant.business_hours
         },
         repairOrder: sanitized.repairOrder,
+        vehicle: sanitized.repairOrder,
         plate_masked: sanitized.plate_masked,
         customer_name_masked: sanitized.customer_name_masked,
         milestones,
@@ -324,7 +328,9 @@ export function publicRoutes(db) {
         spareparts: sanitized.spareparts,
         history: sanitizedHistory,
         trackingUrl,
+        shareUrl: trackingUrl,
         waShareUrl,
+        whatsappUrl: waShareUrl,
         waContactUrl
       });
     } catch (err) {

@@ -21,7 +21,7 @@ export default function App() {
       return { view: 'tracking', slug, plate };
     }
 
-    if (path.startsWith('/admin') || path.startsWith('/dashboard')) {
+    if (path.startsWith('/admin') || path.startsWith('/dashboard') || path === '/login' || path === '/masuk') {
       return { view: 'admin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '' };
     }
 

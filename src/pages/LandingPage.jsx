@@ -28,7 +28,7 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin }) {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans">
       {/* Top Header Navbar */}
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800">
+      <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Logo & Brand */}
@@ -91,15 +91,27 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin }) {
               <span>Cek Status</span>
             </button>
 
-            {/* Operator Portal Link */}
+            {/* Operator Portal Link (Desktop) */}
             <button
               type="button"
               onClick={handleLoginClick}
               disabled={loading}
-              className="touch-target hidden sm:flex items-center space-x-1.5 px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-xs font-semibold text-slate-800 dark:text-slate-200 transition-colors"
+              className="touch-target hidden sm:flex items-center space-x-1.5 px-3 py-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition-colors"
             >
               <LogIn className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>{user ? 'Buka Workspace' : 'Login Bengkel'}</span>
+            </button>
+
+            {/* Operator Portal Link (Mobile Quick Icon) */}
+            <button
+              type="button"
+              onClick={handleLoginClick}
+              disabled={loading}
+              aria-label={user ? 'Buka Workspace' : 'Login Bengkel'}
+              title={user ? 'Buka Workspace' : 'Login Bengkel'}
+              className="touch-target sm:hidden w-11 h-11 flex items-center justify-center rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 transition-colors"
+            >
+              <LogIn className="w-5 h-5" />
             </button>
           </div>
 

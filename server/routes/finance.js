@@ -531,7 +531,11 @@ export function financeRoutes(db) {
       seedDefaultCategoriesIfEmpty(db, tenantId);
 
       // Extract bilingual keys
-      const rawType = (req.body.type || req.body.tipe || '').toUpperCase();
+      const inputType = req.body.type !== undefined ? req.body.type : req.body.tipe;
+      if (typeof inputType !== 'string') {
+        return res.status(400).json({ error: 'Validation Error', message: 'Tipe transaksi harus berupa string INCOME atau EXPENSE' });
+      }
+      const rawType = inputType.trim().toUpperCase();
       const rawCatId = req.body.categoryId || req.body.category_id || req.body.kategoriId;
       const rawAmount = req.body.amount !== undefined ? req.body.amount : req.body.nominal;
       const rawDate = req.body.date || req.body.tanggal;
@@ -639,7 +643,17 @@ export function financeRoutes(db) {
         return res.status(404).json({ error: 'Not Found', message: 'Transaksi tidak ditemukan' });
       }
 
-      const rawType = (req.body.type || req.body.tipe || existing.type).toUpperCase();
+      let rawType = existing.type;
+      const inputType = req.body.type !== undefined ? req.body.type : req.body.tipe;
+      if (inputType !== undefined) {
+        if (typeof inputType !== 'string') {
+          return res.status(400).json({ error: 'Validation Error', message: 'Tipe transaksi harus berupa string INCOME atau EXPENSE' });
+        }
+        rawType = inputType.trim().toUpperCase();
+        if (rawType !== 'INCOME' && rawType !== 'EXPENSE') {
+          return res.status(400).json({ error: 'Validation Error', message: 'Tipe transaksi harus INCOME atau EXPENSE' });
+        }
+      }
       const rawCatId = req.body.categoryId || req.body.category_id || req.body.kategoriId || existing.category_id;
       const rawAmount = req.body.amount !== undefined ? req.body.amount : (req.body.nominal !== undefined ? req.body.nominal : existing.amount);
       const rawDate = req.body.date || req.body.tanggal || existing.date;

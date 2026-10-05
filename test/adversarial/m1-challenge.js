@@ -579,22 +579,22 @@ async function runConstraintTests() {
     const defaultTenant = db.prepare('SELECT id FROM tenants WHERE slug = ?').get('bengkel-gps-motor');
     const secondTenant = db.prepare('SELECT id FROM tenants WHERE slug = ?').get('second-workshop');
 
-    // Duplicate ro_number under same tenant throws
+    // Duplicate ro_number under same tenant throws (RO-202610-001 already exists in defaultTenant)
     assert.throws(() => {
       db.prepare(`
         INSERT INTO repair_orders (id, tenant_id, ro_number, tracking_token, plate_number, customer_name, customer_phone, car_brand, car_model, entry_date, complaint, mechanic_name, status)
-        VALUES ('ro-dup-num', ?, 'RO-001', 'TRACK-UNIQUE-DIFF-TOKEN-1', 'AG 9999 XX', 'Pak Slamet', '081234', 'Toyota', 'Avanza', '2026-10-04', 'Ganti Oli', 'Agus', 'MASUK')
+        VALUES ('ro-dup-num', ?, 'RO-202610-001', 'TRACK-UNIQUE-DIFF-TOKEN-1', 'AG 9999 XX', 'Pak Slamet', '081234', 'Toyota', 'Avanza', '2026-10-04', 'Ganti Oli', 'Agus', 'MASUK')
       `).run(defaultTenant.id);
     }, /UNIQUE constraint failed/);
 
     // Same ro_number under second tenant succeeds
     db.prepare(`
       INSERT INTO repair_orders (id, tenant_id, ro_number, tracking_token, plate_number, customer_name, customer_phone, car_brand, car_model, entry_date, complaint, mechanic_name, status)
-      VALUES ('ro-second-num', ?, 'RO-001', 'TRACK-UNIQUE-DIFF-TOKEN-2', 'AG 8888 YY', 'Bu Ani', '081299', 'Honda', 'Mobilio', '2026-10-04', 'Ganti Kampas', 'Budi', 'MASUK')
+      VALUES ('ro-second-num', ?, 'RO-202610-001', 'TRACK-UNIQUE-DIFF-TOKEN-2', 'AG 8888 YY', 'Bu Ani', '081299', 'Honda', 'Mobilio', '2026-10-04', 'Ganti Kampas', 'Budi', 'MASUK')
     `).run(secondTenant.id);
 
     const ro = db.prepare('SELECT * FROM repair_orders WHERE id = ?').get('ro-second-num');
-    assert.equal(ro.ro_number, 'RO-001');
+    assert.equal(ro.ro_number, 'RO-202610-001');
   });
 
   // 2.3 Cascading Deletion (ON DELETE CASCADE)

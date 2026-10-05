@@ -174,6 +174,7 @@ async function runM4AdversarialChallenge() {
   console.log(`${COLORS.bold}================================================================${COLORS.reset}\n`);
 
   const { app, db, cleanup } = createTestApp();
+  const TODAY = new Date().toISOString().slice(0, 10);
 
   try {
     const authGps = await loginUser(app, { tenantSlug: FIXTURES.tenants.gpsMotor.slug, email: FIXTURES.users.gpsAdmin.email });
@@ -238,7 +239,7 @@ async function runM4AdversarialChallenge() {
         amount: 2500000,
         description: 'Pemasukan servis seimbang',
         paymentMethod: 'CASH',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -251,7 +252,7 @@ async function runM4AdversarialChallenge() {
         amount: 2500000,
         description: 'Pengeluaran seimbang',
         paymentMethod: 'TRANSFER',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -280,7 +281,7 @@ async function runM4AdversarialChallenge() {
         amount: 1000000,
         description: 'Pendapatan jasa servis rutin',
         paymentMethod: 'QRIS',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -293,7 +294,7 @@ async function runM4AdversarialChallenge() {
         amount: 500000000,
         description: 'Pengadaan mesin dyno test besar',
         paymentMethod: 'TRANSFER',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -345,7 +346,7 @@ async function runM4AdversarialChallenge() {
         amount: largeIncomeAmount,
         description: 'Modal investasi mega ekspansi 100 Milyar',
         paymentMethod: 'TRANSFER',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -358,7 +359,7 @@ async function runM4AdversarialChallenge() {
         amount: largeExpenseAmount,
         description: 'Akuisisi lahan bengkel 35 Milyar',
         paymentMethod: 'TRANSFER',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -421,7 +422,7 @@ async function runM4AdversarialChallenge() {
         amount: 12345.67,
         description: 'Pendapatan pecahan presisi 1',
         paymentMethod: 'CASH',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -434,7 +435,7 @@ async function runM4AdversarialChallenge() {
         amount: 2345.42,
         description: 'Biaya pecahan presisi 2',
         paymentMethod: 'CASH',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -466,7 +467,7 @@ async function runM4AdversarialChallenge() {
           amount: amt,
           description: `Micro income ${i}`,
           paymentMethod: 'QRIS',
-          date: '2026-10-04'
+          date: TODAY
         })
         .expect(201);
     }
@@ -511,7 +512,7 @@ async function runM4AdversarialChallenge() {
         amount: 8888888,
         description: 'Transaksi Super Rahasia GPS Motor Kediri 8888888',
         paymentMethod: 'TRANSFER',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
     const secretTrxAId = resSecretTrxA.body.transaction.id;
@@ -728,7 +729,7 @@ async function runM4AdversarialChallenge() {
     const resHeaderSpoof = await request(app)
       .get('/api/finance/summary')
       .set('Cookie', authBerkah.cookie)
-      .set('x-tenant-id', FIXTURES.tenants.gpsMotor.id)
+      .set('x-tenant-id', authGps.tenant.id)
       .expect(200);
 
     recordTest(
@@ -1059,7 +1060,7 @@ async function runM4AdversarialChallenge() {
         amount: 850000,
         description: unicodeDesc,
         paymentMethod: 'QRIS',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -1081,7 +1082,7 @@ async function runM4AdversarialChallenge() {
         amount: 50000,
         description: xssDesc,
         paymentMethod: 'CASH',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
@@ -1102,7 +1103,7 @@ async function runM4AdversarialChallenge() {
         amount: 320000,
         description: trickyCsvDesc,
         paymentMethod: 'CASH',
-        date: '2026-10-04'
+        date: TODAY
       })
       .expect(201);
 
