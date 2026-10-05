@@ -1,6 +1,22 @@
 import React from 'react';
 import { Car, User, Calendar, Gauge, Clock, ShieldCheck, AlertCircle } from 'lucide-react';
 
+function formatEstimatedDate(val) {
+  if (!val) return 'Dalam Konfirmasi';
+  const isoMatch = String(val).match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}))?/);
+  if (isoMatch) {
+    const [_, y, m, d, hh, mm] = isoMatch;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const monthName = months[parseInt(m, 10) - 1] || m;
+    const dateStr = `${parseInt(d, 10)} ${monthName} ${y}`;
+    if (hh !== undefined && mm !== undefined) {
+      return `${dateStr}, ${hh}:${mm} WIB`;
+    }
+    return dateStr;
+  }
+  return val;
+}
+
 export default function VehicleInfoCard({ repairOrder }) {
   if (!repairOrder) return null;
 
@@ -86,7 +102,7 @@ export default function VehicleInfoCard({ repairOrder }) {
             <span className="font-semibold">Estimasi Selesai</span>
           </div>
           <span className="text-sm font-bold text-amber-700 dark:text-amber-400 font-mono">
-            {repairOrder.estimated_completion || repairOrder.estimatedCompletion || 'Dalam Konfirmasi'}
+            {formatEstimatedDate(repairOrder.estimated_completion || repairOrder.estimatedCompletion)}
           </span>
           <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
             Mekanik: {repairOrder.mechanic_name || 'Tim Mekanik GPS'}

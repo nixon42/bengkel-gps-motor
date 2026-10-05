@@ -43,6 +43,22 @@ const STAGE_COLORS = {
   'DIAMBIL': 'bg-zinc-200 text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100 border-zinc-400 dark:border-zinc-600'
 };
 
+function formatEstimatedDate(val) {
+  if (!val) return '-';
+  const isoMatch = String(val).match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}))?/);
+  if (isoMatch) {
+    const [_, y, m, d, hh, mm] = isoMatch;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const monthName = months[parseInt(m, 10) - 1] || m;
+    const dateStr = `${parseInt(d, 10)} ${monthName} ${y}`;
+    if (hh !== undefined && mm !== undefined) {
+      return `${dateStr}, ${hh}:${mm} WIB`;
+    }
+    return dateStr;
+  }
+  return val;
+}
+
 export default function RepairOrderDetailPage({ roId, onBack }) {
   const [ro, setRo] = useState(null);
   const [spareparts, setSpareparts] = useState([]);
@@ -500,7 +516,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
               </div>
               <div>
                 <span className="block text-xs text-slate-500">Estimasi Selesai</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">{ro.estimated_completion || '-'}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{formatEstimatedDate(ro.estimated_completion)}</span>
               </div>
               <div className="sm:col-span-2 bg-slate-50 dark:bg-slate-750 p-3 rounded border border-slate-200 dark:border-slate-700">
                 <span className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Keluhan Pelanggan:</span>

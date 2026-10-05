@@ -80,6 +80,57 @@ export default function RepairOrdersPage() {
     estimasiSelesai: ''
   });
 
+  // Dynamic form options for cars, colors, mechanics
+  const [formOptions, setFormOptions] = useState({ cars: [], colors: [], mechanics: [] });
+
+  const fetchFormOptions = async () => {
+    try {
+      const res = await fetch('/api/repair-orders/form-options', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setFormOptions({
+          cars: data.cars || [],
+          colors: data.colors || [],
+          mechanics: data.mechanics || []
+        });
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
+  useEffect(() => {
+    fetchFormOptions();
+  }, []);
+
+  const setEstimatedPreset = (presetKey) => {
+    const target = new Date();
+    if (presetKey === 'today_17') {
+      target.setHours(17, 0, 0, 0);
+      if (target <= new Date()) {
+        target.setDate(target.getDate() + 1);
+      }
+    } else if (presetKey === 'tomorrow_12') {
+      target.setDate(target.getDate() + 1);
+      target.setHours(12, 0, 0, 0);
+    } else if (presetKey === 'tomorrow_17') {
+      target.setDate(target.getDate() + 1);
+      target.setHours(17, 0, 0, 0);
+    } else if (presetKey === 'in_2_days') {
+      target.setDate(target.getDate() + 2);
+      target.setHours(17, 0, 0, 0);
+    } else if (presetKey === 'in_3_days') {
+      target.setDate(target.getDate() + 3);
+      target.setHours(17, 0, 0, 0);
+    }
+    const year = target.getFullYear();
+    const month = String(target.getMonth() + 1).padStart(2, '0');
+    const day = String(target.getDate()).padStart(2, '0');
+    const hours = String(target.getHours()).padStart(2, '0');
+    const mins = String(target.getMinutes()).padStart(2, '0');
+    setFormData(prev => ({ ...prev, estimasiSelesai: `${year}-${month}-${day}T${hours}:${mins}` }));
+  };
+
   // Autocomplete state
   const [customerSuggestions, setCustomerSuggestions] = useState([]);
   const [suggestLoading, setSuggestLoading] = useState(false);
@@ -567,21 +618,68 @@ export default function RepairOrdersPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2">
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Merek & Model Mobil
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: Toyota Avanza 1.3 G"
-                    value={formData.merekModel}
-                    onChange={(e) => setFormData({ ...formData, merekModel: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
+                <div className="sm:col-span-2 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                      Merek & Model Mobil
+                    </label>
+                    <span className="text-[10px] text-slate-400">Pilih riwayat atau ketik manual</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {/* Dropdown pilihan mobil yang pernah ditangani tenant */}
+                    <select
+                      onChange={(e) => {
+                        if (!e.target.value) return;
+                        const val = e.target.value;
+                        const matched = formOptions.cars.find(c => `${c.brand} ${c.model}`.trim() === val);
+                        setFormData(prev => ({
+                          ...prev,
+                          merekModel: val,
+                          tahun: (matched && matched.year && !prev.tahun) ? String(matched.year) : prev.tahun,
+                          warna: (matched && matched.color && !prev.warna) ? matched.color : prev.warna
+                        }));
+                      }}
+                      defaultValue=""
+                      className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
+                    >
+                      <option value="">▼ Pilih mobil dari riwayat bengkel...</option>
+                      {formOptions.cars.filter(c => c.isHandled).length > 0 && (
+                        <optgroup label="Pernah Diservis di Bengkel Ini">
+                          {formOptions.cars.filter(c => c.isHandled).map((c, i) => (
+                            <option key={`handled-${i}`} value={`${c.brand} ${c.model}`.trim()}>
+                              {c.brand} {c.model} {c.count ? `(${c.count}x riwayat)` : ''}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      <optgroup label="Model Populer Lainnya">
+                        {formOptions.cars.filter(c => !c.isHandled).map((c, i) => (
+                          <option key={`pop-${i}`} value={`${c.brand} ${c.model}`.trim()}>
+                            {c.brand} {c.model}
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
+
+                    {/* Input manual dengan datalist */}
+                    <input
+                      type="text"
+                      list="ro-cars-datalist"
+                      placeholder="Atau ketik merek & jenis manual (misal: Toyota Avanza 1.3 G)"
+                      value={formData.merekModel}
+                      onChange={(e) => setFormData({ ...formData, merekModel: e.target.value })}
+                      className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 text-slate-900 dark:text-white"
+                    />
+                    <datalist id="ro-cars-datalist">
+                      {formOptions.cars.map((c, i) => (
+                        <option key={i} value={`${c.brand} ${c.model}`.trim()} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
                     Tahun Kendaraan
                   </label>
                   <input
@@ -589,27 +687,53 @@ export default function RepairOrdersPage() {
                     placeholder="2019"
                     value={formData.tahun}
                     onChange={(e) => setFormData({ ...formData, tahun: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
+                    className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Warna Mobil
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Hitam Metalik"
-                    value={formData.warna}
-                    onChange={(e) => setFormData({ ...formData, warna: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                      Warna Mobil
+                    </label>
+                    <span className="text-[10px] text-slate-400">Pilih / ketik</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          setFormData(prev => ({ ...prev, warna: e.target.value }));
+                        }
+                      }}
+                      defaultValue=""
+                      className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
+                    >
+                      <option value="">▼ Pilih dari daftar warna...</option>
+                      {formOptions.colors.map((color, i) => (
+                        <option key={i} value={color}>{color}</option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="text"
+                      list="ro-colors-datalist"
+                      placeholder="Atau ketik warna manual..."
+                      value={formData.warna}
+                      onChange={(e) => setFormData({ ...formData, warna: e.target.value })}
+                      className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 text-slate-900 dark:text-white"
+                    />
+                    <datalist id="ro-colors-datalist">
+                      {formOptions.colors.map((color, i) => (
+                        <option key={i} value={color} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
                     Odometer Masuk (km)
                   </label>
                   <input
@@ -617,25 +741,25 @@ export default function RepairOrdersPage() {
                     placeholder="65420"
                     value={formData.odometerMasuk}
                     onChange={(e) => setFormData({ ...formData, odometerMasuk: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-mono"
+                    className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
                     Tanggal Masuk
                   </label>
                   <input
                     type="date"
                     value={formData.tanggalMasuk}
                     onChange={(e) => setFormData({ ...formData, tanggalMasuk: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
+                    className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
                   Keluhan Pelanggan / Permintaan Servis *
                 </label>
                 <textarea
@@ -644,46 +768,117 @@ export default function RepairOrdersPage() {
                   placeholder="Contoh: Mesin brebet saat akselerasi dan AC kurang dingin"
                   value={formData.keluhan}
                   onChange={(e) => setFormData({ ...formData, keluhan: e.target.value })}
-                  className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
+                  className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Mekanik PJ
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.mekanikPj}
-                    onChange={(e) => setFormData({ ...formData, mekanikPj: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                      Mekanik PJ
+                    </label>
+                    <span className="text-[10px] text-slate-400">Pilih / ketik</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          setFormData(prev => ({ ...prev, mekanikPj: e.target.value }));
+                        }
+                      }}
+                      defaultValue=""
+                      className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
+                    >
+                      <option value="">▼ Pilih nama mekanik...</option>
+                      {formOptions.mechanics.map((mech, i) => (
+                        <option key={i} value={mech}>{mech}</option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="text"
+                      list="ro-mechanics-datalist"
+                      placeholder="Atau ketik nama mekanik manual..."
+                      value={formData.mekanikPj}
+                      onChange={(e) => setFormData({ ...formData, mekanikPj: e.target.value })}
+                      className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 text-slate-900 dark:text-white"
+                    />
+                    <datalist id="ro-mechanics-datalist">
+                      {formOptions.mechanics.map((mech, i) => (
+                        <option key={i} value={mech} />
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
                     Biaya Jasa Awal (Rp)
                   </label>
                   <input
                     type="number"
                     value={formData.biayaJasa}
                     onChange={(e) => setFormData({ ...formData, biayaJasa: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-bold"
+                    className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-bold"
                   />
                 </div>
 
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    Estimasi Selesai
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Contoh: Hari ini 16:00 WIB"
-                    value={formData.estimasiSelesai}
-                    onChange={(e) => setFormData({ ...formData, estimasiSelesai: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                      Estimasi Selesai (Date Picker)
+                    </label>
+                  </div>
+                  <div className="space-y-1.5">
+                    <input
+                      type="datetime-local"
+                      value={formData.estimasiSelesai}
+                      onChange={(e) => setFormData({ ...formData, estimasiSelesai: e.target.value })}
+                      className="w-full p-2 text-xs rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 text-slate-900 dark:text-white font-mono"
+                    />
+                    {/* Quick Preset Buttons */}
+                    <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setEstimatedPreset('today_17')}
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                      >
+                        Hari ini 17:00
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEstimatedPreset('tomorrow_12')}
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                      >
+                        Besok 12:00
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEstimatedPreset('tomorrow_17')}
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                      >
+                        Besok 17:00
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEstimatedPreset('in_2_days')}
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                      >
+                        2 Hari Lagi
+                      </button>
+                      {formData.estimasiSelesai && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, estimasiSelesai: '' })}
+                          className="touch-target text-[10px] text-rose-500 hover:underline px-1 py-0.5"
+                          title="Hapus estimasi"
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

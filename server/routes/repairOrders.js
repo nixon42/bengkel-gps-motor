@@ -360,6 +360,152 @@ export function repairOrdersRoutes(db) {
     }
   });
 
+  // 2b. GET /api/repair-orders/form-options (Dropdown options for cars, colors, mechanics)
+  router.get('/form-options', requireAuth, (req, res, next) => {
+    try {
+      const tenantId = getTenantId(req);
+
+      // 1. Cars handled by this tenant + registered vehicles
+      const handledCars = db.prepare(`
+        SELECT car_brand as brand, car_model as model, count(*) as count, MAX(car_year) as year, MAX(car_color) as color
+        FROM repair_orders
+        WHERE tenant_id = ? AND car_brand IS NOT NULL AND car_model IS NOT NULL
+        GROUP BY car_brand, car_model
+        ORDER BY count DESC, car_brand ASC
+      `).all(tenantId);
+
+      const registeredVehicles = db.prepare(`
+        SELECT brand, model, count(*) as count, MAX(year) as year, MAX(color) as color
+        FROM vehicles
+        WHERE tenant_id = ? AND brand IS NOT NULL AND model IS NOT NULL
+        GROUP BY brand, model
+      `).all(tenantId);
+
+      const popularCars = [
+        { brand: 'Toyota', model: 'Avanza 1.3 G' },
+        { brand: 'Toyota', model: 'Innova Reborn' },
+        { brand: 'Toyota', model: 'Calya 1.2 G' },
+        { brand: 'Toyota', model: 'Rush 1.5 S TRD' },
+        { brand: 'Toyota', model: 'Fortuner 2.4 VRZ' },
+        { brand: 'Toyota', model: 'Yaris 1.5 S' },
+        { brand: 'Honda', model: 'Brio Satya E' },
+        { brand: 'Honda', model: 'HR-V 1.5 E' },
+        { brand: 'Honda', model: 'Jazz RS' },
+        { brand: 'Honda', model: 'CR-V 1.5 Turbo' },
+        { brand: 'Daihatsu', model: 'Xenia 1.3 R' },
+        { brand: 'Daihatsu', model: 'Sigra 1.2 R' },
+        { brand: 'Daihatsu', model: 'Terios 1.5 R' },
+        { brand: 'Daihatsu', model: 'Gran Max Pick Up' },
+        { brand: 'Mitsubishi', model: 'Xpander Ultimate' },
+        { brand: 'Mitsubishi', model: 'Pajero Sport Dakar' },
+        { brand: 'Suzuki', model: 'Ertiga GL' },
+        { brand: 'Suzuki', model: 'XL7 Alpha' },
+        { brand: 'Suzuki', model: 'Carry Pick Up' }
+      ];
+
+      const carMap = new Map();
+      for (const c of handledCars) {
+        if (!c.brand || !c.model) continue;
+        const key = `${c.brand.trim()} ${c.model.trim()}`.toLowerCase();
+        carMap.set(key, {
+          brand: c.brand.trim(),
+          model: c.model.trim(),
+          count: c.count,
+          year: c.year,
+          color: c.color,
+          isHandled: true
+        });
+      }
+      for (const v of registeredVehicles) {
+        if (!v.brand || !v.model) continue;
+        const key = `${v.brand.trim()} ${v.model.trim()}`.toLowerCase();
+        if (!carMap.has(key)) {
+          carMap.set(key, {
+            brand: v.brand.trim(),
+            model: v.model.trim(),
+            count: v.count,
+            year: v.year,
+            color: v.color,
+            isHandled: true
+          });
+        }
+      }
+      for (const p of popularCars) {
+        const key = `${p.brand.trim()} ${p.model.trim()}`.toLowerCase();
+        if (!carMap.has(key)) {
+          carMap.set(key, {
+            brand: p.brand.trim(),
+            model: p.model.trim(),
+            count: 0,
+            year: null,
+            color: null,
+            isHandled: false
+          });
+        }
+      }
+      const cars = Array.from(carMap.values());
+
+      // 2. Colors previously used in this tenant + standard colors
+      const handledColors = db.prepare(`
+        SELECT DISTINCT car_color as color FROM repair_orders WHERE tenant_id = ? AND car_color IS NOT NULL AND trim(car_color) != ''
+        UNION
+        SELECT DISTINCT color FROM vehicles WHERE tenant_id = ? AND color IS NOT NULL AND trim(color) != ''
+      `).all(tenantId, tenantId);
+
+      const defaultColors = [
+        'Hitam Metalik',
+        'Putih Solid',
+        'Putih Mutiara (Pearl White)',
+        'Silver Metalik',
+        'Abu-abu Metalik (Grey)',
+        'Hitam Solid',
+        'Merah Metalik',
+        'Biru Metalik',
+        'Coklat Metalik',
+        'Kuning / Gold',
+        'Hijau Tua Metalik'
+      ];
+      const colorSet = new Set(defaultColors);
+      for (const hc of handledColors) {
+        if (hc.color && hc.color.trim()) {
+          colorSet.add(hc.color.trim());
+        }
+      }
+      const colors = Array.from(colorSet);
+
+      // 3. Mechanics
+      const staffUsers = db.prepare(`
+        SELECT name, role FROM users WHERE tenant_id = ? AND is_active = 1 ORDER BY name ASC
+      `).all(tenantId);
+
+      const roMechanics = db.prepare(`
+        SELECT DISTINCT mechanic_name as name FROM repair_orders WHERE tenant_id = ? AND mechanic_name IS NOT NULL AND trim(mechanic_name) != ''
+      `).all(tenantId);
+
+      const mechSet = new Set();
+      for (const u of staffUsers) {
+        if (u.name && u.name.trim()) mechSet.add(u.name.trim());
+      }
+      for (const m of roMechanics) {
+        if (m.name && m.name.trim()) mechSet.add(m.name.trim());
+      }
+      if (mechSet.size === 0) {
+        mechSet.add('Mas Agus Santoso');
+        mechSet.add('Pak Joko Priyono');
+      }
+      const mechanics = Array.from(mechSet);
+
+      res.json({
+        success: true,
+        cars,
+        colors,
+        mechanics
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   // 3. GET /api/repair-orders/:id (Full RO details with logs, spareparts, photos)
   router.get('/:id', requireAuth, async (req, res, next) => {
     try {
