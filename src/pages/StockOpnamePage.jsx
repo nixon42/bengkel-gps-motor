@@ -445,84 +445,146 @@ export default function StockOpnamePage() {
             <p className="text-xs">Catatan audit fisik akan tercatat di sini setelah Anda menyimpan penyesuaian pertama.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-3 sm:px-4">Tanggal Audit</th>
-                  <th className="py-3 px-3">SKU & Sparepart</th>
-                  <th className="py-3 px-3 text-center">Stok Sistem Lama</th>
-                  <th className="py-3 px-3 text-center">Stok Fisik Aktual</th>
-                  <th className="py-3 px-3 text-center">Selisih</th>
-                  <th className="py-3 px-3">Alasan Audit</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                {history.map((item) => {
-                  const diff = item.difference ?? 0;
-                  return (
-                    <tr 
-                      key={item.id} 
-                      className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
-                    >
-                      {/* Tanggal */}
-                      <td className="py-3 px-3 sm:px-4 whitespace-nowrap">
-                        <div className="font-medium text-slate-900 dark:text-white">
-                          {formatDateIndo(item.date)}
-                        </div>
-                        {item.created_at && (
-                          <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                            {item.created_at.slice(11, 16)} WIB
+          <div>
+            {/* Mobile Card List View (< 768px) */}
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
+              {history.map((item) => {
+                const diff = item.difference ?? 0;
+                return (
+                  <div key={item.id} className="p-4 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                        {formatDateIndo(item.date)}
+                      </span>
+                      {diff === 0 ? (
+                        <span className="inline-flex px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                          0 (Sesuai)
+                        </span>
+                      ) : diff > 0 ? (
+                        <span className="inline-flex px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
+                          +{diff}
+                        </span>
+                      ) : (
+                        <span className="inline-flex px-2 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200">
+                          {diff}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white text-xs leading-tight">
+                        {item.sparepart_name || '-'}
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                        {item.sparepart_sku || '-'}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-slate-700/30 p-2 rounded border border-slate-100 dark:border-slate-700 text-xs">
+                      <div>
+                        <span className="text-[10px] text-slate-400 block">Sistem Komputer</span>
+                        <span className="font-mono font-medium text-slate-700 dark:text-slate-300">
+                          {item.system_stock} {item.sparepart_unit || 'pcs'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 block">Hitung Fisik Aktual</span>
+                        <span className="font-mono font-bold text-slate-900 dark:text-white">
+                          {item.physical_stock} {item.sparepart_unit || 'pcs'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {item.reason && (
+                      <p className="text-[11px] text-slate-600 dark:text-slate-300 italic pt-1">
+                        &ldquo;{item.reason}&rdquo;
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View (>= 768px) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
+                    <th className="py-3 px-3 sm:px-4">Tanggal Audit</th>
+                    <th className="py-3 px-3">SKU & Sparepart</th>
+                    <th className="py-3 px-3 text-center">Stok Sistem Lama</th>
+                    <th className="py-3 px-3 text-center">Stok Fisik Aktual</th>
+                    <th className="py-3 px-3 text-center">Selisih</th>
+                    <th className="py-3 px-3">Alasan Audit</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                  {history.map((item) => {
+                    const diff = item.difference ?? 0;
+                    return (
+                      <tr 
+                        key={item.id} 
+                        className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+                      >
+                        {/* Tanggal */}
+                        <td className="py-3 px-3 sm:px-4 whitespace-nowrap">
+                          <div className="font-medium text-slate-900 dark:text-white">
+                            {formatDateIndo(item.date)}
                           </div>
-                        )}
-                      </td>
+                          {item.created_at && (
+                            <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                              {item.created_at.slice(11, 16)} WIB
+                            </div>
+                          )}
+                        </td>
 
-                      {/* SKU & Sparepart */}
-                      <td className="py-3 px-3">
-                        <div className="font-bold text-slate-900 dark:text-white leading-tight">
-                          {item.sparepart_name || '-'}
-                        </div>
-                        <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
-                          {item.sparepart_sku || '-'}
-                        </div>
-                      </td>
+                        {/* SKU & Sparepart */}
+                        <td className="py-3 px-3">
+                          <div className="font-bold text-slate-900 dark:text-white leading-tight">
+                            {item.sparepart_name || '-'}
+                          </div>
+                          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                            {item.sparepart_sku || '-'}
+                          </div>
+                        </td>
 
-                      {/* Stok Sistem */}
-                      <td className="py-3 px-3 text-center font-mono font-medium text-slate-600 dark:text-slate-400">
-                        {item.system_stock} {item.sparepart_unit || 'pcs'}
-                      </td>
+                        {/* Stok Sistem */}
+                        <td className="py-3 px-3 text-center font-mono font-medium text-slate-600 dark:text-slate-400">
+                          {item.system_stock} {item.sparepart_unit || 'pcs'}
+                        </td>
 
-                      {/* Stok Fisik */}
-                      <td className="py-3 px-3 text-center font-mono font-bold text-slate-900 dark:text-white">
-                        {item.physical_stock} {item.sparepart_unit || 'pcs'}
-                      </td>
+                        {/* Stok Fisik */}
+                        <td className="py-3 px-3 text-center font-mono font-bold text-slate-900 dark:text-white">
+                          {item.physical_stock} {item.sparepart_unit || 'pcs'}
+                        </td>
 
-                      {/* Selisih Badge */}
-                      <td className="py-3 px-3 text-center whitespace-nowrap font-mono font-bold">
-                        {diff === 0 ? (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
-                            0 (Sesuai)
-                          </span>
-                        ) : diff > 0 ? (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
-                            +{diff}
-                          </span>
-                        ) : (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200">
-                            {diff}
-                          </span>
-                        )}
-                      </td>
+                        {/* Selisih Badge */}
+                        <td className="py-3 px-3 text-center whitespace-nowrap font-mono font-bold">
+                          {diff === 0 ? (
+                            <span className="inline-flex px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                              0 (Sesuai)
+                            </span>
+                          ) : diff > 0 ? (
+                            <span className="inline-flex px-2 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200">
+                              +{diff}
+                            </span>
+                          ) : (
+                            <span className="inline-flex px-2 py-0.5 rounded text-xs bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200">
+                              {diff}
+                            </span>
+                          )}
+                        </td>
 
-                      {/* Alasan */}
-                      <td className="py-3 px-3 text-slate-700 dark:text-slate-300 max-w-sm truncate" title={item.reason}>
-                        {item.reason}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {/* Alasan */}
+                        <td className="py-3 px-3 text-slate-700 dark:text-slate-300 max-w-sm truncate" title={item.reason}>
+                          {item.reason}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 

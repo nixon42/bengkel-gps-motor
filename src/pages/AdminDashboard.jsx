@@ -107,16 +107,16 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans pb-16 md:pb-0">
       {/* Top Navbar */}
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold shadow-none">
-              <Wrench className="w-6 h-6" />
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 flex-1 sm:flex-initial">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold shrink-0 shadow-none">
+              <Wrench className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+            <div className="min-w-0">
+              <h1 className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight truncate max-w-[130px] xs:max-w-[200px] sm:max-w-none">
                 {tenant?.name || 'Bengkel Mobil GPS Motor Kediri'}
               </h1>
-              <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400">
+              <div className="hidden sm:flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 font-mono font-medium">
                   {tenant?.slug || 'bengkel-gps-motor'}
                 </span>
@@ -126,21 +126,20 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {/* Superadmin Portal Link if user is superadmin */}
             {user && (user.isSuperAdmin || user.role === 'superadmin') && (
               <button
                 onClick={() => onNavigateSuperadmin ? onNavigateSuperadmin() : (window.location.pathname = '/superadmin')}
-                className="touch-target flex items-center space-x-1.5 px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors shadow-none"
+                className="touch-target flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors shadow-none"
                 title="Buka Portal Pengawasan Superadmin"
               >
-                <ShieldCheck className="w-4 h-4 text-slate-950" />
-                <span className="hidden sm:inline">Portal Superadmin</span>
-                <span className="sm:hidden">Superadmin</span>
+                <ShieldCheck className="w-4 h-4 text-slate-950 shrink-0" />
+                <span className="hidden md:inline">Portal Superadmin</span>
               </button>
             )}
 
-            {/* View Landing Link */}
+            {/* View Landing Link (Desktop Only) */}
             <button
               onClick={onNavigateLanding}
               className="touch-target hidden lg:flex items-center space-x-1.5 px-3 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200"
@@ -149,54 +148,58 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
               <span>Lihat Website</span>
             </button>
 
-            {/* View Tracking Link */}
+            {/* View Tracking Link (Desktop Only) */}
             <button
               onClick={() => onNavigateTracking()}
               className="touch-target hidden md:flex items-center space-x-1.5 px-3 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200"
             >
               <Search className="w-3.5 h-3.5 text-blue-600" />
-              <span>Cek Status Publik</span>
+              <span>Cek Status</span>
             </button>
 
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
               aria-label="Toggle tema gelap/terang"
-              className="touch-target w-11 h-11 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors"
+              className="touch-target w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>
 
             {/* Auth Session Button */}
             {user ? (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
                 <button
                   onClick={() => setSettingsOpen(true)}
-                  className="touch-target hidden sm:flex items-center space-x-1.5 px-3 py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200"
+                  aria-label="Pengaturan Bengkel"
+                  title="Pengaturan Profil Bengkel"
+                  className="touch-target w-9 h-9 sm:w-auto sm:px-3 sm:py-2 flex items-center justify-center space-x-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 shrink-0"
                 >
                   <Settings className="w-4 h-4 text-slate-500" />
-                  <span>Pengaturan</span>
+                  <span className="hidden sm:inline">Pengaturan</span>
                 </button>
-                <div className="hidden md:flex flex-col text-right">
+                <div className="hidden lg:flex flex-col text-right">
                   <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{user.name}</span>
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">{user.email}</span>
                 </div>
                 <button
                   onClick={logout}
-                  className="touch-target flex items-center space-x-1 px-3 py-2 rounded bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium transition-colors"
+                  aria-label="Keluar akun"
+                  title="Keluar akun"
+                  className="touch-target flex items-center justify-center space-x-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-medium transition-colors shrink-0"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span className="hidden sm:inline">Keluar</span>
+                  <span className="hidden md:inline">Keluar</span>
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => mockLogin()}
                 disabled={loading}
-                className="touch-target flex items-center space-x-2 px-3 sm:px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
+                className="touch-target flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold transition-colors shrink-0"
               >
                 <LogIn className="w-4 h-4" />
-                <span>{loading ? 'Masuk...' : '1-Click Demo Login'}</span>
+                <span>{loading ? 'Masuk...' : 'Demo Login'}</span>
               </button>
             )}
           </div>
@@ -462,13 +465,6 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
         >
           <Users className="w-4 h-4 mb-0.5" />
           <span>Pelanggan</span>
-        </button>
-        <button
-          onClick={onNavigateLanding}
-          className="touch-target flex-1 flex flex-col items-center justify-center py-1 text-[11px] font-medium text-slate-500 dark:text-slate-400"
-        >
-          <ExternalLink className="w-4 h-4 mb-0.5" />
-          <span>Website</span>
         </button>
       </nav>
     </div>

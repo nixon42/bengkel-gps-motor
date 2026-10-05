@@ -326,84 +326,151 @@ export default function RepairOrdersPage() {
             Tidak ada Repair Order yang cocok dengan filter.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-slate-50 dark:bg-slate-750 text-slate-600 dark:text-slate-300 font-bold uppercase border-b border-slate-200 dark:border-slate-700">
-                <tr>
-                  <th className="py-3 px-4">Kendaraan & Plat</th>
-                  <th className="py-3 px-4">Pelanggan</th>
-                  <th className="py-3 px-4">Keluhan Awal</th>
-                  <th className="py-3 px-4">Status Tahapan</th>
-                  <th className="py-3 px-4 text-right">Total Biaya</th>
-                  <th className="py-3 px-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                {repairOrders.map((item) => (
-                  <tr
-                    key={item.id}
-                    onClick={() => setSelectedRoId(item.id)}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-750 cursor-pointer transition-colors"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-mono bg-slate-900 text-white px-2 py-0.5 rounded text-xs font-bold">
-                          {item.plate_number}
-                        </span>
-                        <div className="font-semibold text-slate-800 dark:text-slate-200">
-                          {item.car_brand} {item.car_model}
-                        </div>
-                      </div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">
-                        {item.ro_number} • Tgl: {item.entry_date}
-                      </div>
-                    </td>
-
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">
-                        {item.customer_name}
-                      </div>
-                      <div className="text-[11px] font-mono text-slate-500">
-                        {item.customer_phone || '-'}
-                      </div>
-                    </td>
-
-                    <td className="py-3 px-4 max-w-xs truncate text-slate-600 dark:text-slate-300">
-                      {item.complaint || '-'}
-                      <span className="block text-[10px] text-slate-400">PJ: {item.mechanic_name || 'Mas Agus'}</span>
-                    </td>
-
-                    <td className="py-3 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
-                        {item.status}
+          <div>
+            {/* Mobile Card List View (< 768px) */}
+            <div className="md:hidden divide-y divide-slate-200 dark:divide-slate-700">
+              {repairOrders.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedRoId(item.id)}
+                  className="p-4 hover:bg-slate-50 dark:hover:bg-slate-750/50 cursor-pointer space-y-2.5 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center space-x-2 min-w-0">
+                      <span className="font-mono bg-slate-900 text-white px-2 py-0.5 rounded text-xs font-bold shrink-0">
+                        {item.plate_number}
                       </span>
-                    </td>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs truncate">
+                        {item.car_brand} {item.car_model}
+                      </span>
+                    </div>
+                    <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
+                      {item.status}
+                    </span>
+                  </div>
 
-                    <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
-                      Rp {Number(item.total_cost || 0).toLocaleString('id-ID')}
-                    </td>
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                    <div className="truncate">
+                      <span className="font-medium text-slate-800 dark:text-slate-200">{item.customer_name}</span>
+                      {item.customer_phone && <span className="font-mono ml-1.5 text-[11px]">({item.customer_phone})</span>}
+                    </div>
+                    <span className="text-[11px] shrink-0 font-mono">{item.entry_date}</span>
+                  </div>
 
-                    <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-center space-x-1.5">
-                        <button
-                          onClick={() => setSelectedRoId(item.id)}
-                          className="touch-target px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-bold"
-                        >
-                          Kelola
-                        </button>
-                        <button
-                          onClick={() => window.open(`/api/repair-orders/${item.id}/invoice-pdf`, '_blank')}
-                          className="touch-target p-1 text-slate-600 hover:text-slate-900 dark:hover:text-white rounded"
-                          title="Cetak PDF"
-                        >
-                          <FileText className="w-4 h-4 text-red-500" />
-                        </button>
-                      </div>
-                    </td>
+                  {item.complaint && (
+                    <div className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-750 p-2.5 rounded border border-slate-100 dark:border-slate-700">
+                      <p className="line-clamp-2">{item.complaint}</p>
+                      <span className="block text-[10px] text-slate-400 mt-1">PJ: {item.mechanic_name || 'Mas Agus'}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-1">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Total Biaya</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">
+                        Rp {Number(item.total_cost || 0).toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-1.5" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => setSelectedRoId(item.id)}
+                        className="touch-target px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold"
+                      >
+                        Kelola
+                      </button>
+                      <button
+                        onClick={() => window.open(`/api/repair-orders/${item.id}/invoice-pdf`, '_blank')}
+                        className="touch-target p-1.5 text-slate-600 hover:text-slate-900 dark:hover:text-white rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+                        title="Cetak PDF"
+                      >
+                        <FileText className="w-4 h-4 text-red-500" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View (>= 768px) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-slate-50 dark:bg-slate-750 text-slate-600 dark:text-slate-300 font-bold uppercase border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="py-3 px-4">Kendaraan & Plat</th>
+                    <th className="py-3 px-4">Pelanggan</th>
+                    <th className="py-3 px-4">Keluhan Awal</th>
+                    <th className="py-3 px-4">Status Tahapan</th>
+                    <th className="py-3 px-4 text-right">Total Biaya</th>
+                    <th className="py-3 px-4 text-center">Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                  {repairOrders.map((item) => (
+                    <tr
+                      key={item.id}
+                      onClick={() => setSelectedRoId(item.id)}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-750 cursor-pointer transition-colors"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-mono bg-slate-900 text-white px-2 py-0.5 rounded text-xs font-bold">
+                            {item.plate_number}
+                          </span>
+                          <div className="font-semibold text-slate-800 dark:text-slate-200">
+                            {item.car_brand} {item.car_model}
+                          </div>
+                        </div>
+                        <div className="text-[11px] text-slate-500 mt-0.5">
+                          {item.ro_number} • Tgl: {item.entry_date}
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-4">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200">
+                          {item.customer_name}
+                        </div>
+                        <div className="text-[11px] font-mono text-slate-500">
+                          {item.customer_phone || '-'}
+                        </div>
+                      </td>
+
+                      <td className="py-3 px-4 max-w-xs truncate text-slate-600 dark:text-slate-300">
+                        {item.complaint || '-'}
+                        <span className="block text-[10px] text-slate-400">PJ: {item.mechanic_name || 'Mas Agus'}</span>
+                      </td>
+
+                      <td className="py-3 px-4">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
+                          {item.status}
+                        </span>
+                      </td>
+
+                      <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
+                        Rp {Number(item.total_cost || 0).toLocaleString('id-ID')}
+                      </td>
+
+                      <td className="py-3 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-center space-x-1.5">
+                          <button
+                            onClick={() => setSelectedRoId(item.id)}
+                            className="touch-target px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-bold"
+                          >
+                            Kelola
+                          </button>
+                          <button
+                            onClick={() => window.open(`/api/repair-orders/${item.id}/invoice-pdf`, '_blank')}
+                            className="touch-target p-1 text-slate-600 hover:text-slate-900 dark:hover:text-white rounded"
+                            title="Cetak PDF"
+                          >
+                            <FileText className="w-4 h-4 text-red-500" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

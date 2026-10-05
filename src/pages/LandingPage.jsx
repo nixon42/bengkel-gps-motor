@@ -33,15 +33,15 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSup
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div className="w-10 h-10 rounded bg-blue-600 flex items-center justify-center text-white shrink-0">
-              <Wrench className="w-6 h-6" />
+          <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer min-w-0 flex-1 sm:flex-initial" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded bg-blue-600 flex items-center justify-center text-white shrink-0">
+              <Wrench className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight block">
+            <div className="min-w-0">
+              <span className="text-sm sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight block truncate">
                 Bengkel GPS Motor
               </span>
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">
+              <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 block truncate">
                 Kediri • Sambiresik
               </span>
             </div>
@@ -74,22 +74,22 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSup
           </nav>
 
           {/* Right Controls */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {/* Dark Mode Toggle */}
             <button
               type="button"
               onClick={toggleTheme}
               aria-label="Ganti mode gelap atau terang"
-              className="touch-target w-11 h-11 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+              className="touch-target w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
             >
-              {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />}
             </button>
 
             {/* Quick Cek Status Button on Mobile */}
             <button
               type="button"
               onClick={() => onNavigateTracking()}
-              className="touch-target md:hidden flex items-center space-x-1 px-3 py-2 rounded bg-blue-600 text-white font-bold text-xs"
+              className="touch-target md:hidden flex items-center space-x-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded bg-blue-600 text-white font-bold text-xs"
             >
               <Search className="w-3.5 h-3.5" />
               <span>Cek Status</span>
@@ -113,9 +113,9 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSup
               disabled={loading}
               aria-label={user ? 'Buka Workspace' : 'Login Bengkel'}
               title={user ? 'Buka Workspace' : 'Login Bengkel'}
-              className="touch-target sm:hidden w-11 h-11 flex items-center justify-center rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 transition-colors"
+              className="touch-target sm:hidden w-9 h-9 flex items-center justify-center rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-blue-600 dark:text-blue-400 transition-colors"
             >
-              <LogIn className="w-5 h-5" />
+              <LogIn className="w-4 h-4" />
             </button>
           </div>
 

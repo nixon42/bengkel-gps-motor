@@ -529,127 +529,231 @@ export default function InventoryPage() {
             <p className="text-xs">Coba ubah kata kunci pencarian atau bersihkan filter yang aktif.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-3 sm:px-4">Foto & Item</th>
-                  <th className="py-3 px-3">Kategori</th>
-                  <th className="py-3 px-3">Stok & Status</th>
-                  <th className="py-3 px-3">Harga Beli</th>
-                  <th className="py-3 px-3">Harga Jual</th>
-                  <th className="py-3 px-3">Margin Laba</th>
-                  <th className="py-3 px-3 hidden md:table-cell">Supplier</th>
-                  <th className="py-3 px-3 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                {items.map((item) => (
-                  <tr 
-                    key={item.id} 
-                    className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
-                  >
-                    {/* Foto & Item Name */}
-                    <td className="py-3 px-3 sm:px-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
-                          {item.photo_url ? (
-                            <img
-                              src={item.photo_url}
-                              alt={item.name}
-                              loading="lazy"
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                              }}
-                            />
-                          ) : (
-                            <Package className="w-5 h-5 text-slate-400" />
-                          )}
+          <div>
+            {/* Mobile Card List View (< 768px) */}
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
+              {items.map((item) => (
+                <div key={item.id} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <div className="w-12 h-12 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                        {item.photo_url ? (
+                          <img
+                            src={item.photo_url}
+                            alt={item.name}
+                            loading="lazy"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <Package className="w-6 h-6 text-slate-400" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-slate-900 dark:text-white text-sm leading-tight truncate">
+                          {item.name || item.nama}
                         </div>
-                        <div>
-                          <div className="font-bold text-slate-900 dark:text-white leading-tight">
-                            {item.name || item.nama}
-                          </div>
-                          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
-                            {item.sku}
-                          </div>
+                        <div className="flex items-center space-x-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                          <span>{item.sku}</span>
+                          <span>•</span>
+                          <span className="font-sans font-medium px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                            {item.category || item.kategori}
+                          </span>
                         </div>
                       </div>
-                    </td>
-
-                    {/* Kategori */}
-                    <td className="py-3 px-3">
-                      <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                        {item.category || item.kategori}
-                      </span>
-                    </td>
-
-                    {/* Stok & Status */}
-                    <td className="py-3 px-3">
+                    </div>
+                    <div className="shrink-0">
                       {renderStockBadge(item)}
-                    </td>
+                    </div>
+                  </div>
 
-                    {/* Harga Beli */}
-                    <td className="py-3 px-3 font-mono font-medium text-slate-700 dark:text-slate-300">
-                      {formatRp(item.buy_price ?? item.hargaBeli)}
-                    </td>
-
-                    {/* Harga Jual */}
-                    <td className="py-3 px-3 font-mono font-bold text-slate-900 dark:text-white">
-                      {formatRp(item.sell_price ?? item.hargaJual)}
-                    </td>
-
-                    {/* Margin Laba */}
-                    <td className="py-3 px-3">
+                  {/* Price & Margin info */}
+                  <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-700/30 p-2.5 rounded border border-slate-100 dark:border-slate-700 text-xs">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Harga Beli</span>
+                      <span className="font-mono font-medium text-slate-700 dark:text-slate-300 text-[11px]">
+                        {formatRp(item.buy_price ?? item.hargaBeli)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Harga Jual</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white text-[11px]">
+                        {formatRp(item.sell_price ?? item.hargaJual)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Margin</span>
                       {renderProfitMargin(item)}
-                    </td>
+                    </div>
+                  </div>
 
-                    {/* Supplier */}
-                    <td className="py-3 px-3 hidden md:table-cell text-slate-600 dark:text-slate-400">
-                      {item.supplier || '-'}
-                    </td>
+                  {/* Action buttons */}
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[130px]">
+                      {item.supplier ? `Supplier: ${item.supplier}` : ''}
+                    </span>
+                    <div className="inline-flex items-center space-x-1.5">
+                      <button
+                        onClick={() => openRestockModal(item.id)}
+                        title="Restock barang masuk"
+                        className="touch-target px-2.5 py-1.5 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold flex items-center space-x-1"
+                      >
+                        <ArrowDownRight className="w-3.5 h-3.5" />
+                        <span>Masuk</span>
+                      </button>
+                      <button
+                        onClick={() => openStockOutModal(item.id)}
+                        title="Pengeluaran barang keluar"
+                        className="touch-target px-2.5 py-1.5 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 hover:bg-rose-100 text-xs font-bold flex items-center space-x-1"
+                      >
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        <span>Keluar</span>
+                      </button>
+                      <button
+                        onClick={() => openEditModal(item)}
+                        title="Ubah detail sparepart"
+                        className="touch-target p-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeletePart(item)}
+                        title="Hapus sparepart"
+                        className="touch-target p-1.5 rounded bg-slate-100 dark:bg-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-100"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-                    {/* Aksi */}
-                    <td className="py-3 px-3 text-right">
-                      <div className="inline-flex items-center space-x-1.5 justify-end">
-                        <button
-                          onClick={() => openRestockModal(item.id)}
-                          title="Restock barang masuk"
-                          className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60"
-                        >
-                          <ArrowDownRight className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={() => openStockOutModal(item.id)}
-                          title="Pengeluaran barang keluar"
-                          className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60"
-                        >
-                          <ArrowUpRight className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={() => openEditModal(item)}
-                          title="Ubah detail sparepart"
-                          className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={() => handleDeletePart(item)}
-                          title="Hapus / Nonaktifkan sparepart"
-                          className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-slate-100 dark:bg-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+            {/* Desktop Table View (>= 768px) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
+                    <th className="py-3 px-3 sm:px-4">Foto & Item</th>
+                    <th className="py-3 px-3">Kategori</th>
+                    <th className="py-3 px-3">Stok & Status</th>
+                    <th className="py-3 px-3">Harga Beli</th>
+                    <th className="py-3 px-3">Harga Jual</th>
+                    <th className="py-3 px-3">Margin Laba</th>
+                    <th className="py-3 px-3 hidden md:table-cell">Supplier</th>
+                    <th className="py-3 px-3 text-right">Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                  {items.map((item) => (
+                    <tr 
+                      key={item.id} 
+                      className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+                    >
+                      {/* Foto & Item Name */}
+                      <td className="py-3 px-3 sm:px-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                            {item.photo_url ? (
+                              <img
+                                src={item.photo_url}
+                                alt={item.name}
+                                loading="lazy"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              <Package className="w-5 h-5 text-slate-400" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-bold text-slate-900 dark:text-white leading-tight">
+                              {item.name || item.nama}
+                            </div>
+                            <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                              {item.sku}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Kategori */}
+                      <td className="py-3 px-3">
+                        <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                          {item.category || item.kategori}
+                        </span>
+                      </td>
+
+                      {/* Stok & Status */}
+                      <td className="py-3 px-3">
+                        {renderStockBadge(item)}
+                      </td>
+
+                      {/* Harga Beli */}
+                      <td className="py-3 px-3 font-mono font-medium text-slate-700 dark:text-slate-300">
+                        {formatRp(item.buy_price ?? item.hargaBeli)}
+                      </td>
+
+                      {/* Harga Jual */}
+                      <td className="py-3 px-3 font-mono font-bold text-slate-900 dark:text-white">
+                        {formatRp(item.sell_price ?? item.hargaJual)}
+                      </td>
+
+                      {/* Margin Laba */}
+                      <td className="py-3 px-3">
+                        {renderProfitMargin(item)}
+                      </td>
+
+                      {/* Supplier */}
+                      <td className="py-3 px-3 hidden md:table-cell text-slate-600 dark:text-slate-400">
+                        {item.supplier || '-'}
+                      </td>
+
+                      {/* Aksi */}
+                      <td className="py-3 px-3 text-right">
+                        <div className="inline-flex items-center space-x-1.5 justify-end">
+                          <button
+                            onClick={() => openRestockModal(item.id)}
+                            title="Restock barang masuk"
+                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60"
+                          >
+                            <ArrowDownRight className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => openStockOutModal(item.id)}
+                            title="Pengeluaran barang keluar"
+                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60"
+                          >
+                            <ArrowUpRight className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => openEditModal(item)}
+                            title="Ubah detail sparepart"
+                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => handleDeletePart(item)}
+                            title="Hapus / Nonaktifkan sparepart"
+                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-slate-100 dark:bg-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 

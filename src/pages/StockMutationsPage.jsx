@@ -414,8 +414,82 @@ export default function StockMutationsPage() {
             <p className="text-xs">Belum ada transaksi barang masuk atau keluar yang sesuai filter.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          <div>
+            {/* Mobile Card List View (< 768px) */}
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
+              {movements.map((m) => {
+                const isIncoming = m.type === 'IN';
+                const isOutgoing = m.type === 'OUT';
+
+                return (
+                  <div key={m.id} className="p-4 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center space-x-2">
+                        {renderTypeBadge(m.type)}
+                        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                          {formatDateIndo(m.date)}
+                        </span>
+                      </div>
+                      <span className={`text-sm font-bold font-mono ${
+                        isIncoming 
+                          ? 'text-emerald-700 dark:text-emerald-400' 
+                          : isOutgoing 
+                          ? 'text-rose-700 dark:text-rose-400' 
+                          : 'text-slate-700 dark:text-slate-300'
+                      }`}>
+                        {isIncoming ? `+${m.quantity}` : isOutgoing ? `-${m.quantity}` : `${m.quantity}`}{' '}
+                        <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+                          {m.sparepart_unit || 'pcs'}
+                        </span>
+                      </span>
+                    </div>
+
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white text-xs leading-tight">
+                        {m.sparepart_name || '-'}
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                        {m.sparepart_sku || '-'}
+                      </div>
+                    </div>
+
+                    {(m.total_price || m.supplier || m.invoice_number || m.notes) && (
+                      <div className="bg-slate-50 dark:bg-slate-700/30 p-2.5 rounded border border-slate-100 dark:border-slate-700 text-xs space-y-1">
+                        {m.total_price ? (
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 dark:text-slate-400">Total Nilai:</span>
+                            <span className="font-mono font-bold text-slate-900 dark:text-white">
+                              {formatRp(m.total_price)}
+                            </span>
+                          </div>
+                        ) : null}
+                        {m.supplier && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 dark:text-slate-400">Supplier:</span>
+                            <span className="font-medium text-slate-800 dark:text-slate-200">{m.supplier}</span>
+                          </div>
+                        )}
+                        {m.invoice_number && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 dark:text-slate-400">No. Faktur:</span>
+                            <span className="font-mono text-blue-600 dark:text-blue-400">{m.invoice_number}</span>
+                          </div>
+                        )}
+                        {m.notes && (
+                          <p className="text-[11px] text-slate-600 dark:text-slate-300 pt-0.5 border-t border-slate-200/50 dark:border-slate-700/50">
+                            {m.notes}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View (>= 768px) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
                   <th className="py-3 px-3 sm:px-4">Tanggal</th>
@@ -530,7 +604,8 @@ export default function StockMutationsPage() {
               </tbody>
             </table>
           </div>
-        )}
+        </div>
+      )}
 
         {/* Pagination Bar */}
         <div className="bg-slate-50 dark:bg-slate-700/40 border-t border-slate-200 dark:border-slate-700 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
