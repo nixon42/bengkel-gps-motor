@@ -13,7 +13,7 @@ services:
       - PORT=3000
       - DB_PATH=/app/data/bengkel.db
       - UPLOAD_DIR=/app/uploads
-      - SESSION_SECRET=bengkel_gps_motor_prod_secret_2026
+      - SESSION_SECRET=${SESSION_SECRET:-bengkel_gps_motor_prod_secret_2026}
       - IMAGE_STORAGE_SALT=${IMAGE_STORAGE_SALT:-bengkel-gps-motor-secure-salt-2026}
       - NODE_OPTIONS=--max-old-space-size=512
     deploy:
