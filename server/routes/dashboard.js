@@ -284,6 +284,55 @@ export function dashboardRoutes(db) {
       combinedActivities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       const recentActivities = combinedActivities.slice(0, 10);
 
+      // 6. Operational Attention Items (Triage)
+      const waitingPartsRos = db.prepare(`
+        SELECT id, ro_number, plate_number, customer_name, car_brand, car_model, mechanic_name, updated_at
+        FROM repair_orders
+        WHERE tenant_id = ? AND status = 'MENUNGGU_PART'
+        ORDER BY updated_at ASC
+        LIMIT 5
+      `).all(tenantId);
+
+      const readyPickupRos = db.prepare(`
+        SELECT id, ro_number, plate_number, customer_name, customer_phone, car_brand, car_model, updated_at
+        FROM repair_orders
+        WHERE tenant_id = ? AND status = 'SELESAI'
+        ORDER BY updated_at ASC
+        LIMIT 5
+      `).all(tenantId);
+
+      const criticalPartsList = db.prepare(`
+        SELECT id, name, sku, category, stock, min_stock, unit, supplier
+        FROM spareparts
+        WHERE tenant_id = ? AND is_active = 1 AND stock <= min_stock
+        ORDER BY stock ASC, name ASC
+        LIMIT 5
+      `).all(tenantId);
+
+      // 7. Active Workshop Bays / Floor Radar
+      const activeBays = db.prepare(`
+        SELECT id, ro_number, plate_number, customer_name, car_brand, car_model, mechanic_name, status, updated_at
+        FROM repair_orders
+        WHERE tenant_id = ? AND status IN ('MASUK', 'DIAGNOSA', 'PENGERJAAN')
+        ORDER BY 
+          CASE status 
+            WHEN 'PENGERJAAN' THEN 1 
+            WHEN 'DIAGNOSA' THEN 2 
+            ELSE 3 
+          END, 
+          updated_at DESC
+        LIMIT 6
+      `).all(tenantId);
+
+      // 8. All active repair orders for instantaneous Omnibox lookup
+      const activeVehicles = db.prepare(`
+        SELECT id, ro_number, plate_number, customer_name, car_brand, car_model, mechanic_name, status
+        FROM repair_orders
+        WHERE tenant_id = ? AND status != 'DIAMBIL'
+        ORDER BY updated_at DESC
+        LIMIT 20
+      `).all(tenantId);
+
       const summary = {
         active_ros: activeRos,
         active_ros_today: activeRos,
@@ -310,7 +359,14 @@ export function dashboardRoutes(db) {
         top_spareparts: topSpareparts,
         top_parts: topSpareparts,
         recent_activities: recentActivities,
-        recent_activity: recentActivities
+        recent_activity: recentActivities,
+        attention_items: {
+          waiting_parts: waitingPartsRos,
+          ready_pickup: readyPickupRos,
+          critical_parts: criticalPartsList
+        },
+        active_bays: activeBays,
+        active_vehicles: activeVehicles
       });
     } catch (err) {
       next(err);
