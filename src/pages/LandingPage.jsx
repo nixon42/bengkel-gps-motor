@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wrench, Sun, Moon, LogIn, Search, ShieldCheck } from 'lucide-react';
+import { Wrench, Sun, Moon, LogIn, Search, ShieldCheck, BookOpen } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import HeroSection from '../components/Landing/HeroSection';
@@ -10,7 +10,7 @@ import FaqSection from '../components/Landing/FaqSection';
 import LocationSection from '../components/Landing/LocationSection';
 import Footer from '../components/Landing/Footer';
 
-export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSuperadmin }) {
+export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSuperadmin, onNavigateDocs }) {
   const { theme, toggleTheme } = useTheme();
   const { user, mockLogin, loading } = useAuth();
 
@@ -68,6 +68,13 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSup
             <a href="#faq" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               FAQ
             </a>
+            <button
+              onClick={() => onNavigateDocs ? onNavigateDocs() : (window.location.pathname = '/panduan')}
+              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center space-x-1"
+            >
+              <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>Panduan</span>
+            </button>
             <a href="#lokasi" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               Lokasi & Kontak
             </a>
@@ -137,6 +144,7 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSup
         onNavigateTracking={() => onNavigateTracking()} 
         onOpenLogin={handleLoginClick} 
         onOpenSuperadmin={onOpenSuperadmin}
+        onNavigateDocs={onNavigateDocs}
       />
     </div>
   );

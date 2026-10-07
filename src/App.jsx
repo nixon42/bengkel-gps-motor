@@ -5,6 +5,7 @@ import LandingPage from './pages/LandingPage';
 const PublicTrackingPage = lazy(() => import('./pages/PublicTrackingPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'));
+const DocsPage = lazy(() => import('./pages/DocsPage'));
 
 function PageFallback() {
   return (
@@ -22,27 +23,37 @@ export default function App() {
 
   const parseRoute = () => {
     if (typeof window === 'undefined') {
-      return { view: 'landing', slug: 'bengkel-gps-motor', plate: '' };
+      return { view: 'landing', slug: 'bengkel-gps-motor', plate: '', section: '' };
     }
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
     const plate = params.get('plate') || '';
 
     if (path.startsWith('/superadmin')) {
-      return { view: 'superadmin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '' };
+      return { view: 'superadmin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '', section: '' };
+    }
+
+    if (path === '/panduan' || path === '/docs' || path.startsWith('/panduan/') || path.startsWith('/docs/')) {
+      const hash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
+      return { 
+        view: 'docs', 
+        slug: tenant?.slug || 'bengkel-gps-motor', 
+        plate: '', 
+        section: hash || params.get('topic') || '' 
+      };
     }
 
     if (path.includes('cek-status')) {
       const match = path.match(/^\/([^\/]+)\/cek-status/);
       const slug = match ? match[1] : (tenant?.slug || 'bengkel-gps-motor');
-      return { view: 'tracking', slug, plate };
+      return { view: 'tracking', slug, plate, section: '' };
     }
 
     if (path.startsWith('/admin') || path.startsWith('/dashboard') || path === '/login' || path === '/masuk') {
-      return { view: 'admin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '' };
+      return { view: 'admin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '', section: '' };
     }
 
-    return { view: 'landing', slug: tenant?.slug || 'bengkel-gps-motor', plate: '' };
+    return { view: 'landing', slug: tenant?.slug || 'bengkel-gps-motor', plate: '', section: '' };
   };
 
   const [currentRoute, setCurrentRoute] = useState(parseRoute);
@@ -65,6 +76,9 @@ export default function App() {
       newPath = '/admin';
     } else if (view === 'superadmin') {
       newPath = '/superadmin';
+    } else if (view === 'docs' || view === 'panduan') {
+      const anchor = extra.section ? `#${extra.section}` : '';
+      newPath = `/panduan${anchor}`;
     } else {
       newPath = '/';
     }
@@ -76,7 +90,8 @@ export default function App() {
     setCurrentRoute({
       view,
       slug,
-      plate: extra.plate || ''
+      plate: extra.plate || '',
+      section: extra.section || ''
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -88,6 +103,7 @@ export default function App() {
         <SuperadminDashboard
           onNavigateAdmin={() => navigateTo('admin')}
           onNavigateLanding={() => navigateTo('landing')}
+          onNavigateDocs={(section) => navigateTo('docs', { section })}
         />
       </Suspense>
     );
@@ -105,6 +121,19 @@ export default function App() {
     );
   }
 
+  if (currentRoute.view === 'docs' || currentRoute.view === 'panduan') {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <DocsPage
+          initialSection={currentRoute.section}
+          onNavigateHome={() => navigateTo('landing')}
+          onNavigateAdmin={() => navigateTo('admin')}
+          onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
+        />
+      </Suspense>
+    );
+  }
+
   if (currentRoute.view === 'admin') {
     return (
       <Suspense fallback={<PageFallback />}>
@@ -112,6 +141,7 @@ export default function App() {
           onNavigateLanding={() => navigateTo('landing')}
           onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
           onNavigateSuperadmin={() => navigateTo('superadmin')}
+          onNavigateDocs={(section) => navigateTo('docs', { section })}
         />
       </Suspense>
     );
@@ -122,6 +152,7 @@ export default function App() {
       onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
       onOpenAdmin={() => navigateTo('admin')}
       onOpenSuperadmin={() => navigateTo('superadmin')}
+      onNavigateDocs={(section) => navigateTo('docs', { section })}
     />
   );
 }

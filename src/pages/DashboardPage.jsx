@@ -22,11 +22,12 @@ import {
   ArrowDownUp, 
   ClipboardCheck, 
   Users,
-  X
+  X,
+  BookOpen
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigateLanding, onNavigateTracking }) {
+export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigateLanding, onNavigateTracking, onNavigateDocs }) {
   const { tenant } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -201,7 +202,8 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
     { label: 'Stok Opname Fisik', icon: ClipboardCheck, action: () => { setQuickActionOpen(false); onNavigateTab('opname'); }, desc: 'Sinkronisasi stok sistem & fisik' },
     { label: 'Katalog Sparepart & Inventaris', icon: Layers, action: () => { setQuickActionOpen(false); onNavigateTab('inventory'); }, desc: 'Cari & kelola inventaris barang' },
     { label: 'Database CRM Pelanggan', icon: Users, action: () => { setQuickActionOpen(false); onNavigateTab('customers'); }, desc: 'Data kontak & histori pelanggan' },
-    { label: 'Pengaturan Profil Bengkel', icon: Settings, action: () => { setQuickActionOpen(false); onOpenSettings(); }, desc: 'Nama, alamat, jam operasional' }
+    { label: 'Pengaturan Profil Bengkel', icon: Settings, action: () => { setQuickActionOpen(false); onOpenSettings(); }, desc: 'Nama, alamat, jam operasional' },
+    { label: 'Buku Panduan & Dokumentasi', icon: BookOpen, action: () => { setQuickActionOpen(false); if (onNavigateDocs) onNavigateDocs(); else onNavigateTab('docs'); }, desc: 'Tutorial langkah operasional Owner, Mekanik, & Kasir' }
   ];
 
   const filteredQuickActions = quickActions.filter(item => 

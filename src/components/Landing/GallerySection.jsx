@@ -62,7 +62,7 @@ export default function GallerySection() {
                   loading="lazy"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
-                <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900/80 text-white backdrop-blur-none border border-slate-700">
+                <span className="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 text-white border border-slate-700">
                   {item.category}
                 </span>
               </div>

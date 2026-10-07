@@ -27,7 +27,8 @@ import {
   ClipboardCheck, 
   Wallet, 
   Users, 
-  Car 
+  Car,
+  BookOpen
 } from 'lucide-react';
 
 const InventoryPage = lazy(() => import('./InventoryPage'));
@@ -37,6 +38,7 @@ const FinancePage = lazy(() => import('./FinancePage'));
 const RepairOrdersPage = lazy(() => import('./RepairOrdersPage'));
 const CustomersPage = lazy(() => import('./CustomersPage'));
 const DashboardPage = lazy(() => import('./DashboardPage'));
+const DocsPage = lazy(() => import('./DocsPage'));
 
 function TabFallback() {
   return (
@@ -47,7 +49,7 @@ function TabFallback() {
   );
 }
 
-export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, onNavigateSuperadmin }) {
+export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, onNavigateSuperadmin, onNavigateDocs }) {
   const { user, tenant, loading, mockLogin, logout, updateSettings } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
@@ -155,6 +157,17 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
             >
               <Search className="w-3.5 h-3.5 text-blue-600" />
               <span>Cek Status</span>
+            </button>
+
+            {/* Buku Panduan Button */}
+            <button
+              onClick={() => onNavigateDocs ? onNavigateDocs() : setActiveTab('docs')}
+              aria-label="Buka Buku Panduan Aplikasi"
+              title="Buku Panduan Operasional & Dokumentasi"
+              className="touch-target flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors shadow-none"
+            >
+              <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+              <span className="hidden sm:inline">Panduan</span>
             </button>
 
             {/* Dark Mode Toggle */}
@@ -293,6 +306,18 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
               <Users className="w-4 h-4" />
               <span>Pelanggan CRM</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('docs')}
+              className={`touch-target px-3.5 py-2 rounded text-xs font-bold flex items-center space-x-2 whitespace-nowrap transition-colors ${
+                activeTab === 'docs'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Buku Panduan</span>
+            </button>
           </div>
         </div>
       </div>
@@ -306,6 +331,7 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
           {activeTab === 'mutations' && <StockMutationsPage />}
           {activeTab === 'opname' && <StockOpnamePage />}
           {activeTab === 'finance' && <FinancePage />}
+          {activeTab === 'docs' && <DocsPage isInline onNavigateTab={setActiveTab} />}
           {activeTab === 'overview' && (
             <div className="space-y-6">
               <DashboardPage 
@@ -313,6 +339,7 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
                 onOpenSettings={() => setSettingsOpen(true)}
                 onNavigateLanding={onNavigateLanding}
                 onNavigateTracking={onNavigateTracking}
+                onNavigateDocs={onNavigateDocs}
               />
             </div>
           )}

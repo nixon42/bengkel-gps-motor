@@ -1,7 +1,7 @@
 import React from 'react';
 import { Wrench, MapPin, Phone, Clock, ShieldCheck, Heart } from 'lucide-react';
 
-export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadmin }) {
+export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadmin, onNavigateDocs }) {
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -49,6 +49,15 @@ export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadm
                   className="hover:text-white transition-colors text-left"
                 >
                   Cek Status Servis (Tracking)
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigateDocs ? onNavigateDocs() : (window.location.pathname = '/panduan')}
+                  className="hover:text-white transition-colors text-left"
+                >
+                  Buku Panduan Penggunaan
                 </button>
               </li>
               <li>

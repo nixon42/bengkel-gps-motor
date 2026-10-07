@@ -544,6 +544,49 @@ export async function runTier1Features(options = {}) {
       assert.ok(resDelDefault.body.error.includes('default'));
     });
 
+    // ----------------------------------------------------
+    // T1.15: Documentation & User Guide (/panduan & /docs)
+    // ----------------------------------------------------
+    await test('T1.15: GET /panduan, /docs, and /api/docs verify documentation and role workflows', async () => {
+      // 1. Verify direct HTML routes for /panduan and /docs
+      const resPanduan = await request(app).get('/panduan');
+      assert.equal(resPanduan.status, 200);
+      assert.ok(resPanduan.text.includes('Bengkel') || resPanduan.text.includes('html'));
+
+      const resDocs = await request(app).get('/docs');
+      assert.equal(resDocs.status, 200);
+
+      // 2. Verify Documentation API / data structure
+      const resData = await request(app).get('/api/docs');
+      assert.equal(resData.status, 200);
+      assert.equal(resData.body.success, true);
+      assert.ok(resData.body.meta);
+      assert.equal(resData.body.meta.totalFaqs >= 5, true);
+
+      // 3. Verify all 4 roles are covered
+      const roleKeys = resData.body.roles.map(r => r.key);
+      assert.ok(roleKeys.includes('owner'), 'Owner role must be covered');
+      assert.ok(roleKeys.includes('mekanik'), 'Mekanik role must be covered');
+      assert.ok(roleKeys.includes('kasir'), 'Kasir role must be covered');
+      assert.ok(roleKeys.includes('crm'), 'CRM role must be covered');
+
+      // 4. Verify all 5 Operational Troubleshooting FAQ items are covered
+      assert.ok(Array.isArray(resData.body.faqs));
+      assert.ok(resData.body.faqs.length >= 5, 'Must have at least 5 FAQ items');
+
+      // 5. Verify search query filtering works on API
+      const resSearch = await request(app).get('/api/docs?q=opname');
+      assert.equal(resSearch.status, 200);
+      assert.equal(resSearch.body.success, true);
+      assert.ok(resSearch.body.totalResults > 0);
+
+      // 6. Verify single module retrieval
+      const resModule = await request(app).get('/api/docs/owner-settings');
+      assert.equal(resModule.status, 200);
+      assert.equal(resModule.body.success, true);
+      assert.equal(resModule.body.data.id, 'owner-settings');
+    });
+
   } finally {
     cleanup();
   }

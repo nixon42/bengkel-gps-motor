@@ -19,6 +19,7 @@ import { repairOrdersRoutes } from './routes/repairOrders.js';
 import { customersRoutes } from './routes/customers.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { superadminRoutes } from './routes/superadmin.js';
+import docsRoutes from './routes/docs.js';
 import { desaltBuffer } from './services/imageSalter.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -161,6 +162,20 @@ export function createApp(databaseInstance) {
   app.use('/api/customers', customersRoutes(db));
   app.use('/api/dashboard', dashboardRoutes(db));
   app.use('/api/superadmin', superadminRoutes(db));
+  app.use('/api/docs', docsRoutes);
+
+  // Direct route handler for /panduan and /docs (always returns HTML)
+  const distDir = path.join(__dirname, '../dist');
+  app.get(['/panduan', '/docs', '/panduan/*', '/docs/*'], (req, res) => {
+    if (fs.existsSync(distDir)) {
+      return res.sendFile(path.join(distDir, 'index.html'));
+    }
+    const rootIndex = path.join(__dirname, '../index.html');
+    if (fs.existsSync(rootIndex)) {
+      return res.sendFile(rootIndex);
+    }
+    res.status(200).send('<!DOCTYPE html><html><head><title>Panduan Bengkel Mobil GPS Motor Kediri</title></head><body><div id="root"></div></body></html>');
+  });
 
   // Static public assets (favicon.svg, manifest.json, etc.)
   const publicDir = path.join(__dirname, '../public');
@@ -169,7 +184,6 @@ export function createApp(databaseInstance) {
   }
 
   // Static frontend assets in production / when dist exists
-  const distDir = path.join(__dirname, '../dist');
   if (fs.existsSync(distDir)) {
     app.use(express.static(distDir));
     app.get('*', (req, res, next) => {
