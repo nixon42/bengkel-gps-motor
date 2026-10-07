@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-08T03:15:20Z",
+  "title": "Design System: Bengkel Mobil GPS Motor Kediri",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Automotive Blue",
+        "canonical": "#2563eb",
+        "tonalRamp": ["#eff6ff", "#dbeafe", "#93c5fd", "#3b82f6", "#2563eb", "#1d4ed8", "#1e40af"]
+      },
+      "emerald-income": {
+        "role": "success",
+        "displayName": "Emerald Income",
+        "canonical": "#10b981",
+        "tonalRamp": ["#ecfdf5", "#d1fae5", "#6ee7b7", "#10b981", "#059669", "#047857"]
+      },
+      "rose-expense": {
+        "role": "danger",
+        "displayName": "Rose Alert",
+        "canonical": "#f43f5e",
+        "tonalRamp": ["#fff1f2", "#ffe4e6", "#fda4af", "#f43f5e", "#e11d48", "#be123c"]
+      },
+      "amber-warning": {
+        "role": "warning",
+        "displayName": "Amber Attention",
+        "canonical": "#f59e0b",
+        "tonalRamp": ["#fffbeb", "#fef3c7", "#fcd34d", "#f59e0b", "#d97706", "#b45309"]
+      },
+      "purple-servicing": {
+        "role": "accent",
+        "displayName": "Purple Servicing",
+        "canonical": "#8b5cf6",
+        "tonalRamp": ["#f5f3ff", "#ede9fe", "#c4b5fd", "#8b5cf6", "#7c3aed", "#6d28d9"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Nama bengkel dan angka KPI utama." },
+      "headline": { "displayName": "Headline", "purpose": "Judul modul dan kartu radar bengkel." },
+      "title": { "displayName": "Title", "purpose": "Plat nomor kendaraan dan nama suku cadang." },
+      "body": { "displayName": "Body", "purpose": "Teks keluhan, deskripsi servis, dan catatan mekanik." },
+      "label": { "displayName": "Label", "purpose": "Badge 6 tahap status RO dan indikator peran." }
+    },
+    "shadows": [
+      { "name": "none", "value": "none", "purpose": "Strict Modern Flat; tidak menggunakan bayangan blur dekoratif." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0, 0, 0.2, 1)", "purpose": "Transisi halus hover tombol dan akordion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Action Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Tombol aksi utama bengkel dengan target sentuh 44px.",
+      "html": "<button class=\"touch-target px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs\">Simpan Data</button>",
+      "css": ".touch-target { min-height: 44px; min-width: 44px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Grounded Workshop Terminal",
+    "overview": "Sistem antarmuka Modern Flat murni untuk Bengkel Mobil GPS Motor Kediri, mengutamakan kecepatan pemuatan, kontras tajam di bawah cahaya bengkel, dan kenyamanan operasional layar sentuh ponsel tanpa efek kaca berat.",
+    "keyCharacteristics": [
+      "Zero glassmorphism atau blur dekoratif",
+      "Target sentuh ergonomis minimum 44x44px",
+      "Tipografi angka tabular sejajar vertikal",
+      "Pemisahan visual berbasis garis 1px dan tonal layering"
+    ],
+    "rules": [
+      {
+        "name": "The Zero-Blur Rule",
+        "body": "Dilarang keras menggunakan utility backdrop-blur atau filter transparansi buram.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Gunakan angka tabular (.tabular-nums) pada semua nilai Rupiah dan plat nomor.",
+      "Pertahankan area klik minimum 44x44px untuk seluruh tombol dan input.",
+      "Sertakan tombol 1-klik recovery pada pesan kesalahan."
+    ],
+    "donts": [
+      "Jangan gunakan glassmorphism atau drop shadow tebal.",
+      "Jangan gunakan teks abu-abu di atas latar berwarna.",
+      "Jangan gunakan pustaka chart pihak ketiga yang berat jika bisa dirender dengan SVG murni."
+    ]
+  }
+}
