@@ -133,10 +133,10 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
             {user && (user.isSuperAdmin || user.role === 'superadmin') && (
               <button
                 onClick={() => onNavigateSuperadmin ? onNavigateSuperadmin() : (window.location.pathname = '/superadmin')}
-                className="touch-target flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition-colors shadow-none"
+                className="touch-target flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold text-xs transition-colors shadow-none"
                 title="Buka Portal Pengawasan Superadmin"
               >
-                <ShieldCheck className="w-4 h-4 text-slate-950 shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-amber-950 shrink-0" />
                 <span className="hidden md:inline">Portal Superadmin</span>
               </button>
             )}

@@ -842,28 +842,28 @@ export default function RepairOrdersPage() {
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('today_17')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         Hari ini 17:00
                       </button>
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('tomorrow_12')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         Besok 12:00
                       </button>
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('tomorrow_17')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         Besok 17:00
                       </button>
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('in_2_days')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 hover:text-blue-700 text-slate-700 dark:text-slate-300 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         2 Hari Lagi
                       </button>

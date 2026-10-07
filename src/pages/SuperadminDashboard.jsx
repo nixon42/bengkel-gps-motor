@@ -321,8 +321,8 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-amber-500 rounded flex items-center justify-center text-slate-950 font-bold">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="w-10 h-10 bg-amber-500 rounded flex items-center justify-center text-amber-950 font-bold">
+              <ShieldCheck className="w-6 h-6 text-amber-950" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
@@ -391,7 +391,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={handleSuperadminQuickLogin}
-              className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs"
+              className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold text-xs"
             >
               🔑 1-Click Login sebagai Superadmin
             </button>
@@ -1095,8 +1095,8 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 </select>
               </div>
 
-              <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded text-slate-700 dark:text-slate-300 text-[11px]">
-                💡 <strong>Multi-Akun Tenant:</strong> Anda dapat mendaftarkan beberapa email berbeda ke satu workspace bengkel yang sama, sehingga pemilik bengkel dan para staf dapat mengakses dan berbagi data yang sama.
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded text-blue-900 dark:text-blue-200 text-[11px]">
+                💡 <strong className="text-blue-950 dark:text-blue-100">Multi-Akun Tenant:</strong> Anda dapat mendaftarkan beberapa email berbeda ke satu workspace bengkel yang sama, sehingga pemilik bengkel dan para staf dapat mengakses dan berbagi data yang sama.
               </div>
 
               <div className="pt-3 flex items-center justify-end space-x-2 border-t border-slate-100 dark:border-slate-700">
@@ -1189,9 +1189,9 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 <button
                   type="submit"
                   disabled={reassignSubmitting}
-                  className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center space-x-1.5"
+                  className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold text-xs flex items-center space-x-1.5"
                 >
-                  <ArrowRightLeft className="w-4 h-4" />
+                  <ArrowRightLeft className="w-4 h-4 text-amber-950" />
                   <span>{reassignSubmitting ? 'Memindahkan...' : 'Pindahkan Workspace'}</span>
                 </button>
               </div>
