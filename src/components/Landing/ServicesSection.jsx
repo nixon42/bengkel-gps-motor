@@ -1,140 +1,190 @@
-import React from 'react';
-import { Gauge, Cpu, Wrench, ShieldCheck, Zap, Clock, Check, MessageSquare } from 'lucide-react';
+import React, { useState } from 'react';
+import { Gauge, Cpu, Wrench, ShieldCheck, Zap, Clock, Check, MessageSquare, ArrowRight } from 'lucide-react';
 
-const SERVICES = [
+const SERVICE_CATEGORIES = [
   {
-    id: 'tune-up',
-    title: 'Tune Up Mesin & Carbon Clean',
-    category: 'Tune Up',
-    icon: Gauge,
-    image: '/images/services/tune-up.jpg',
-    badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300',
-    description: 'Pembersihan ruang bakar secara menyeluruh, kalibrasi injektor, pembersihan throttle body, dan scan OBD2 komputer mesin untuk mengembalikan tarikan enteng dan hemat bahan bakar.',
-    features: [
-      'Scan diagnostik OBD2 scanner',
-      'Pembersihan kerak ruang bakar (Carbon Clean)',
-      'Kalibrasi dan tes semprotan injektor',
-      'Penyetelan celah elektroda busi'
-    ]
-  },
-  {
-    id: 'servis-injeksi',
-    title: 'Servis Mobil Injeksi & EFI',
-    category: 'Injeksi',
+    id: 'mesin-efi',
+    tag: 'Spesialis Inti',
+    title: 'Diagnostik Komputer, EFI & Tune Up Mesin',
     icon: Cpu,
-    image: '/images/services/injeksi.jpg',
-    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
-    description: 'Diagnosa dan perbaikan sensor EFI, lampu check engine (MIL) menyala, sensor oksigen, throttle position sensor, fuel pump, dan kalibrasi sistem bahan bakar injeksi elektronik.',
-    features: [
-      'Pendeteksian error kode DTC scanner',
-      'Pembersihan ultrasonic injektor bensin',
-      'Pengecekan tekanan pompa bensin (Fuel Pump)',
-      'Kalibrasi Idle Speed Control (ISC/IACV)'
-    ]
+    lead: true,
+    description: 'Diagnosa presisi sensor elektronik mobil modern, pembersihan kerak ruang bakar tanpa bongkar mesin (Carbon Clean), dan reset adaptasi ECU dengan OBD2 Scanner.',
+    specs: [
+      'Scan diagnostik OBD2 multi-brand & analisa live sensor',
+      'Pembersihan ultrasonic & kalibrasi semprotan injektor bensin',
+      'Pembersihan throttle body & kalibrasi Idle Speed Control (ISC)',
+      'Carbon Clean ruang bakar & penyetelan celah elektroda busi'
+    ],
+    turnaround: '1.5 - 3 Jam (Bisa Ditunggu)',
+    suitableFor: 'Tarikan berat, mesin brebet, boros BBM, lampu check engine menyala'
   },
   {
-    id: 'overhaul-mesin',
-    title: 'Overhaul Mesin (Turun Mesin)',
-    category: 'Overhaul',
+    id: 'overhaul',
+    tag: 'Mesin Berat',
+    title: 'Overhaul Mesin (Turun Mesin Total / Semi)',
     icon: Wrench,
-    image: '/images/services/overhaul.jpg',
-    badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
-    description: 'Solusi tuntas untuk mobil ngebul putih/hitam, oli berkurang drastis, kompresi bocor, bunyi mesin kasar, atau overheat akibat cylinder head melengkung.',
-    features: [
-      'Turun mesin semi maupun total overhaul',
-      'Skir klep dan penggantian seal klep original',
-      'Penggantian ring piston & metal jalan/duduk',
-      'Pengukuran clearance presisi sesuai spec pabrik'
-    ]
+    lead: false,
+    description: 'Penanganan tuntas mesin overheat, kompresi bocor, oli berkurang drastis, asap putih, atau suara kasar dengan pengukuran clearance mikrometer sesuai spesifikasi pabrikan.',
+    specs: [
+      'Skir klep presisi & penggantian seal klep original',
+      'Penggantian ring piston & metal jalan / metal duduk',
+      'Perataan silinder head & paking cylinder head original'
+    ],
+    turnaround: '3 - 5 Hari Kerja',
+    suitableFor: 'Mesin overheat melengkung, kompresi pincang, suara metalik kasar'
   },
   {
     id: 'kaki-kaki',
-    title: 'Perbaikan Kaki-kaki & Suspensi',
-    category: 'Kaki-kaki',
+    tag: 'Suspensi & Kemudi',
+    title: 'Perbaikan Kaki-kaki, Kemudi & Suspensi',
     icon: ShieldCheck,
-    image: '/images/services/kaki-kaki.jpg',
-    badgeColor: 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300',
-    description: 'Hilangkan bunyi glodakan dan getaran saat melibas jalan berlubang di Kediri. Pemeriksaan dan pergantian tierod, rack end, balljoint, bushing arm, dan shock absorber.',
-    features: [
-      'Pemeriksaan tierod, long tierod & balljoint',
-      'Press bushing lower arm presisi',
-      'Servis dan penggantian shock absorber',
-      'Pengecekan bearing roda & link stabilizer'
-    ]
+    lead: false,
+    description: 'Menghilangkan bunyi glodakan dan getaran saat melibas jalan bergelombang Kediri. Pemeriksaan teliti tierod, rack end, bushing arm, balljoint, dan shock absorber.',
+    specs: [
+      'Pemeriksaan dan pergantian tierod, rack end & link stabilizer',
+      'Press bushing lower arm presisi hidrolik tanpa merusak arm',
+      'Penggantian shock absorber & pengecekan bearing roda'
+    ],
+    turnaround: '2 - 4 Jam',
+    suitableFor: 'Bunyi glodakan di jalan kasar, setir narik satu sisi, bantingan keras'
   },
   {
     id: 'kelistrikan',
-    title: 'Kelistrikan Mobil & Starter',
-    category: 'Kelistrikan',
+    tag: 'Elektrikal',
+    title: 'Kelistrikan Bodi, Starter & Alternator',
     icon: Zap,
-    image: '/images/services/kelistrikan.jpg',
-    badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300',
-    description: 'Perbaikan urut kabel bodi korsleting, dinamo starter macet atau tidak mau memutar mesin, dinamo alternator pengisian drop, sistem lampu utama, dan kelistrikan aki.',
-    features: [
-      'Urut jalur kabel bodi korsleting & sekring',
-      'Servis dinamo starter & ganti carbon brush',
-      'Servis dinamo alternator & pengecekan regulator',
-      'Uji beban aki dan sistem pengisian charging'
-    ]
+    lead: false,
+    description: 'Penelusuran urut kabel bodi korsleting, dinamo starter macet atau tidak kuat memutar flywheel, dinamo ampere alternator drop, sistem penerangan, dan uji beban aki.',
+    specs: [
+      'Urut jalur kabel bodi korsleting & penggantian sekring standar',
+      'Servis dinamo starter, ganti carbon brush & solenoid armature',
+      'Uji kapasitas beban aki & sistem pengisian alternator 13.8V - 14.4V'
+    ],
+    turnaround: '1 - 3 Jam',
+    suitableFor: 'Mobil sulit distarter, aki sering tekor, indikator aki menyala'
   },
   {
     id: 'perawatan-berkala',
-    title: 'Perawatan Berkala & Ganti Oli',
-    category: 'Perawatan Berkala',
+    tag: 'Pelumasan',
+    title: 'Perawatan Berkala & Kuras Oli Matic (ATF/CVT)',
     icon: Clock,
-    image: '/images/services/ganti-oli.jpg',
-    badgeColor: 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300',
-    description: 'Paket ganti oli mesin berbagai viskositas (10W-40, 5W-30, 0W-20), kuras oli transmisi matic ATF/CVT, ganti oli gardan, kuras minyak rem, dan flushing radiator coolant.',
-    features: [
-      'Oli mesin berkualitas & filter oli original',
-      'Kuras oli transmisi matic ATF / CVT',
-      'Ganti filter udara mesin & filter AC kabin',
-      'Flushing air radiator coolant anti-karat'
-    ]
+    lead: false,
+    description: 'Penggantian oli mesin multigrade terpercaya (0W-20, 5W-30, 10W-40), flushing kuras oli transmisi otomatis, penggantian filter kabin/udara, dan kuras minyak rem.',
+    specs: [
+      'Ganti oli mesin original & filter oli baru setiap interval 5.000 - 10.000 km',
+      'Flushing kuras oli transmisi otomatis matic ATF / CVT',
+      'Kuras minyak rem titik didih tinggi & flushing air radiator coolant'
+    ],
+    turnaround: '45 - 60 Menit',
+    suitableFor: 'Servis rutin berkala, persiapan perjalanan jarak jauh / luar kota'
   }
 ];
 
 export default function ServicesSection() {
+  const [selectedService, setSelectedService] = useState(SERVICE_CATEGORIES[0]);
+
   return (
-    <section id="layanan" className="bg-slate-50 dark:bg-slate-950/50 py-12 md:py-20 border-b border-slate-200 dark:border-slate-800">
+    <section id="layanan" className="bg-slate-50 dark:bg-slate-950/60 py-12 md:py-20 border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-            Layanan Unggulan
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white mt-1">
-            Layanan Kami di Bengkel GPS Motor Kediri
+        {/* Section Header (No eyebrow kicker) */}
+        <div className="max-w-3xl mb-10 md:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Layanan Servis &amp; Spesialisasi Workshop
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
-            Peralatan lengkap, mekanik berpengalaman, serta transparansi pengerjaan dan harga yang jelas.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Dikerjakan langsung oleh mekanik berpengalaman di pit Sambiresik dengan alat ukur presisi, scanner komputer diagnostik, dan transparansi rincian kerja.
           </p>
         </div>
 
-        {/* 6 Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SERVICES.map((srv) => {
+        {/* Lead Specialty Box: EFI & Computer Diagnostics */}
+        <div className="mb-8 rounded border-2 border-blue-600 dark:border-blue-500 bg-white dark:bg-slate-800 overflow-hidden shadow-sm">
+          <div className="p-6 md:p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-slate-700">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <span className="px-2.5 py-0.5 rounded bg-blue-600 text-white font-bold text-xs uppercase tracking-wider">
+                    Spesialisasi Unggulan
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Estimasi Pengerjaan: 1.5 - 3 Jam
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                  {SERVICE_CATEGORIES[0].title}
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+                  {SERVICE_CATEGORIES[0].description}
+                </p>
+              </div>
+
+              <div className="shrink-0">
+                <a
+                  href={`https://wa.me/6285603307330?text=${encodeURIComponent('Halo Bengkel GPS Motor, saya ingin konsultasi keluhan mesin / tune up EFI mobil saya.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="touch-target inline-flex items-center space-x-2 py-3 px-5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition-colors"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Konsultasi Keluhan EFI</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Technical Scope Checklist & Symptoms */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+              <div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">
+                  Cakupan Tindakan &amp; Alat Ukur:
+                </h4>
+                <ul className="space-y-2.5">
+                  {SERVICE_CATEGORIES[0].specs.map((item, idx) => (
+                    <li key={idx} className="flex items-start text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                      <Check className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mr-2 mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-700/40 p-4 rounded border border-slate-200 dark:border-slate-700 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2">
+                    Cocok untuk Gejala:
+                  </h4>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    {SERVICE_CATEGORIES[0].suitableFor}
+                  </p>
+                </div>
+                <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-600 text-xs text-slate-500 dark:text-slate-400">
+                  Semua data sensor sebelum &amp; sesudah kalibrasi ditunjukkan langsung ke pemilik.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4 Supporting Workshop Disciplines (Asymmetric 2x2 Grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {SERVICE_CATEGORIES.slice(1).map((srv) => {
             const Icon = srv.icon;
             return (
               <div
                 key={srv.id}
-                className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 flex flex-col justify-between transition-colors hover:border-blue-400 dark:hover:border-blue-500 overflow-hidden"
+                className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
               >
                 <div>
-                  {/* Photo Header */}
-                  <div className="relative h-44 w-full rounded overflow-hidden mb-4 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-750">
-                    <img 
-                      src={srv.image} 
-                      alt={srv.title} 
-                      loading="lazy" 
-                      className="w-full h-full object-cover" 
-                    />
-                    <div className="absolute top-2.5 left-2.5 w-9 h-9 rounded bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-700 shadow-sm">
-                      <Icon className="w-4 h-4" />
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-9 h-9 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        {srv.tag}
+                      </span>
                     </div>
-                    <span className={`absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-200/50 shadow-sm ${srv.badgeColor}`}>
-                      {srv.category}
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                      {srv.turnaround}
                     </span>
                   </div>
 
@@ -146,30 +196,61 @@ export default function ServicesSection() {
                     {srv.description}
                   </p>
 
-                  <ul className="space-y-2 mb-6">
-                    {srv.features.map((feat, idx) => (
-                      <li key={idx} className="flex items-start text-xs text-slate-700 dark:text-slate-300">
+                  <ul className="space-y-2 mb-4">
+                    {srv.specs.map((spec, sIdx) => (
+                      <li key={sIdx} className="flex items-start text-xs text-slate-700 dark:text-slate-300">
                         <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mr-2 mt-0.5" />
-                        <span>{feat}</span>
+                        <span>{spec}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 truncate max-w-[200px]">
+                    {srv.suitableFor}
+                  </span>
                   <a
-                    href={`https://wa.me/6285603307330?text=${encodeURIComponent(`Halo Bengkel GPS Motor, saya ingin konsultasi/booking layanan ${srv.title}.`)}`}
+                    href={`https://wa.me/6285603307330?text=${encodeURIComponent(`Halo Bengkel GPS Motor, saya ingin konsultasi layanan ${srv.title}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="touch-target inline-flex items-center justify-center w-full space-x-2 py-2 px-3 rounded border border-emerald-200 dark:border-emerald-800/80 bg-emerald-50/70 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-xs font-semibold text-emerald-800 dark:text-emerald-200 transition-colors"
+                    className="touch-target inline-flex items-center space-x-1 font-bold text-blue-600 dark:text-blue-400 hover:underline shrink-0"
                   >
-                    <MessageSquare className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-300" />
-                    <span>Konsultasi via WhatsApp</span>
+                    <span>Tanya Mekanik</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>
             );
           })}
+        </div>
+
+        {/* Global Workshop Commitment Banner */}
+        <div className="mt-8 p-4 sm:p-5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="font-bold text-sm text-slate-900 dark:text-white block">
+                Transparansi Biaya Sebelum Pengerjaan Dimulai
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                Estimasi biaya jasa &amp; part diinformasikan diawal. Suku cadang lama yang diganti wajib dibawa pulang pemilik.
+              </span>
+            </div>
+          </div>
+          <div className="shrink-0">
+            <a
+              href="https://wa.me/6285603307330?text=Halo%20Bengkel%20GPS%20Motor%2C%20saya%20ingin%20tanya%20estimasi%20biaya%20servis."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="touch-target inline-flex items-center space-x-2 px-4 py-2 rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition-colors"
+            >
+              <span>Minta Estimasi Biaya</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+          </div>
         </div>
 
       </div>

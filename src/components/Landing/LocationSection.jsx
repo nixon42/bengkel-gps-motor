@@ -3,26 +3,23 @@ import { MapPin, Clock, Phone, Navigation, MessageCircle } from 'lucide-react';
 
 export default function LocationSection() {
   return (
-    <section id="lokasi" className="bg-white dark:bg-slate-900 py-12 md:py-20 border-b border-slate-200 dark:border-slate-800">
+    <section id="lokasi" className="bg-slate-50 dark:bg-slate-950/50 py-12 md:py-20 border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-            Lokasi & Jam Kerja
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white mt-1">
-            Kunjungi Bengkel Mobil GPS Motor Kediri
+        {/* Section Header (No eyebrow kicker) */}
+        <div className="max-w-3xl mb-10 md:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Lokasi Workshop &amp; Jam Operasional
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
-            Lokasi strategis dan mudah dijangkau di wilayah Sambiresik, Kecamatan Gampengrejo, Kabupaten Kediri.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
+            Terletak strategis di Sambiresik, Kecamatan Gampengrejo, Kabupaten Kediri. Mudah diakses dari Kediri Kota maupun jalan utama Papar-Pare.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Left Details Card */}
-          <div className="lg:col-span-5 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 p-6 flex flex-col justify-between">
+          <div className="lg:col-span-5 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 sm:p-7 flex flex-col justify-between">
             <div className="space-y-6">
               
               {/* Address */}
@@ -32,11 +29,11 @@ export default function LocationSection() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Alamat Workshop</h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1 leading-relaxed">
                     Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur 64182
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    (Dekat akses jalan utama Gampengrejo - Kediri Kota)
+                    (Akses jalur Gampengrejo - Menang - Kediri Kota)
                   </p>
                 </div>
               </div>
@@ -48,9 +45,9 @@ export default function LocationSection() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Jam Operasional</h3>
-                  <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 space-y-1">
-                    <p><span className="font-semibold text-slate-800 dark:text-slate-200">Senin - Sabtu:</span> 08:00 - 17:00 WIB</p>
-                    <p><span className="font-semibold text-slate-800 dark:text-slate-200">Minggu & Hari Libur:</span> By Appointment / Darurat</p>
+                  <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1 space-y-1">
+                    <p><span className="font-semibold text-slate-900 dark:text-slate-200">Senin - Sabtu:</span> 08:00 - 17:00 WIB</p>
+                    <p><span className="font-semibold text-slate-900 dark:text-slate-200">Minggu / Darurat:</span> Melalui Konfirmasi WhatsApp</p>
                   </div>
                 </div>
               </div>
@@ -61,12 +58,12 @@ export default function LocationSection() {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Telepon & WhatsApp</h3>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Telepon &amp; WhatsApp Resmi</h3>
                   <p className="text-base font-mono font-bold text-emerald-700 dark:text-emerald-400 mt-1">
                     0856-0330-7330
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Siap melayani konsultasi keluhan mobil & estimasi biaya
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Konsultasi teknis awal &amp; estimasi ketersediaan pit servis
                   </p>
                 </div>
               </div>
@@ -74,7 +71,7 @@ export default function LocationSection() {
             </div>
 
             {/* Actions */}
-            <div className="pt-6 border-t border-slate-200 dark:border-slate-700 space-y-2.5">
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-700 space-y-2.5">
               <a
                 href="https://maps.google.com/?q=Bengkel+Mobil+GPS+Motor+Kediri+Sambiresik"
                 target="_blank"
@@ -82,7 +79,7 @@ export default function LocationSection() {
                 className="touch-target w-full flex items-center justify-center space-x-2 py-3 px-4 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-colors"
               >
                 <Navigation className="w-4 h-4" />
-                <span>Petunjuk Arah Google Maps</span>
+                <span>Petunjuk Rute Google Maps</span>
               </a>
 
               <a
@@ -92,12 +89,12 @@ export default function LocationSection() {
                 className="touch-target w-full flex items-center justify-center space-x-2 py-3 px-4 rounded border border-emerald-600 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm transition-colors hover:bg-emerald-100"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Chat Langsung via WhatsApp</span>
+                <span>Chat WhatsApp Bengkel</span>
               </a>
             </div>
           </div>
 
-          {/* Right Map Container with Pin Marker */}
+          {/* Right Map Container with Authentic Pin Marker */}
           <div className="lg:col-span-7 rounded border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-100 dark:bg-slate-800 min-h-[380px] flex flex-col relative">
             <iframe
               title="Google Maps Lokasi Bengkel Mobil GPS Motor Kediri"
@@ -106,15 +103,15 @@ export default function LocationSection() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-            {/* Overlay Pin Indicator */}
-            <div className="absolute top-3 right-3 z-10 hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded bg-white/95 dark:bg-slate-900/95 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-sm">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
-              <span>Titik: Bengkel Mobil GPS Motor</span>
+            {/* Overlay Pin Indicator (Pure CSS/SVG, no pulse or emoji) */}
+            <div className="absolute top-3 right-3 z-10 hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-sm">
+              <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <span>Titik: Bengkel Mobil GPS Motor Kediri</span>
             </div>
-            <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-900 px-4 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
               <span className="flex items-center space-x-1.5 font-medium">
-                <span className="text-red-600 font-bold">📍</span>
-                <span>Titik: Sambiresik, Kec. Gampengrejo, Kab. Kediri</span>
+                <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                <span>Sambiresik, Kec. Gampengrejo, Kab. Kediri</span>
               </span>
               <a
                 href="https://maps.google.com/?q=-7.7812,112.0205+(Bengkel+Mobil+GPS+Motor+Kediri)"

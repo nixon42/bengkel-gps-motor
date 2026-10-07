@@ -41,7 +41,7 @@ export default function LandingPage({ onNavigateTracking, onOpenAdmin, onOpenSup
               <span className="text-sm sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight block truncate">
                 Bengkel GPS Motor
               </span>
-              <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 block truncate">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block truncate">
                 Kediri • Sambiresik
               </span>
             </div>
