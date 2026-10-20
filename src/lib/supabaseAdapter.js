@@ -267,6 +267,62 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     }
 
     // ----------------------------------------------------
+    // 2b. PUBLIC TENANT PROFILE & SHOWCASE
+    // ----------------------------------------------------
+    if (path === '/api/public/tenants' && method === 'GET') {
+      const { data: tenantsList } = await supabase
+        .from('tenants')
+        .select('*')
+        .order('created_at', { ascending: false });
+      return jsonResponse({
+        success: true,
+        tenants: tenantsList || []
+      });
+    }
+
+    if ((path.startsWith('/api/public/tenant/') || (path.startsWith('/api/public/') && path.endsWith('/info'))) && method === 'GET') {
+      let slug = '';
+      if (path.startsWith('/api/public/tenant/')) {
+        slug = path.replace('/api/public/tenant/', '').split('/')[0];
+      } else {
+        const parts = path.replace('/api/public/', '').split('/');
+        slug = parts[0] === 'info' ? (params.get('slug') || '') : parts[0];
+      }
+
+      let tenantData = null;
+      if (slug && slug !== 'mitra' && slug !== 'bengkel-gps-motor') {
+        const { data } = await supabase
+          .from('tenants')
+          .select('*')
+          .eq('slug', slug)
+          .maybeSingle();
+        tenantData = data;
+      }
+
+      if (!tenantData) {
+        const { data } = await supabase
+          .from('tenants')
+          .select('*')
+          .eq('id', DEFAULT_TENANT_ID)
+          .maybeSingle();
+        tenantData = data;
+      }
+
+      return jsonResponse({
+        success: true,
+        tenant: tenantData || {
+          id: DEFAULT_TENANT_ID,
+          slug: slug || 'mitra',
+          name: DEFAULT_WORKSHOP_NAME,
+          tagline: DEFAULT_WORKSHOP_TAGLINE,
+          address: DEFAULT_WORKSHOP_ADDRESS,
+          phone_wa: DEFAULT_WORKSHOP_PHONE,
+          business_hours: DEFAULT_BUSINESS_HOURS
+        }
+      });
+    }
+
+    // ----------------------------------------------------
     // 3. PUBLIC TRACKING ROUTE
     // ----------------------------------------------------
     if (path.startsWith('/api/public/track') || path.startsWith('/api/public/tracking/')) {
