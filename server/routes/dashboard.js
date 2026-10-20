@@ -110,12 +110,12 @@ export function dashboardRoutes(db) {
       };
 
       const statusColors = {
-        MASUK: '#3B82F6',       // Blue
-        DIAGNOSA: '#F59E0B',    // Amber
-        PENGERJAAN: '#8B5CF6',  // Purple
-        MENUNGGU_PART: '#EC4899',// Pink
-        SELESAI: '#10B981',     // Emerald
-        DIAMBIL: '#6B7280'      // Gray
+        MASUK: '#2563eb',       // Automotive Blue (primary)
+        DIAGNOSA: '#f59e0b',    // Amber Warning
+        PENGERJAAN: '#8b5cf6',  // Purple Servicing
+        MENUNGGU_PART: '#f43f5e',// Rose Alert / Expense
+        SELESAI: '#10b981',     // Emerald Income
+        DIAMBIL: '#64748b'      // Slate Neutral
       };
 
       const statusDistributionArray = Object.keys(statusCounts).map(key => ({

@@ -1,17 +1,67 @@
 /**
  * src/data/docsContent.js
  * Comprehensive Documentation and User Guide Data for Bengkel Mobil GPS Motor Kediri
- * Covers: Owner/Admin, Mekanik, Kasir, CRM & Pelanggan, and 5 Operational FAQs.
+ * Covers: Owner/Admin, Mekanik, Kasir, CRM & Pelanggan, and Operational Troubleshooting FAQs.
+ * Features: Authentic high-res screenshots with numbered step annotations (1, 2, 3...),
+ * interactive UI mockups, and end-to-end workflow diagrams.
  */
+
+
+export const DOCS_STATIONS = [
+  {
+    id: "station-owner",
+    number: "01",
+    roleKey: "owner",
+    title: "Manajemen Bisnis & Keuangan",
+    subtitle: "Owner, Direksi & Akuntan Bengkel",
+    badge: "Stasiun Owner",
+    icon: "Building2",
+    accent: "blue",
+    moduleIds: ["owner-settings", "owner-staff", "owner-multi-tenant", "owner-finance", "owner-inventory"]
+  },
+  {
+    id: "station-mekanik",
+    number: "02",
+    roleKey: "mekanik",
+    title: "Pit Lift & Lantai Kerja Mekanik",
+    subtitle: "Kepala Bengkel & Teknisi Lapangan",
+    badge: "Stasiun Mekanik",
+    icon: "Wrench",
+    accent: "emerald",
+    moduleIds: ["mekanik-intake", "mekanik-lifecycle", "mekanik-photos", "mekanik-parts"]
+  },
+  {
+    id: "station-kasir",
+    number: "03",
+    roleKey: "kasir",
+    title: "Meja Kasir & Pergudangan Sparepart",
+    subtitle: "Kasir Front Office & Pengawas Gudang",
+    badge: "Stasiun Kasir",
+    icon: "Wallet",
+    accent: "purple",
+    moduleIds: ["kasir-new-ro", "kasir-payment", "kasir-invoice", "kasir-thermal-pos", "kasir-restock", "inventory-mutations", "kasir-opname"]
+  },
+  {
+    id: "station-crm",
+    number: "04",
+    roleKey: "crm",
+    title: "Front Desk CRM & Integrasi Pelanggan",
+    subtitle: "Layanan Pelanggan, WhatsApp & Tracking",
+    badge: "Stasiun CRM",
+    icon: "Users",
+    accent: "amber",
+    moduleIds: ["crm-database", "crm-whatsapp", "crm-tracking", "app-omnibox"]
+  }
+];
 
 export const DOCS_ROLES = [
   {
     key: 'owner',
-    aliases: ['admin', 'owner'],
+    aliases: ['admin', 'owner', 'superadmin'],
     label: 'Owner / Admin',
     badge: 'Manajemen Bengkel',
     color: 'blue',
-    description: 'Konfigurasi profil bengkel, manajemen akun staf, pembukuan kas, laba rugi, dan valuasi inventaris sparepart.',
+    description: 'Konfigurasi profil bengkel, foto landing page, manajemen staf, pembukuan kas, laba rugi, valuasi stok, dan kontrol multi-tenant.',
     icon: 'Building2'
   },
   {
@@ -20,7 +70,7 @@ export const DOCS_ROLES = [
     label: 'Mekanik',
     badge: 'Teknis Lapangan',
     color: 'amber',
-    description: 'Penerimaan fisik mobil, alur 6-tahap pengerjaan servis, dokumentasi foto Before/Progress/After, dan pemasangan sparepart.',
+    description: 'Penerimaan fisik mobil, alur 6-tahap pengerjaan servis, dokumentasi foto Before/Progress/After dari HP, dan pemasangan suku cadang.',
     icon: 'Wrench'
   },
   {
@@ -29,788 +79,1155 @@ export const DOCS_ROLES = [
     label: 'Kasir',
     badge: 'Front Office & Keuangan',
     color: 'emerald',
-    description: 'Penerbitan RO baru, pembayaran servis, cetak invoice PDF, restock barang masuk dari supplier, dan audit stok opname.',
+    description: 'Penerbitan RO baru, pelunasan kasir, cetak invoice PDF A4, cetak struk POS termal 58mm, restock supplier, dan stok opname.',
     icon: 'Wallet'
   },
   {
     key: 'crm',
-    aliases: ['crm', 'pelanggan', 'customer'],
+    aliases: ['crm', 'pelanggan', 'customer', 'omnibox'],
     label: 'CRM & Pelanggan',
     badge: 'Relasi Pelanggan',
     color: 'purple',
-    description: 'Database pelanggan, riwayat servis mobil, reminder/promo WhatsApp, dan portal pelacakan publik tanpa login dengan sensor privasi.',
+    description: 'Database pelanggan, riwayat servis mobil, reminder/promo WhatsApp, portal pelacakan publik tanpa login, dan omnibox Ctrl+K.',
     icon: 'Users'
   }
 ];
 
 export const DOCS_MODULES = [
   // ==========================================
-  // OWNER & ADMIN MODULES
+  // 1. OWNER & ADMIN MODULES
   // ==========================================
   {
     id: 'owner-settings',
+    sopCode: 'SOP-OWN-01',
+    targetTab: 'overview',
+    tabActionName: 'Pengaturan Profil Bengkel',
     slug: 'pengaturan-bengkel',
     role: 'owner',
-    title: 'Pengaturan Profil Bengkel & Tenant',
-    summary: 'Konfigurasi identitas bengkel, logo, alamat, WhatsApp resmi, jam operasional, target pendapatan bulanan, dan footer nota cetak.',
+    title: 'Pengaturan Profil Bengkel, Jam Kerja & Kustomisasi Landing Page',
+    summary: 'Konfigurasi identitas bengkel, kontak WhatsApp resmi, jam operasional, target pendapatan bulanan, dan foto galeri fasilitas landing page publik.',
     readTime: '3 menit',
     badge: 'Owner / Admin',
-    tags: ['profil', 'pengaturan', 'alamat', 'whatsapp', 'target', 'omzet', 'jam kerja', 'tenant'],
+    tags: ['profil', 'pengaturan', 'alamat', 'whatsapp', 'target', 'omzet', 'jam kerja', 'landing page', 'foto'],
+    annotatedScreenshot: {
+      title: 'Antarmuka Pengaturan Workshop & Foto Galeri Fasilitas',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_owner_settings.png',
+      annotations: [
+        { number: 1, top: '24%', left: '38%', title: 'Sub-Tab Navigasi', desc: 'Beralih antara Profil & Kontak operasional atau Foto & Landing Page publik' },
+        { number: 2, top: '38%', left: '50%', title: 'Headline Promosi', desc: 'Teks headline utama yang langsung tampil di banner landing page' },
+        { number: 3, top: '48%', left: '64%', title: 'Preset Cepat', desc: 'Terapkan paket foto profesional siap pakai (Standar Bersih Modern / Hydraulic Pit Focus)' },
+        { number: 4, top: '64%', left: '35%', title: 'Foto Hero Banner', desc: 'Unggah foto suasana bengkel atau stall lift hidrolik dengan kompresi otomatis' },
+        { number: 5, top: '88%', left: '64%', title: 'Simpan Perubahan', desc: 'Simpan konfigurasi langsung ke profil tenant tanpa perlu reload' }
+      ]
+    },
     steps: [
       {
         number: 1,
         title: 'Buka Modal Pengaturan Workshop',
-        description: 'Pada tampilan dashboard utama (AdminDashboard), klik ikon Pengaturan (Settings) di pojok kanan atas topbar atau pilih pintasan Pengaturan Profil Bengkel melalui Command Palette (Ctrl+K).',
-        highlightText: 'Tombol Pengaturan di Topbar',
-        mockupType: 'settings-header'
+        description: 'Pada tampilan dashboard utama (AdminDashboard), klik ikon Pengaturan di pojok kanan atas topbar atau pilih pintasan Pengaturan Profil Bengkel melalui Command Palette (Ctrl+K).',
+        highlightText: 'Ikon Pengaturan di Topbar (Pojok Kanan Atas)'
       },
       {
         number: 2,
-        title: 'Perbarui Data Identitas Bengkel',
-        description: 'Isi atau perbarui nama bengkel (Bengkel Mobil GPS Motor Kediri), alamat fisik operasional (Sambiresik, Kec. Gampengrejo, Kab. Kediri), dan nomor WhatsApp resmi (0856-0330-7330). Nomor WhatsApp ini otomatis menjadi kontak rujukan pada portal publik dan invoice PDF.',
-        highlightText: 'Form Identitas & WhatsApp',
-        mockupType: 'settings-form'
+        title: 'Perbarui Data Identitas & Jam Operasional',
+        description: 'Pilih sub-tab "Profil & Kontak". Isi nama bengkel, alamat fisik, jam buka (Senin-Sabtu: 08:00 - 17:00 WIB), dan nomor WhatsApp resmi. Nomor ini otomatis menjadi kontak rujukan pada portal publik dan invoice PDF.',
+        highlightText: 'Sub-Tab Profil & Kontak'
       },
       {
         number: 3,
-        title: 'Atur Jam Operasional & Target Pendapatan Bulanan',
-        description: 'Tentukan jam buka bengkel (contoh: Senin - Sabtu: 08:00 - 17:00 WIB) dan masukkan target omzet bulanan (contoh: Rp 15.000.000). Target ini menjadi acuan progress bar pencapaian target di widget Dashboard utama.',
-        highlightText: 'Target Bulanan & Jam Kerja'
+        title: 'Kustomisasi Foto Landing Page & Fasilitas',
+        description: 'Pilih sub-tab "Foto & Landing Page". Anda dapat mengunggah foto asli bengkel (Hero Banner, Pit Lift Stall, Alat Scanner) atau mengeklik tombol "Standar Bersih Modern" untuk menerapkan foto studio otomotif berkualitas tinggi.',
+        highlightText: 'Sub-Tab Foto & Landing Page'
       },
       {
         number: 4,
-        title: 'Simpan Perubahan',
-        description: 'Klik tombol Simpan Perubahan (ikon Save). Sistem akan memvalidasi data dan menyimpannya secara terisolasi ke database tenant tanpa reload halaman.',
-        highlightText: 'Tombol Simpan Perubahan'
+        title: 'Tetapkan Target Omzet & Simpan Perubahan',
+        description: 'Masukkan target pendapatan bulanan (misal: Rp 15.000.000) untuk acuan visual progress bar pencapaian omzet, lalu klik tombol Simpan Perubahan.',
+        highlightText: 'Tombol Simpan Perubahan (Hijau)'
       }
     ],
     callout: {
       type: 'tip',
       title: 'Tips Branding WhatsApp',
-      content: 'Pastikan nomor WhatsApp yang diinput aktif dan menggunakan format yang mudah dibaca atau standar seluler. Nomor ini akan otomatis menjadi tautan klik-langsung pelanggan dari nota cetak dan portal pelacakan mandiri.'
+      content: 'Pastikan nomor WhatsApp yang diinput aktif dan menggunakan format seluler Indonesia (contoh: 085603307330). Nomor ini otomatis menjadi tautan klik-langsung pelanggan dari nota cetak dan portal pelacakan mandiri.'
     }
   },
+
   {
     id: 'owner-staff',
+    sopCode: 'SOP-OWN-02',
+    targetTab: 'overview',
+    tabActionName: 'Buka Manajemen Staf',
     slug: 'manajemen-staf',
     role: 'owner',
-    title: 'Manajemen Staf & Hak Akses Pengguna',
-    summary: 'Menambahkan akun staf baru, menetapkan peran operator (kasir/mekanik) atau superadmin, serta mengelola izin akses workspace.',
+    title: 'Manajemen Staf & Hak Akses Pengguna Workspace',
+    summary: 'Menambahkan akun staf baru, menetapkan peran operator (kasir/mekanik/admin), dan mengisolasi hak akses ke dalam workspace bengkel.',
     readTime: '4 menit',
     badge: 'Owner / Admin',
-    tags: ['staf', 'pengguna', 'user', 'karyawan', 'role', 'operator', 'superadmin', 'izin'],
+    tags: ['staf', 'pengguna', 'hak akses', 'operator', 'mekanik', 'kasir', 'admin', 'google login'],
+    annotatedScreenshot: {
+      title: 'Manajemen Pengguna & Penugasan Staf Workspace',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_superadmin.png',
+      annotations: [
+        { number: 1, top: '15%', left: '42%', title: 'Tab Manajemen Pengguna', desc: 'Buka daftar seluruh akun staf yang terhubung ke sistem' },
+        { number: 2, top: '28%', left: '38%', title: 'Total Staf Terdaftar', desc: 'Monitoring jumlah akun admin, kasir, dan teknisi yang aktif' },
+        { number: 3, top: '75%', left: '88%', title: 'Hubungkan Akun Baru', desc: 'Daftarkan email Google staf baru dan tentukan workspace bengkel miliknya' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Akses Portal Kelola Staf / Superadmin',
-        description: 'Owner dapat mengakses menu manajemen pengguna melalui tombol Superadmin di footer landing page atau tab pengelolaan staf internal.',
-        highlightText: 'Menu Staf / Superadmin'
+        title: 'Buka Menu Manajemen Staf / Superadmin',
+        description: 'Masuk ke menu pengguna melalui navigasi dashboard atau portal superadmin. Klik tombol "+ Hubungkan Email ke Bengkel".',
+        highlightText: 'Tombol Hubungkan Email ke Bengkel'
       },
       {
         number: 2,
-        title: 'Buka Form Tambah Pengguna',
-        description: 'Klik tombol Tambahkan Pengguna ke Tenant. Masukkan alamat email pengguna Google atau email aktif staf serta nama lengkap teknisi atau kasir.',
-        highlightText: 'Form Tambah Akun'
+        title: 'Masukkan Email Akun Google Staf',
+        description: 'Ketik alamat email Google (Gmail) yang akan digunakan oleh kasir atau mekanik saat login. Sistem menggunakan otentikasi aman tanpa menyimpan password rahasia.',
+        highlightText: 'Input Email Google'
       },
       {
         number: 3,
-        title: 'Pilih Role & Hak Akses',
-        description: 'Tentukan hak akses akun: pilih Operator untuk staf teknisi/mekanik dan kasir yang menjalankan operasional bengkel harian, atau Superadmin untuk pemilik dan manajer pengawas.',
-        highlightText: 'Pilihan Role Operator / Superadmin'
+        title: 'Pilih Hak Akses Role yang Sesuai',
+        description: 'Pilih salah satu dari 4 level otorisasi: Mekanik (hanya update progres & foto servis), Kasir (kelola pembayaran & kas), Admin Bengkel (kontrol penuh tenant), atau Superadmin.',
+        highlightText: 'Dropdown Role Hak Akses'
       },
       {
         number: 4,
-        title: 'Simpan dan Aktifkan Akun',
-        description: 'Klik tombol Simpan Akun. Staf langsung dapat masuk ke workspace menggunakan tombol Google OAuth Login atau Mock Login yang telah terdaftar.',
-        highlightText: 'Simpan Akun'
+        title: 'Verifikasi Hak Akses',
+        description: 'Staf bersangkutan dapat langsung login dengan mengklik "Login dengan Google" pada halaman login utama dan otomatis masuk ke workspace bengkel Anda.',
+        highlightText: 'Simpan & Hubungkan Akun'
       }
     ],
     callout: {
       type: 'note',
-      title: 'Isolasi Multi-Tenant',
-      content: 'Setiap staf yang terdaftar hanya dapat melihat data bengkel tempat ia ditugaskan. Data pesanan servis, stok sparepart, dan buku kas tidak akan pernah bercampur dengan tenant bengkel lain.'
+      title: 'Isolasi Akun Multi-Tenant',
+      content: 'Staf hanya dapat melihat data order servis, pelanggan, dan kas dari bengkel tempat mereka ditugaskan. Data bengkel lain terisolasi secara kriptografis pada tingkat database.'
     }
   },
+
   {
-    id: 'owner-finance',
-    slug: 'buku-kas-keuangan',
+    id: 'owner-multi-tenant',
+    sopCode: 'SOP-OWN-03',
+    targetTab: 'overview',
+    tabActionName: 'Portal Multi-Tenant',
+    slug: 'superadmin-multi-tenant',
     role: 'owner',
-    title: 'Buku Kas Keuangan & Ekspor Laporan Laba Rugi (P&L)',
-    summary: 'Mencatat pemasukan dan pengeluaran bengkel, memantau saldo bersih real-time, melampirkan foto nota fisik, dan mengunduh laporan PDF resmi berkop bengkel.',
-    readTime: '5 menit',
+    title: 'Superadmin: Manajemen Multi-Bengkel & Pemantauan Agregat',
+    summary: 'Pusat pengawasan platform multi-tenant, pendaftaran cabang bengkel baru, pemantauan volume servis lintas cabang, dan alokasi workspace.',
+    readTime: '4 menit',
     badge: 'Owner / Admin',
-    diagramType: 'cashflow',
-    tags: ['kas', 'keuangan', 'pnl', 'laba rugi', 'pemasukan', 'pengeluaran', 'saldo', 'rekap', 'pdf', 'csv', 'struk'],
+    tags: ['multi-tenant', 'superadmin', 'cabang', 'omset', 'diagnostik', 'platform'],
+    annotatedScreenshot: {
+      title: 'Portal Superadmin: Ringkasan Sistem & Diagnostik Multi-Tenant',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_superadmin.png',
+      annotations: [
+        { number: 1, top: '28%', left: '15%', title: 'Total Bengkel Aktif', desc: 'Jumlah cabang/tenant yang terdaftar dan aktif beroperasi' },
+        { number: 2, top: '28%', left: '85%', title: 'Omset Lintas Bengkel', desc: 'Total pendapatan kumulatif dan laba bersih dari seluruh jaringan' },
+        { number: 3, top: '50%', left: '42%', title: 'Volume Keluar/Masuk Stok', desc: 'Pergerakan stok suku cadang global dan audit restock' },
+        { number: 4, top: '70%', left: '20%', title: 'Distribusi Status Mobil', desc: 'Grafik sebaran unit kendaraan: Masuk, Diagnosa, Pengerjaan, Selesai' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Buka Menu Buku Kas & Keuangan',
-        description: 'Navigasikan ke tab Buku Kas & Keuangan di dashboard. Perhatikan ringkasan KPI: Total Pemasukan, Total Pengeluaran, dan Saldo Bersih dengan indikator Surplus Kas (hijau) atau Defisit Kas (merah).',
-        highlightText: 'Tab Keuangan & KPI Cards',
-        mockupType: 'finance-overview'
+        title: 'Akses Portal Superadmin',
+        description: 'Masuk melalui URL /superadmin menggunakan akun berlisensi superadmin. Dasbor akan menampilkan indikator kesehatan sistem dan metrik agregat.',
+        highlightText: 'Topbar Superadmin Portal'
       },
       {
         number: 2,
-        title: 'Pencatatan Transaksi Baru',
-        description: 'Klik tombol + Catat Transaksi. Pilih tipe Pemasukan (+) berwarna hijau atau Pengeluaran (-) berwarna merah. Masukkan nominal uang dengan live preview format Rupiah.',
-        highlightText: 'Modal Catat Transaksi'
+        title: 'Mendaftarkan Cabang (Tenant) Baru',
+        description: 'Buka tab "Daftar Bengkel (Tenants)", klik tombol "+ Daftarkan Bengkel Baru". Masukkan nama cabang, slug URL unik (contoh: /bengkel-pare), dan target omzet.',
+        highlightText: 'Modal Daftarkan Bengkel Baru'
       },
       {
         number: 3,
-        title: 'Kategori, Metode Pembayaran & Lampiran Struk',
-        description: 'Pilih kategori transaksi (Jasa Servis, Penjualan Sparepart, Beli Sparepart / Stok, Listrik, dsb). Pilih metode bayar: Tunai (CASH), TRANSFER, atau QRIS. Ambil foto nota fisik menggunakan tombol Buka Kamera atau unggah dari Galeri HP.',
-        highlightText: 'Metode Pembayaran & Foto Struk'
-      },
-      {
-        number: 4,
-        title: 'Filter Periode & Analisis Arus Kas',
-        description: 'Gunakan tombol filter periode: Hari Ini, Minggu Ini, Bulan Ini, Tahun Ini, atau Semua untuk melihat rincian arus kas pada kurun waktu tertentu.',
-        highlightText: 'Filter Periode Transaksi'
-      },
-      {
-        number: 5,
-        title: 'Ekspor Laporan Resmi (CSV & PDF)',
-        description: 'Klik tombol P&L PDF untuk mencetak dokumen Laporan Laba Rugi resmi berkop bengkel, tombol Rekap Harian untuk rekap kas penutupan shift kasir, atau tombol CSV untuk pembukuan Excel.',
-        highlightText: 'Tombol Ekspor P&L PDF & CSV'
+        title: 'Memindahkan atau Menugaskan Staf Antar Cabang',
+        description: 'Jika staf berpindah cabang, gunakan tombol "Pindahkan Workspace" untuk mengalihkan akses akun email Google staf ke tenant tujuan secara instan.',
+        highlightText: 'Aksi Pindahkan Workspace'
       }
     ],
     callout: {
       type: 'tip',
-      title: 'Otomatisasi Pendapatan Servis',
-      content: 'Saat pesanan servis (RO) diselesaikan ke status DIAMBIL oleh kasir, sistem menyediakan opsi otomatis mencatat tagihan ke Buku Kas sebagai pemasukan jasa dan penjualan part tanpa perlu input manual dua kali.'
+      title: 'Skalabilitas Cabang Tanpa Batas',
+      content: 'Setiap tenant memiliki database landing page publik, nomor invoice, katalog suku cadang, dan buku kas terpisah yang tidak saling mempengaruhi.'
     }
   },
+
   {
-    id: 'owner-inventory',
-    slug: 'katalog-inventaris',
+    id: 'owner-finance',
+    sopCode: 'SOP-OWN-04',
+    targetTab: 'finance',
+    tabActionName: 'Buka Buku Kas & Laba Rugi',
+    slug: 'buku-kas-laba-rugi',
     role: 'owner',
-    title: 'Katalog Inventaris Sparepart, Batas Minimum & Valuasi Nilai',
-    summary: 'Manajemen katalog suku cadang mobil, kode SKU, batas stok minimum, kalkulator margin keuntungan live, dan valuasi aset gudang.',
-    readTime: '4 menit',
+    title: 'Buku Kas Keuangan & Ekspor Laporan Laba Rugi (P&L)',
+    summary: 'Pencatatan pemasukan jasa & sparepart otomatis, pencatatan beban operasional, pemantauan saldo surplus, dan ekspor laporan resmi.',
+    readTime: '5 menit',
     badge: 'Owner / Admin',
-    diagramType: 'stock',
-    tags: ['inventaris', 'sparepart', 'stok', 'sku', 'margin', 'laba', 'valuasi', 'batas minimum', 'katalog'],
+    tags: ['keuangan', 'laba rugi', 'pnl', 'kas', 'pengeluaran', 'pemasukan', 'pdf', 'csv'],
+    diagramType: 'cashflow',
+    annotatedScreenshot: {
+      title: 'Buku Kas Keuangan, Analisis Arus Kas & Ekspor Laporan',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_finance_cashflow.png',
+      annotations: [
+        { number: 1, top: '15%', left: '30%', title: 'Pemasukan Kas', desc: 'Total uang masuk dari pelunasan servis dan penjualan suku cadang' },
+        { number: 2, top: '15%', left: '50%', title: 'Pengeluaran Kas', desc: 'Beban operasional, belanja restock suku cadang, dan biaya bengkel' },
+        { number: 3, top: '15%', left: '72%', title: 'Saldo Kas Bersih (Net)', desc: 'Surplus atau defisit kas berjalan secara real-time' },
+        { number: 4, top: '15%', left: '88%', title: 'Tombol Catat Transaksi', desc: 'Pintasan untuk mencatat pengeluaran atau pemasukan manual baru' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Buka Halaman Inventaris & Sparepart',
-        description: 'Buka tab Inventaris & Sparepart. Daftar seluruh suku cadang tampil lengkap dengan foto, kode SKU, kategori, stok aktual, harga beli, dan harga jual.',
-        highlightText: 'Tab Inventaris'
+        title: 'Buka Tab Buku Kas & Keuangan',
+        description: 'Klik menu "Buku Kas & Keuangan" di topbar dashboard. Anda akan melihat kartu ringkasan Pemasukan, Pengeluaran, dan Saldo Bersih bulan berjalan.',
+        highlightText: 'Tab Buku Kas & Keuangan'
       },
       {
         number: 2,
-        title: 'Tambah Sparepart Baru',
-        description: 'Klik tombol Tambah Sparepart. Masukkan Kode / SKU unik (contoh: OIL-HX7), Nama Barang (contoh: Oli Shell Helix HX7 10W-40 4L), dan pilih Kategori yang sesuai.',
-        highlightText: 'Modal Tambah Sparepart'
+        title: 'Mencatat Pengeluaran Operasional Bengkel',
+        description: 'Klik tombol "+ Catat Transaksi". Pilih tipe "Pengeluaran", tentukan kategori (Listrik, Sewa, Gaji, Makan, Belanja Alat), masukkan nominal, dan unggah foto nota struk fisik.',
+        highlightText: 'Tombol Catat Transaksi & Kategori Beban'
       },
       {
         number: 3,
-        title: 'Atur Batas Stok Minimum & Kalkulasi Margin Laba',
-        description: 'Tentukan Batas Minimum Stok (default: 5 unit). Masukkan Harga Beli (Modal) dan Harga Jual. Kotak Live Profit Margin Box akan langsung menghitung nominal margin rupiah dan persentase laba secara real-time. Jika harga jual lebih rendah dari harga modal, kotak berubah merah dengan peringatan Posisi Jual Rugi (Loss).',
-        highlightText: 'Live Margin Calculator'
-      },
-      {
-        number: 4,
-        title: 'Cek Valuasi Nilai Aset Gudang',
-        description: 'Klik tombol Valuasi Nilai di bagian atas tabel untuk melihat total modal pembelian stok gudang, potensi omzet penjualan, dan potensi keuntungan kotor bengkel. Dokumen valuasi dapat diunduh dalam format CSV maupun dicetak PDF.',
-        highlightText: 'Modal Valuasi Nilai'
+        title: 'Ekspor Laporan Keuangan ke PDF atau CSV',
+        description: 'Klik tombol "Unduh PDF" untuk menghasilkan lembar laporan laba rugi format cetak A4 berlogo bengkel, atau "Export CSV" untuk diolah di Microsoft Excel / Google Sheets.',
+        highlightText: 'Tombol Unduh PDF / CSV'
       }
     ],
     callout: {
-      type: 'warning',
-      title: 'Peringatan Stok Menipis',
-      content: 'Item dengan jumlah stok di bawah batas minimum akan otomatis diberi lencana kuning "Menipis" atau merah "Habis" dan muncul di widget peringatan dashboard untuk segera direstock.'
+      type: 'tip',
+      title: 'Sinkronisasi Otomatis Kasir',
+      content: 'Setiap kali kasir melunasi order servis (RO) atau mencatat restock barang masuk, sistem otomatis membukukan transaksi ke jurnal kas tanpa perlu input ganda.'
+    }
+  },
+
+  {
+    id: 'owner-inventory',
+    sopCode: 'SOP-OWN-05',
+    targetTab: 'inventory',
+    tabActionName: 'Buka Inventaris & Sparepart',
+    slug: 'katalog-inventaris',
+    role: 'owner',
+    title: 'Katalog Inventaris Sparepart, Batas Minimum & Valuasi Nilai Stok',
+    summary: 'Manajemen master suku cadang, penentuan harga beli vs jual, penetapan batas minimum (peringatan stok menipis), dan valuasi aset gudang.',
+    readTime: '4 menit',
+    badge: 'Owner / Admin',
+    tags: ['inventaris', 'sparepart', 'stok', 'sku', 'harga beli', 'harga jual', 'batas minimum', 'valuasi'],
+    diagramType: 'stock',
+    annotatedScreenshot: {
+      title: 'Katalog Suku Cadang, Status Ketersediaan & Valuasi Aset',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_inventory_catalog.png',
+      annotations: [
+        { number: 1, top: '28%', left: '25%', title: 'Pencarian Suku Cadang', desc: 'Cari cepat berdasarkan nomor SKU, nama part, atau kategori barang' },
+        { number: 2, top: '48%', left: '15%', title: 'Badge Peringatan Kritis', desc: 'Indikator merah jika stok berada di bawah batas minimum pemakaian' },
+        { number: 3, top: '28%', left: '85%', title: 'Tombol Tambah Sparepart', desc: 'Daftarkan SKU suku cadang baru ke dalam master data gudang' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Buka Tab Inventaris & Sparepart',
+        description: 'Navigasi ke tab "Inventaris & Sparepart". Di bagian atas terdapat metrik total jenis barang, valuasi total nilai aset, dan jumlah SKU yang berada dalam kondisi kritis.',
+        highlightText: 'Tab Inventaris & Sparepart'
+      },
+      {
+        number: 2,
+        title: 'Menambahkan Suku Cadang Baru',
+        description: 'Klik "+ Tambah Sparepart". Isi kode SKU (contoh: OLI-SHELL-10W40), nama barang, kategori, satuan (Liter, Pcs, Set), harga beli modal, harga jual ke konsumen, dan batas minimum stok.',
+        highlightText: 'Form Tambah Sparepart Baru'
+      },
+      {
+        number: 3,
+        title: 'Monitoring Batas Minimum (Early Warning)',
+        description: 'Ketika stok suku cadang tersisa sama atau lebih sedikit dari batas minimum, sistem memberi tanda badge merah "KRITIS" di tabel dan dasbor utama agar kasir segera melakukan pemesanan ulang ke supplier.',
+        highlightText: 'Badge Peringatan Kritis'
+      }
+    ],
+    callout: {
+      type: 'note',
+      title: 'Pencegahan Kehabisan Stok',
+      content: 'Pastikan batas minimum diatur realistis sesuai kecepatan pemakaian (misal: Oli mesin minimal 10 botol, kampas rem minimal 4 set).'
     }
   },
 
   // ==========================================
-  // MEKANIK (TECHNICIAN) MODULES
+  // 2. MEKANIK MODULES
   // ==========================================
   {
     id: 'mekanik-intake',
-    slug: 'penerimaan-servis-mekanik',
+    sopCode: 'SOP-MEK-01',
+    targetTab: 'repair-orders',
+    tabActionName: 'Buka Penerimaan RO Baru',
+    slug: 'penerimaan-kendaraan-intake',
     role: 'mekanik',
     title: 'Penerimaan Fisik Kendaraan & Pembukaan Order Servis (RO)',
-    summary: 'Menerima unit mobil di area bengkel, mencatat kilometer odometer, memeriksa keluhan awal pemilik, dan menetapkan teknisi penanggung jawab (PIC).',
+    summary: 'Pemeriksaan awal fisik mobil saat tiba di pit stall, pencatatan odometer (KM), keluhan pemilik, dan pembukaan tiket servis.',
     readTime: '3 menit',
     badge: 'Mekanik',
-    tags: ['penerimaan', 'intake', 'odometer', 'keluhan', 'mekanik pic', 'servis masuk', 'ro'],
+    tags: ['penerimaan', 'intake', 'odometer', 'keluhan', 'mobil masuk', 'spk'],
+    annotatedScreenshot: {
+      title: 'Formulir Penerimaan Fisik Kendaraan & Pembukaan Tiket Servis',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_kasir_new_ro.png',
+      annotations: [
+        { number: 1, top: '28%', left: '48%', title: 'Nama Pemilik / Pelanggan', desc: 'Ketik nama pemilik; sistem otomatis mencocokkan riwayat kendaraan' },
+        { number: 2, top: '38%', left: '35%', title: 'WhatsApp & Plat Nomor', desc: 'Masukkan nomor WA pelanggan dan nomor polisi kendaraan (contoh: AG 1822 AB)' },
+        { number: 3, top: '65%', left: '48%', title: 'Odometer Masuk (KM)', desc: 'Catat angka kilometer odometer pada spedometer dashboard mobil' },
+        { number: 4, top: '80%', left: '48%', title: 'Keluhan / Permintaan Servis', desc: 'Tuliskan gejala kerusakan yang disampaikan pemilik (misal: rem bunyi, tarikan berat)' },
+        { number: 5, top: '90%', left: '65%', title: 'Buat Repair Order', desc: 'Simpan tiket dan mulai alur pengerjaan panggung 6-tahap' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Inspeksi Awal Mobil Tiba',
-        description: 'Saat mobil tiba di bengkel, mekanik melakukan pengecekan visual bersama pemilik: catat nomor plat kendaraan, angka odometer pada speedometer, dan dengarkan keluhan utama (contoh: mesin brebet, rem berdecit, AC tidak dingin).',
-        highlightText: 'Pengecekan Fisik Mobil'
+        title: 'Inspeksi Awal Mobil di Stall Masuk',
+        description: 'Periksa fisik bodi mobil, level bahan bakar, dan catat angka kilometer odometer pada instrumen cluster dashboard.',
+        highlightText: 'Pencatatan Odometer Masuk'
       },
       {
         number: 2,
-        title: 'Buka atau Periksa Order Servis (RO)',
-        description: 'Buka tab Servis Mobil (RO) di aplikasi tablet atau smartphone bengkel. Pastikan kartu RO kendaraan sudah dibuat oleh kasir/admin, atau klik + Buat RO Baru jika mekanik bertugas sebagai operator terdepan.',
-        highlightText: 'Kartu Repair Order'
+        title: 'Buka Tiket RO Baru',
+        description: 'Tekan tombol "Buat RO Baru" di halaman Servis Mobil atau gunakan pintasan keyboard Omnibox (Ctrl+K). Masukkan plat nomor kendaraan (contoh: AG 1822 AB).',
+        highlightText: 'Tombol Buat RO Baru'
       },
       {
         number: 3,
-        title: 'Penetapan Mekanik Penanggung Jawab (PIC)',
-        description: 'Pilih nama mekanik yang bertanggung jawab mengerjakan perbaikan pada field Mekanik PJ agar riwayat pengerjaan tercatat akurat untuk pembagian insentif bengkel.',
-        highlightText: 'Field Mekanik PJ'
+        title: 'Pilih Mekanik Penanggung Jawab & Estimasi Selesai',
+        description: 'Pilih nama mekanik PIC yang ditugaskan menangani mobil dan pilih preset estimasi selesai cepat ("Hari ini 17:00" atau "Besok 12:00").',
+        highlightText: 'Preset Estimasi Selesai'
       }
     ],
     callout: {
       type: 'tip',
-      title: 'Kemudahan di Smartphone HP Kentang',
-      content: 'Aplikasi didesain responsive dan ringan tanpa efek blur berat. Mekanik dapat membuka aplikasi langsung dari browser ponsel di area pit bengkel dengan ukuran tombol yang pas di jari (minimal 44x44px).'
+      title: 'Manfaat Odometer Akurat',
+      content: 'Angka odometer akurat menjadi dasar sistem pengingat servis otomatis (servis berkala 5.000 KM atau 10.000 KM) yang akan dikirimkan lewat WhatsApp.'
     }
   },
+
   {
     id: 'mekanik-lifecycle',
-    slug: 'alur-status-6-tahap',
+    sopCode: 'SOP-MEK-02',
+    targetTab: 'repair-orders',
+    tabActionName: 'Buka 6-Tahap Servis RO',
+    slug: 'alur-status-servis-6-tahap',
     role: 'mekanik',
-    title: 'Alur Status Servis 6-Tahap & Log Pengerjaan',
-    summary: 'Memandu transisi 6 siklus hidup pengerjaan servis: Masuk → Diagnosa → Pengerjaan → Menunggu Part → Selesai → Sudah Diambil dengan pencatatan log waktu dan teknisi.',
+    title: 'Alur Status Servis 6-Tahap & Log Pengerjaan Bengkel',
+    summary: 'Standar tahapan kerja bengkel dari MASUK, DIAGNOSA, PENGERJAAN, MENUNGGU PART, SELESAI, hingga DIAMBIL PEMILIK.',
     readTime: '5 menit',
     badge: 'Mekanik',
+    tags: ['status', 'lifecycle', 'diagnosa', 'pengerjaan', 'selesai', 'diambil', 'stepper'],
     diagramType: 'ro-lifecycle',
-    tags: ['6-tahap', 'lifecycle', 'masuk', 'diagnosa', 'pengerjaan', 'menunggu part', 'selesai', 'diambil', 'status'],
+    annotatedScreenshot: {
+      title: 'Stepper 6-Tahap Pengerjaan Servis & Status Terkini',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_ro_lifecycle.png',
+      annotations: [
+        { number: 1, top: '25%', left: '15%', title: 'Identitas Plat & Status', desc: 'Plat nomor kendaraan dan badge status operasional saat ini' },
+        { number: 2, top: '55%', left: '48%', title: 'Stepper 6-Tahap', desc: 'Indikator visual alur: Masuk -> Diagnosa -> Pengerjaan -> Tunggu Part -> Selesai -> Diambil' },
+        { number: 3, top: '48%', left: '88%', title: 'Tombol Update Status', desc: 'Perbarui tahapan pengerjaan dan catat log catatan mekanik' },
+        { number: 4, top: '28%', left: '78%', title: 'Aksi Cepat Kirim WA', desc: 'Kirimkan tautan pelacakan real-time langsung ke WhatsApp pemilik mobil' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Tahap 1: MASUK (Unit Tiba)',
-        description: 'Status awal saat mobil baru diterima di bengkel. Mobil terdaftar di antrean tunggu servis.',
-        highlightText: 'Status MASUK'
+        title: 'Buka Halaman Rincian RO Mobil',
+        description: 'Dari daftar Repair Order, klik pada baris mobil yang sedang Anda kerjakan untuk membuka halaman rincian kerja.',
+        highlightText: 'Klik Kartu / Baris RO'
       },
       {
         number: 2,
-        title: 'Tahap 2: DIAGNOSA / PEMERIKSAAN',
-        description: 'Mekanik melakukan scan scanner OBD2, pengecekan kompresi, uji emisi, atau cek kelistrikan untuk menemukan sumber kerusakan pasti.',
-        highlightText: 'Status DIAGNOSA'
+        title: 'Klik Tombol "Update Status Pengerjaan"',
+        description: 'Tekan tombol hijau "Update Status >" di kanan atas kotak tahapan kerja. Modal pembaruan status akan terbuka.',
+        highlightText: 'Tombol Update Status'
       },
       {
         number: 3,
-        title: 'Tahap 3: PENGERJAAN (Servis Aktif)',
-        description: 'Mekanik mulai membongkar komponen, melakukan tune up, perbaikan mesin, kuras oli, atau pergantian suku cadang.',
-        highlightText: 'Status PENGERJAAN'
+        title: 'Pilih Tahap Pengerjaan Baru & Tuliskan Catatan',
+        description: 'Pilih status baru (contoh: dari DIAGNOSA menjadi PENGERJAAN). Masukkan catatan singkat (misal: "Sedang dilakukan kuras minyak rem dan ganti kampas").',
+        highlightText: 'Pilihan Status & Catatan Pengerjaan'
       },
       {
         number: 4,
-        title: 'Tahap 4: MENUNGGU PART (Opsional)',
-        description: 'Jika suku cadang langka harus dipesan inden dari distributor, pindahkan status ke Menunggu Part agar pelanggan mengetahui penyebab jeda pengerjaan.',
-        highlightText: 'Status MENUNGGU_PART'
-      },
-      {
-        number: 5,
-        title: 'Tahap 5: SELESAI (Uji Jalan / Quality Control)',
-        description: 'Perbaikan tuntas, mobil diuji jalan (test drive), dibersihkan, dan dinyatakan siap diserahkan kepada pemilik.',
-        highlightText: 'Status SELESAI'
-      },
-      {
-        number: 6,
-        title: 'Tahap 6: DIAMBIL (Serah Terima & Selesai)',
-        description: 'Kunci diserahkan, nota dilunasi di kasir, dan pembayaran dicatat ke buku kas. Order servis resmi ditutup.',
-        highlightText: 'Status DIAMBIL'
+        title: 'Simpan Status & Beri Tahu Pelanggan',
+        description: 'Klik "Perbarui Status". Status langsung tersinkronisasi ke portal publik pelanggan tanpa delay.',
+        highlightText: 'Simpan Pembaruan'
       }
     ],
     callout: {
       type: 'note',
-      title: 'Transparansi Real-Time ke Pelanggan',
-      content: 'Setiap kali status diubah oleh mekanik, pelanggan yang mengecek plat nomor di portal publik atau menerima link WhatsApp dapat melihat perubahan tahap secara instan detik itu juga.'
+      title: 'Pentingnya Status "Tunggu Part"',
+      content: 'Gunakan status MENUNGGU PART jika pekerjaan terhenti karena menunggu konfirmasi penggantian komponen dari pemilik mobil atau kiriman supplier.'
     }
   },
+
   {
     id: 'mekanik-photos',
-    slug: 'dokumentasi-foto-servis',
+    sopCode: 'SOP-MEK-03',
+    targetTab: 'repair-orders',
+    tabActionName: 'Buka Kamera Servis RO',
+    slug: 'dokumentasi-foto-pengerjaan',
     role: 'mekanik',
     title: 'Dokumentasi Foto Pengerjaan (Before, Progress, After)',
-    summary: 'Mengambil foto kondisi mobil dan sparepart rusak langsung dari kamera HP, kompresi otomatis client-side, dan publikasi transparan ke pelanggan.',
+    summary: 'Mengambil foto kondisi mobil dan sparepart rusak langsung dari kamera HP, kompresi otomatis client-side hingga 90%, dan publikasi transparan ke pelanggan.',
     readTime: '4 menit',
     badge: 'Mekanik',
-    tags: ['foto', 'kamera', 'before', 'progress', 'after', 'dokumentasi', 'kompresi', 'upload'],
+    tags: ['foto', 'kamera', 'before', 'progress', 'after', 'dokumentasi', 'bukti', 'kompresi'],
+    annotatedScreenshot: {
+      title: 'Dokumentasi Foto Servis: Jepret Kamera & Klasifikasi Stage',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_photo_upload.png',
+      annotations: [
+        { number: 1, top: '48%', left: '14%', title: 'Buka Kamera (Jepret)', desc: 'Tombol hijau untuk langsung membuka kamera ponsel mekanik tanpa aplikasi tambahan' },
+        { number: 2, top: '48%', left: '28%', title: 'Pilih Galeri / File', desc: 'Alternatif untuk memilih foto yang sudah diambil sebelumnya di galeri HP' },
+        { number: 3, top: '58%', left: '15%', title: 'Pilih Tahap Servis', desc: 'Pilih klasifikasi: BEFORE (Sebelum), PROGRESS (Proses Servis), atau AFTER (Selesai)' },
+        { number: 4, top: '58%', left: '36%', title: 'Keterangan / Caption', desc: 'Ketik deskripsi singkat, misalnya: "Kondisi kampas rem depan aus parah"' },
+        { number: 5, top: '58%', left: '55%', title: 'Unggah Foto Otomatis', desc: 'Kompresi otomatis client-side hingga hemat kuota 90% sebelum diunggah' }
+      ]
+    },
     steps: [
       {
         number: 1,
         title: 'Buka Bagian Dokumentasi Foto pada Detail RO',
-        description: 'Scroll ke bagian Dokumentasi Foto Servis (Transparansi Pelanggan) pada halaman rincian order servis mobil.',
-        highlightText: 'Section Dokumentasi Foto'
+        description: 'Scroll ke bagian "Dokumentasi Foto Servis (Transparansi Pelanggan)" pada halaman rincian order servis mobil.',
+        highlightText: 'Section Dokumentasi Foto Servis'
       },
       {
         number: 2,
-        title: 'Ambil Foto dari Kamera Langsung',
-        description: 'Klik tombol Buka Kamera (Jepret) berwarna biru untuk langsung membuka lensa kamera ponsel tanpa perlu membuka galeri terpisah.',
-        highlightText: 'Tombol Buka Kamera'
+        title: 'Klik Tombol "Buka Kamera (Jepret)"',
+        description: 'Tekan tombol hijau "Buka Kamera (Jepret)". Browser ponsel Anda akan langsung mengaktifkan kamera belakang tanpa perlu install aplikasi pihak ketiga.',
+        highlightText: 'Tombol Buka Kamera (Jepret)'
       },
       {
         number: 3,
-        title: 'Pilih Kategori Tahap Foto & Tulis Keterangan',
-        description: 'Pilih tahap foto: BEFORE (kondisi awal komponen rusak/kotor), PROGRESS (proses pembongkaran/pengerjaan), atau AFTER (komponen baru terpasang bersih). Tulis keterangan singkat seperti "Kampas rem depan aus tersisa 1mm".',
-        highlightText: 'Pilihan Tahap Foto & Caption'
+        title: 'Pilih Tahap Pengerjaan (Before, Progress, After)',
+        description: 'Pilih klasifikasi foto: BEFORE untuk kondisi awal komponen rusak sebelum disentuh, PROGRESS untuk proses pembongkaran, dan AFTER untuk komponen baru yang telah terpasang rapi.',
+        highlightText: 'Dropdown Tahap Servis'
       },
       {
         number: 4,
-        title: 'Unggah Foto dengan Kompresi Otomatis',
-        description: 'Klik tombol Unggah Foto. Modul cerdas imageCompressor.js otomatis mengompres foto resolusi tinggi menjadi ~100KB dalam hitungan milidetik sehingga unggah berlangsung kilat meski sinyal bengkel lambat.',
+        title: 'Tulis Keterangan & Klik "Unggah Foto"',
+        description: 'Tulis catatan komponen (misal: "Busi lama berkerak hitam, celah elektroda melebihi batas 1.1mm"). Klik tombol "Unggah Foto". Sistem otomatis memperkecil ukuran foto dari 5MB menjadi <300KB dalam 1 detik.',
         highlightText: 'Tombol Unggah Foto'
-      }
-    ],
-    callout: {
-      type: 'tip',
-      title: 'Hemat Kuota Internet Bengkel',
-      content: 'Foto dikompresi di memori browser HP sebelum dikirim ke server. Anda tidak perlu khawatir kuota internet bengkel habis atau proses upload macet saat memotret banyak sparepart.'
-    }
-  },
-  {
-    id: 'mekanik-parts',
-    slug: 'pemakaian-sparepart-ro',
-    role: 'mekanik',
-    title: 'Pemasangan & Pelepasan Sparepart ke Repair Order',
-    summary: 'Mengambil suku cadang dari inventaris ke pesanan servis dengan pemotongan stok otomatis dan pencatatan mutasi barang keluar.',
-    readTime: '3 menit',
-    badge: 'Mekanik',
-    tags: ['pasang part', 'suku cadang', 'potong stok', 'mutasi out', 'auto-deduct', 'lepas part'],
-    steps: [
-      {
-        number: 1,
-        title: 'Buka Kotak Suku Cadang Terpasang',
-        description: 'Pada detail RO, lihat tabel Suku Cadang & Sparepart Terpasang. Klik tombol + Pasang Sparepart.',
-        highlightText: 'Tombol + Pasang Sparepart'
-      },
-      {
-        number: 2,
-        title: 'Pilih Item dari Stok Gudang',
-        description: 'Pilih suku cadang dari dropdown katalog. Sistem langsung menampilkan stok aktual yang tersedia di gudang agar mekanik tidak memasang part yang habis.',
-        highlightText: 'Pilih Suku Cadang'
-      },
-      {
-        number: 3,
-        title: 'Tentukan Jumlah (Qty) & Simpan',
-        description: 'Ketik jumlah unit yang dipasang. Harga satuan otomatis diambil dari katalog dengan live preview subtotal tagihan. Klik Pasang Part.',
-        highlightText: 'Input Qty & Pasang Part'
-      },
-      {
-        number: 4,
-        title: 'Otomatisasi Stok & Pelepasan Part',
-        description: 'Saat part terpasang, stok gudang otomatis berkurang dan tercatat di mutasi keluar (OUT). Jika pemasangan dibatalkan, cukup klik tombol Hapus (tong sampah merah) pada baris part terkait, dan stok gudang otomatis dikembalikan utuh.',
-        highlightText: 'Pengembalian Stok Otomatis'
-      }
-    ],
-    callout: {
-      type: 'note',
-      title: 'Sinkronisasi Tagihan Kasir',
-      content: 'Setiap sparepart yang ditambahkan oleh mekanik otomatis menjumlahkan nilai tagihan invoice kasir, sehingga kasir tidak perlu menginput ulang saat pelanggan membayar.'
-    }
-  },
-
-  // ==========================================
-  // KASIR (CASHIER) MODULES
-  // ==========================================
-  {
-    id: 'kasir-new-ro',
-    slug: 'pembuatan-ro-baru-kasir',
-    role: 'kasir',
-    title: 'Pembuatan RO Baru & Autocomplete CRM Pelanggan',
-    summary: 'Menerbitkan Repair Order baru saat mobil masuk dengan fitur autocomplete otomatis data pemilik, nomor WhatsApp, dan histori mobil pelanggan.',
-    readTime: '4 menit',
-    badge: 'Kasir',
-    tags: ['buat ro', 'order baru', 'autocomplete', 'crm', 'plat nomor', 'pelanggan', 'kasir'],
-    steps: [
-      {
-        number: 1,
-        title: 'Klik Tombol Buat RO Baru',
-        description: 'Di halaman Servis Mobil (RO), klik tombol + Buat RO Baru di kanan atas layar.',
-        highlightText: 'Tombol + Buat RO Baru',
-        mockupType: 'new-ro-modal'
-      },
-      {
-        number: 2,
-        title: 'Gunakan Autocomplete Nama Pelanggan',
-        description: 'Ketik beberapa huruf nama pelanggan di field Nama Pemilik / Pelanggan. Jika pelanggan pernah servis sebelumnya, kotak saran CRM akan muncul menampilkan nama, nomor HP, dan plat mobil. Klik saran tersebut untuk mengisi data secara instan!',
-        highlightText: 'CRM Autocomplete Dropdown'
-      },
-      {
-        number: 3,
-        title: 'Lengkapi Data Kendaraan & Keluhan',
-        description: 'Masukkan Plat Nomor (otomatis huruf kapital, misal: AG 1822 AB), merek/model mobil (Avanza 1.3 G), tahun, warna, kilometer odometer masuk, serta keluhan perbaikan yang diinginkan pemilik.',
-        highlightText: 'Data Mobil & Keluhan'
-      },
-      {
-        number: 4,
-        title: 'Pilih Estimasi Selesai dengan Preset Cepat',
-        description: 'Gunakan tombol preset waktu cepat: Hari ini 17:00, Besok 12:00, Besok 17:00, atau 2 Hari Lagi untuk menentukan janji selesai perbaikan tanpa repot mengetik kalender manual.',
-        highlightText: 'Preset Estimasi Waktu'
       },
       {
         number: 5,
-        title: 'Terbitkan Repair Order',
-        description: 'Klik Buat Repair Order. Sistem menerbitkan nomor registrasi unik (contoh: RO-20261007-0001) lengkap dengan token pelacakan online mandiri.',
-        highlightText: 'Tombol Buat RO'
+        title: 'Verifikasi di Portal Pelanggan',
+        description: 'Foto langsung tampil di galeri dokumentasi foto real-time yang dapat dilihat pelanggan saat membuka link tracking WhatsApp.',
+        highlightText: 'Pratinjau Galeri Foto'
       }
     ],
     callout: {
       type: 'tip',
-      title: 'Cepat Tanpa Ketik Ulang',
-      content: 'Fitur autocomplete CRM menghilangkan kesalahan ketik nomor HP pelanggan lama dan mempercepat proses penerimaan antrean kendaraan saat jam sibuk bengkel.'
+      title: 'Kunci Kepercayaan Pelanggan',
+      content: 'Foto perbandingan BEFORE & AFTER adalah bukti fisik tak terbantahkan yang menghindarkan bengkel dari kecurigaan kecurangan atau nota fiktif.'
     }
   },
+
   {
-    id: 'kasir-payment',
-    slug: 'pembayaran-dan-pelunasan-kas',
-    role: 'kasir',
-    title: 'Perhitungan Biaya, Diskon & Pelunasan Kas Otomatis',
-    summary: 'Menyesuaikan ongkos jasa kerja, memberikan potongan diskon nota, dan menutup RO dengan auto-record pembayaran ke buku kas.',
+    id: 'mekanik-parts',
+    sopCode: 'SOP-MEK-04',
+    targetTab: 'repair-orders',
+    tabActionName: 'Buka Pemasangan Part RO',
+    slug: 'pemasangan-sparepart-ke-ro',
+    role: 'mekanik',
+    title: 'Pemasangan & Pelepasan Suku Cadang ke Repair Order',
+    summary: 'Menambahkan suku cadang yang terpasang pada mobil, pengurangan stok gudang otomatis, dan rekapitulasi biaya part ke invoice.',
     readTime: '3 menit',
-    badge: 'Kasir',
-    tags: ['pembayaran', 'diskon', 'biaya jasa', 'pelunasan', 'kas masuk', 'qris', 'tunai', 'transfer'],
+    badge: 'Mekanik',
+    tags: ['pasang part', 'sparepart', 'deduction', 'stok keluar', 'subtotal'],
+    annotatedScreenshot: {
+      title: 'Pemasangan Sparepart & Rincian Tagihan Servis',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_kasir_payment.png',
+      annotations: [
+        { number: 1, top: '25%', left: '85%', title: 'Edit Jasa & Biaya', desc: 'Atur nominal ongkos kerja mekanik sesuai standar jasa' },
+        { number: 2, top: '35%', left: '20%', title: 'Subtotal Jasa & Part', desc: 'Kalkulasi otomatis total biaya pengerjaan dan komponen terpasang' },
+        { number: 3, top: '55%', left: '85%', title: 'Total Tagihan Bersih', desc: 'Nilai total yang siap dibayarkan pelanggan di kasir' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Periksa Rincian Biaya & Tagihan',
-        description: 'Buka rincian order servis. Kotak tagihan menampilkan Subtotal Biaya Jasa, Subtotal Suku Cadang, Potongan / Diskon, dan TOTAL BIAYA bersih.',
-        highlightText: 'Kotak Rincian Biaya'
+        title: 'Klik Tombol "+ Pasang Sparepart"',
+        description: 'Pada detail RO, scroll ke tabel Suku Cadang Terpasang dan klik tombol "+ Pasang Sparepart".',
+        highlightText: 'Tombol Pasang Sparepart'
       },
       {
         number: 2,
-        title: 'Ubah Biaya Jasa atau Beri Diskon',
-        description: 'Jika ada penyesuaian tarif jasa atau promo khusus, klik tombol Edit Jasa. Masukkan nominal jasa akhir dan nilai diskon potongan, lalu simpan.',
-        highlightText: 'Tombol Edit Jasa & Diskon'
+        title: 'Pilih Item Suku Cadang dari Gudang',
+        description: 'Pilih part dari katalog. Sistem akan menampilkan sisa stok saat ini. Masukkan jumlah (qty) yang dipasang ke mobil.',
+        highlightText: 'Dropdown Suku Cadang & Input Qty'
       },
       {
         number: 3,
-        title: 'Proses Serah Terima & Pelunasan',
-        description: 'Klik tombol Update Status dan pilih status 6. Diambil. Centang opsi Catat otomatis ke Buku Kas sebagai Pemasukan, lalu pilih metode pembayaran pelanggan (QRIS, Tunai CASH, atau Transfer).',
-        highlightText: 'Status 6. Diambil & Auto-Record Kas'
-      },
-      {
-        number: 4,
-        title: 'Simpan Status Penutupan Order',
-        description: 'Klik Simpan Status. Order servis resmi berstatus lunas dan uang pembayaran langsung tercatat di Buku Kas bengkel pada hari itu.',
-        highlightText: 'Simpan Status Pelunasan'
-      }
-    ],
-    callout: {
-      type: 'tip',
-      title: 'QRIS & Non-Tunai',
-      content: 'Kasir dapat mengarahkan pelanggan membayar via QRIS. Pembayaran langsung tercatat dengan metode bayar QRIS pada rekap kas harian untuk memudahkan rekonsiliasi mutasi rekening bank bengkel.'
-    }
-  },
-  {
-    id: 'kasir-invoice',
-    slug: 'cetak-invoice-nota-pdf',
-    role: 'kasir',
-    title: 'Cetak Invoice / Nota PDF Resmi Siap Cetak',
-    summary: 'Menerbitkan faktur resmi berkop Bengkel Mobil GPS Motor Kediri, lengkap dengan rincian suku cadang, jasa teknisi, data kendaraan, dan catatan garansi.',
-    readTime: '3 menit',
-    badge: 'Kasir',
-    tags: ['cetak nota', 'invoice', 'pdf', 'faktur', 'print', 'garansi', 'kop bengkel'],
-    steps: [
-      {
-        number: 1,
-        title: 'Buka Dokumen Nota dari RO',
-        description: 'Dari daftar order servis maupun dari halaman detail RO, klik tombol Cetak Nota PDF (ikon dokumen merah).',
-        highlightText: 'Tombol Cetak Nota PDF'
-      },
-      {
-        number: 2,
-        title: 'Preview Faktur PDF Berkop Bengkel',
-        description: 'Browser otomatis membuka dokumen PDF beresolusi tinggi dengan kop resmi Bengkel Mobil GPS Motor Kediri, alamat Sambiresik Gampengrejo Kediri, WhatsApp, data mobil & pemilik, nomor RO, rincian sparepart & jasa, total bayar, serta catatan garansi servis.',
-        highlightText: 'Tampilan PDF Faktur'
-      },
-      {
-        number: 3,
-        title: 'Cetak ke Printer atau Simpan File',
-        description: 'Tekan Ctrl+P untuk mencetak langsung ke printer kasir (kertas A4 atau continuous thermal), atau klik ikon unduh untuk mengirimkan file PDF ke WhatsApp pelanggan.',
-        highlightText: 'Cetak / Unduh PDF'
-      }
-    ],
-    callout: {
-      type: 'note',
-      title: 'Cetak Ulang Tanpa Batas',
-      content: 'Jika nota fisik hilang oleh pelanggan, kasir dapat mencetak ulang kapan saja dari arsip daftar Servis Mobil tanpa mengubah data riwayat pembukuan.'
-    }
-  },
-  {
-    id: 'kasir-restock',
-    slug: 'restock-barang-masuk',
-    role: 'kasir',
-    title: 'Pencatatan Restock Barang Masuk dari Supplier',
-    summary: 'Mencatat pembelian suku cadang baru dari toko onderdil atau supplier, menambah stok inventaris secara otomatis, dan mengunggah foto nota faktur.',
-    readTime: '4 menit',
-    badge: 'Kasir',
-    diagramType: 'stock',
-    tags: ['restock', 'barang masuk', 'supplier', 'faktur', 'mutasi in', 'beli stok', 'foto nota'],
-    steps: [
-      {
-        number: 1,
-        title: 'Buka Tab Mutasi Stok',
-        description: 'Navigasikan ke menu Mutasi Stok di dashboard. Riwayat seluruh pergerakan barang (Masuk, Keluar, Opname) tertata rapi.',
-        highlightText: 'Tab Mutasi Stok'
-      },
-      {
-        number: 2,
-        title: 'Buka Form Barang Masuk (Restock)',
-        description: 'Klik tombol + Barang Masuk (Restock). Pilih item sparepart dari katalog barang, tentukan tanggal pembelian, dan jumlah unit yang masuk (Qty).',
-        highlightText: 'Modal Barang Masuk'
-      },
-      {
-        number: 3,
-        title: 'Isi Informasi Faktur Pembelian (Fleksibel)',
-        description: 'Masukkan nama supplier (contoh: Toko Onderdil Jaya Kediri), nomor faktur pembelian, dan harga beli satuan. Field ini fleksibel dan tidak memberatkan jika faktur tidak lengkap.',
-        highlightText: 'Form Supplier & Faktur'
-      },
-      {
-        number: 4,
-        title: 'Foto Bukti Faktur & Simpan',
-        description: 'Jepret foto nota faktur supplier menggunakan tombol kamera HP, lalu klik Simpan Barang Masuk. Stok inventaris bertambah seketika dan mutasi tercatat dengan tipe IN.',
-        highlightText: 'Simpan Barang Masuk'
-      }
-    ],
-    callout: {
-      type: 'tip',
-      title: 'Foto Faktur Rapi',
-      content: 'Gunakan pencahayaan yang cukup saat memotret faktur kertas supplier agar rincian nomor surat jalan dan tanggal pembelian tetap terbaca jelas untuk arsip audit.'
-    }
-  },
-  {
-    id: 'kasir-opname',
-    slug: 'pelaksanaan-stok-opname',
-    role: 'kasir',
-    title: 'Pelaksanaan Stok Opname Fisik Gudang',
-    summary: 'Audit berkala mencocokkan stok fisik di rak gudang dengan data komputer sistem, deteksi selisih otomatis, dan penyesuaian saldo stok.',
-    readTime: '4 menit',
-    badge: 'Kasir',
-    diagramType: 'stock',
-    tags: ['stok opname', 'audit', 'rekonsiliasi', 'selisih', 'fisik vs sistem', 'hilang', 'pecah', 'penyesuaian'],
-    steps: [
-      {
-        number: 1,
-        title: 'Buka Menu Stok Opname',
-        description: 'Masuk ke tab Stok Opname di dashboard bengkel.',
-        highlightText: 'Tab Stok Opname'
-      },
-      {
-        number: 2,
-        title: 'Pilih Sparepart yang Diaudit',
-        description: 'Pilih item suku cadang dari dropdown. Sistem menampilkan angka Stok Sistem Saat Ini (catatan komputer).',
-        highlightText: 'Pilih Sparepart'
-      },
-      {
-        number: 3,
-        title: 'Hitung dan Input Stok Fisik Aktual',
-        description: 'Hitung jumlah barang nyata yang ada di rak gudang, lalu ketik angka tersebut di kolom Stok Fisik Aktual di Rak. Sistem menghitung selisih secara otomatis: jika kurang muncul badge merah Defisit, jika lebih muncul badge hijau Surplus, dan jika sama muncul badge biru Cocok Sempurna.',
-        highlightText: 'Input Stok Fisik & Indikator Selisih'
-      },
-      {
-        number: 4,
-        title: 'Pilih Alasan Penyesuaian & Simpan',
-        description: 'Pilih alasan menggunakan tombol preset cepat (misal: "Barang Rusak / Pecah di Rak", "Audit Rutin Bulanan", "Selisih Hitung Restock Sebelumnya"). Klik Simpan Penyesuaian Stok Opname. Angka stok sistem seketika diselaraskan dengan kondisi fisik rak.',
-        highlightText: 'Tombol Simpan Penyesuaian'
+        title: 'Simpan Pemasangan',
+        description: 'Klik tombol Simpan. Sistem otomatis memotong stok di gudang dan menambahkan rincian harga ke kalkulasi nota pelanggan.',
+        highlightText: 'Simpan Pemasangan'
       }
     ],
     callout: {
       type: 'warning',
-      title: 'Pencatatan Audit Transparan',
-      content: 'Setiap penyesuaian stok opname otomatis tercatat sebagai mutasi bertipe ADJUSTMENT lengkap dengan nama operator, tanggal, selisih jumlah, dan alasan tertulis demi mencegah kecurangan gudang.'
+      title: 'Proteksi Stok Habis (E10)',
+      content: 'Sistem menolak pemasangan jika jumlah sparepart yang diminta melebihi sisa fisik di gudang untuk mencegah selisih stok (stock underflow).'
     }
   },
 
   // ==========================================
-  // CRM & PELANGGAN MODULES
+  // 3. KASIR MODULES
   // ==========================================
   {
-    id: 'crm-database',
-    slug: 'database-pelanggan-crm',
-    role: 'crm',
-    title: 'Database Pelanggan & Riwayat Servis Kendaraan',
-    summary: 'Mengelola daftar pelanggan bengkel, mencatat lebih dari satu kendaraan per pemilik, dan meninjau histori perawatan berkala di masa lalu.',
+    id: 'kasir-new-ro',
+    sopCode: 'SOP-KAS-01',
+    targetTab: 'repair-orders',
+    tabActionName: 'Buat RO Kasir Baru',
+    slug: 'pembuatan-ro-kasir',
+    role: 'kasir',
+    title: 'Pembuatan RO Baru & Autocomplete CRM Pelanggan',
+    summary: 'Penerbitan Surat Perintah Kerja (SPK) baru di meja depan kasir dengan pencocokan otomatis database pelanggan tetap.',
     readTime: '3 menit',
-    badge: 'CRM & Pelanggan',
-    tags: ['crm', 'pelanggan', 'riwayat', 'histori', 'database', 'multi kendaraan', 'whatsapp'],
+    badge: 'Kasir',
+    tags: ['kasir', 'spk', 'ro baru', 'autocomplete', 'crm', 'pelanggan', 'plat nomor'],
+    annotatedScreenshot: {
+      title: 'Penerbitan RO Baru Kasir dengan Autocomplete CRM',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_kasir_new_ro.png',
+      annotations: [
+        { number: 1, top: '28%', left: '48%', title: 'Pencarian CRM Pelanggan', desc: 'Ketik nama pelanggan untuk mencocokkan nomor HP dan riwayat mobil' },
+        { number: 2, top: '38%', left: '35%', title: 'Nomor WhatsApp Aktif', desc: 'Format seluler Indonesia untuk pengiriman notifikasi nota digital' },
+        { number: 3, top: '38%', left: '60%', title: 'Plat Nomor Kendaraan', desc: 'Nomor polisi mobil (contoh: AG 1822 AB)' },
+        { number: 4, top: '48%', left: '48%', title: 'Merek & Model Mobil', desc: 'Pilih dari riwayat bengkel atau ketik manual (Toyota Avanza, Honda Brio, dll.)' },
+        { number: 5, top: '90%', left: '65%', title: 'Terbitkan Order Servis', desc: 'Cetak nomor RO otomatis dan arahkan mobil ke pit pengerjaan' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Buka Menu Pelanggan CRM',
-        description: 'Pilih tab Pelanggan CRM di dashboard. Seluruh kontak pelanggan tercantum dengan indikator jumlah kunjungan servis (X kali Servis), nomor WhatsApp, dan tanggal servis terakhir.',
-        highlightText: 'Tab Pelanggan CRM'
+        title: 'Klik Tombol "Buat RO Baru"',
+        description: 'Buka tab "Servis Mobil (RO)" di dashboard dan klik tombol "+ Buat RO Baru".',
+        highlightText: 'Tombol Buat RO Baru'
       },
       {
         number: 2,
-        title: 'Kelola Kendaraan Pelanggan',
-        description: 'Jika pelanggan memiliki lebih dari satu mobil (contoh: Avanza dan Innova), staf dapat menambahkan unit mobil baru langsung dari kartu pelanggan.',
-        highlightText: 'Tambah Mobil Pelanggan'
+        title: 'Ketik Nama Pelanggan (Autocomplete)',
+        description: 'Mulai ketik nama pemilik. Jika pelanggan pernah servis sebelumnya, data nomor telepon dan daftar mobilnya akan muncul otomatis.',
+        highlightText: 'Autocomplete CRM'
       },
       {
         number: 3,
-        title: 'Buka Modal Riwayat Servis',
-        description: 'Klik tombol Riwayat (ikon History) untuk melihat linimasa seluruh order perbaikan masa lalu kendaraan tersebut lengkap dengan tanggal, keluhan, biaya, dan part yang pernah diganti.',
-        highlightText: 'Modal Riwayat Servis'
+        title: 'Lengkapi Data Kendaraan & Keluhan',
+        description: 'Isi plat nomor, tipe mobil, tahun, warna, kilometer, dan keluhan utama pemilik mobil.',
+        highlightText: 'Input Rincian Kendaraan'
+      },
+      {
+        number: 4,
+        title: 'Terbitkan SPK / RO',
+        description: 'Klik "Buat Repair Order". Nomor urut RO diterbitkan otomatis (contoh: RO-202610-001).',
+        highlightText: 'Simpan Repair Order'
       }
     ],
     callout: {
       type: 'tip',
-      title: 'Diagnosa Lebih Akurat',
-      content: 'Dengan memeriksa riwayat servis masa lalu, mekanik dapat mengetahui riwayat penggantian oli dan part sebelumnya untuk mendiagnosa masalah kendaraan secara lebih presisi.'
+      title: 'Kecepatan Pelayanan Meja Kasir',
+      content: 'Fitur autocomplete CRM menghemat waktu pendaftaran hingga <30 detik untuk pelanggan lama.'
     }
   },
+
   {
-    id: 'crm-whatsapp',
-    slug: 'pengingat-dan-promo-whatsapp',
-    role: 'crm',
-    title: 'Pengiriman Pesan WhatsApp Promosi & Pengingat Servis',
-    summary: 'Kirim pesan promosi berkala, pengingat jadwal ganti oli rutin, dan follow-up kepuasan pelanggan langsung ke WhatsApp pelanggan dalam satu klik.',
-    readTime: '3 menit',
-    badge: 'CRM & Pelanggan',
-    tags: ['whatsapp', 'blast', 'promo', 'reminder', 'pengingat', 'follow-up', 'ganti oli'],
+    id: 'kasir-payment',
+    sopCode: 'SOP-KAS-02',
+    targetTab: 'finance',
+    tabActionName: 'Buka Pelunasan & Kasir',
+    slug: 'perhitungan-biaya-pelunasan',
+    role: 'kasir',
+    title: 'Perhitungan Biaya, Diskon & Pelunasan Kasir Otomatis',
+    summary: 'Proses pembayaran servis, penambahan diskon promo, pencatatan metode bayar (Tunai, QRIS, Transfer), dan pencetakan tanda lunas.',
+    readTime: '4 menit',
+    badge: 'Kasir',
+    tags: ['pembayaran', 'kasir', 'diskon', 'tunai', 'qris', 'transfer', 'lunas'],
+    annotatedScreenshot: {
+      title: 'Panel Pembayaran Servis Kasir & Pemilihan Metode Bayar',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_kasir_payment.png',
+      annotations: [
+        { number: 1, top: '25%', left: '85%', title: 'Atur Ongkos Jasa', desc: 'Sesuaikan biaya jasa tune-up, servis rem, atau turun mesin' },
+        { number: 2, top: '35%', left: '20%', title: 'Subtotal Suku Cadang', desc: 'Akumulasi seluruh part yang telah dipasang oleh mekanik di pit' },
+        { number: 3, top: '48%', left: '20%', title: 'Input Potongan / Diskon', desc: 'Masukkan nominal potongan harga khusus pelanggan atau voucher promo' },
+        { number: 4, top: '55%', left: '85%', title: 'Total Tagihan Bersih', desc: 'Jumlah uang yang wajib ditagihkan dan dibayarkan oleh konsumen' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Pilih Pelanggan & Klik Kirim Promo WA',
-        description: 'Di tabel Pelanggan CRM, klik tombol Kirim Promo WA pada baris pelanggan yang ingin dihubungi.',
-        highlightText: 'Tombol Kirim Promo WA'
+        title: 'Verifikasi Pekerjaan Telah Selesai',
+        description: 'Pastikan status servis mobil telah berada pada tahap SELESAI dan seluruh sparepart telah diverifikasi oleh kepala mekanik.',
+        highlightText: 'Status Tahap Selesai'
       },
       {
         number: 2,
-        title: 'Pilih Template Pesan Siap Pakai',
-        description: 'Pilih salah satu dari 3 template otomatis: PROMO (penawaran diskon jasa servis 15% & gratis cek 25 titik), REMINDER (pengingat perawatan berkala dan ganti oli rutin), atau FOLLOWUP (menanyakan kenyamanan berkendara pasca servis).',
-        highlightText: 'Pilihan Template WA'
+        title: 'Input Potongan Harga / Diskon (Jika Ada)',
+        description: 'Jika ada program promosi atau voucher loyalitas pelanggan, masukkan nominal diskon pada kolom potongan harga.',
+        highlightText: 'Kolom Diskon / Potongan'
       },
       {
         number: 3,
-        title: 'Kustomisasi Pesan & Kirim via WhatsApp',
-        description: 'Edit teks pesan jika ingin menambahkan catatan khusus. Klik Kirim via WhatsApp. Aplikasi langsung membuka WhatsApp Web atau aplikasi WhatsApp dengan pesan dan nomor tujuan internasional (62...) yang telah terisi rapi!',
+        title: 'Pilih Metode Pembayaran & Catat Pelunasan',
+        description: 'Pilih metode bayar konsumen (Tunai, QRIS Dinamis, atau Transfer Bank). Sistem otomatis mencatat uang masuk ke jurnal Buku Kas.',
+        highlightText: 'Pilihan Metode Pembayaran'
+      }
+    ],
+    callout: {
+      type: 'tip',
+      title: 'Rekonsiliasi Kas Instan',
+      content: 'Setiap transaksi lunas langsung memperbarui saldo kas kasir tanpa perlu perhitungan manual akhir shift.'
+    }
+  },
+
+  {
+    id: 'kasir-invoice',
+    sopCode: 'SOP-KAS-03',
+    targetTab: 'repair-orders',
+    tabActionName: 'Cetak Nota & Invoice A4',
+    slug: 'cetak-invoice-nota-pdf',
+    role: 'kasir',
+    title: 'Cetak Invoice & Surat Jalan Format Cetak Standar A4',
+    summary: 'Menghasilkan dokumen invoice resmi format PDF standar cetak A4 berlogo bengkel, rincian biaya transparan, dan QR code tracking.',
+    readTime: '3 menit',
+    badge: 'Kasir',
+    tags: ['invoice', 'pdf', 'cetak', 'nota a4', 'surat jalan', 'qr code'],
+    annotatedScreenshot: {
+      title: 'Tombol Cetak Dokumen Invoice Resmi & Integrasi Pelacakan',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_ro_lifecycle.png',
+      annotations: [
+        { number: 1, top: '28%', left: '68%', title: 'Cetak Nota PDF', desc: 'Unduh file PDF resmi format standar A4 berlogo bengkel untuk printer kantor' },
+        { number: 2, top: '28%', left: '78%', title: 'Kirim via WhatsApp', desc: 'Kirimkan tautan ringkasan invoice langsung ke kontak WhatsApp pemilik mobil' },
+        { number: 3, top: '28%', left: '88%', title: 'Buka Portal Tracking', desc: 'Buka pratinjau halaman pelacakan mandiri publik milik pelanggan' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Klik Tombol "Cetak Nota PDF"',
+        description: 'Pada halaman rincian order servis, klik tombol abu-abu "Cetak Nota PDF" di bagian atas.',
+        highlightText: 'Tombol Cetak Nota PDF'
+      },
+      {
+        number: 2,
+        title: 'Pratinjau Dokumen PDF',
+        description: 'File PDF akan terbuka di tab browser baru menampilkan kop resmi bengkel, nomor SPK, data mobil, rincian jasa dan suku cadang, serta tanda tangan mekanik.',
+        highlightText: 'Tampilan PDF Browser'
+      },
+      {
+        number: 3,
+        title: 'Cetak atau Kirimkan File ke Pelanggan',
+        description: 'Tekan Ctrl+P untuk mencetak ke kertas fisik, atau simpan file PDF untuk dikirimkan melalui WhatsApp pelanggan.',
+        highlightText: 'Pintasan Ctrl+P / Download'
+      }
+    ],
+    callout: {
+      type: 'note',
+      title: 'QR Code Transparansi Pelanggan',
+      content: 'Pada bagian bawah invoice cetak terdapat QR code yang dapat dipindai oleh kamera ponsel pelanggan untuk melihat dokumentasi foto perbaikan mobil mereka kapan saja.'
+    }
+  },
+
+  {
+    id: 'kasir-thermal-pos',
+    sopCode: 'SOP-KAS-04',
+    targetTab: 'repair-orders',
+    tabActionName: 'Cetak Struk POS Termal 58mm',
+    slug: 'cetak-struk-kasir-thermal-58mm',
+    role: 'kasir',
+    title: 'Pencetakan Struk Kasir Termal 58mm POS & QRIS Cepat',
+    summary: 'Mencetak struk kasir kecil ukuran continuous thermal 58mm menggunakan printer bluetooth murah langsung dari meja kasir.',
+    readTime: '3 menit',
+    badge: 'Kasir',
+    tags: ['struk', 'thermal', 'printer kasir', '58mm', 'pos', 'bluetooth printer', 'qris'],
+    annotatedScreenshot: {
+      title: 'Simulasi Struk Kasir Termal 58mm & Font Monospace Kasir',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_thermal_receipt.png',
+      annotations: [
+        { number: 1, top: '25%', left: '50%', title: 'Kop Struk Bengkel', desc: 'Nama bengkel, alamat Kediri, dan kontak WhatsApp pemesanan' },
+        { number: 2, top: '40%', left: '50%', title: 'Nomor SPK & Plat Mobil', desc: 'Identifikasi ringkas mobil konsumen dan nama teknisi yang bertugas' },
+        { number: 3, top: '55%', left: '50%', title: 'Rincian Jasa & Part', desc: 'Daftar item biaya dengan format monospace rata kanan standar POS' },
+        { number: 4, top: '70%', left: '50%', title: 'Total Tagihan & QRIS', desc: 'Total pembayaran bersih dan status lunas' },
+        { number: 5, top: '85%', left: '50%', title: 'Cetak ke Printer Bluetooth', desc: 'Kirim perintah cetak langsung ke printer termal 58mm portabel' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Sambungkan Printer Kasir Bluetooth / USB',
+        description: 'Pastikan printer thermal 58mm atau 80mm di meja kasir Anda telah menyala dan terhubung melalui Bluetooth atau kabel USB ke komputer kasir/HP.',
+        highlightText: 'Koneksi Printer 58mm'
+      },
+      {
+        number: 2,
+        title: 'Pilih Cetak Struk Kasir',
+        description: 'Setelah pelunasan transaksi selesai, klik opsi "Cetak Struk Kasir 58mm". Format teks struk otomatis disesuaikan dengan lebar kertas termal.',
+        highlightText: 'Opsi Struk Kasir 58mm'
+      },
+      {
+        number: 3,
+        title: 'Robek dan Serahkan ke Pelanggan',
+        description: 'Printer akan mencetak struk secara cepat dalam 2 detik. Serahkan struk beserta kunci mobil kepada pelanggan.',
+        highlightText: 'Serah Terima Struk Kasir'
+      }
+    ],
+    callout: {
+      type: 'tip',
+      title: 'Hemat Biaya Kertas Khas Bengkel',
+      content: 'Struk termal 58mm menghemat biaya kertas hingga 80% dibanding mencetak di kertas HVS A4 untuk servis-servis ringan seperti ganti oli berkala.'
+    }
+  },
+
+  {
+    id: 'kasir-restock',
+    sopCode: 'SOP-KAS-05',
+    targetTab: 'mutations',
+    tabActionName: 'Catat Restock Barang Masuk',
+    slug: 'pencatatan-restock-barang-masuk',
+    role: 'kasir',
+    title: 'Pencatatan Restock Barang Masuk dari Supplier',
+    summary: 'Mencatat pembelian sparepart dari toko/supplier, pembaruan harga beli terakhir, penambahan stok gudang, dan pencatatan kas keluar.',
+    readTime: '4 menit',
+    badge: 'Kasir',
+    tags: ['restock', 'barang masuk', 'supplier', 'harga modal', 'stok bertambah', 'faktur supplier'],
+    annotatedScreenshot: {
+      title: 'Pencatatan Barang Masuk & Rekam Transaksi Restock',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_stock_mutations.png',
+      annotations: [
+        { number: 1, top: '35%', left: '65%', title: '+ Barang Masuk (Restock)', desc: 'Tombol hijau untuk membuka form penerimaan barang baru dari distributor' },
+        { number: 2, top: '45%', left: '65%', title: '- Barang Keluar (Pemakaian)', desc: 'Tombol merah untuk mencatat barang keluar non-servis atau retur' },
+        { number: 3, top: '42%', left: '85%', title: 'Ekspor Mutasi CSV & PDF', desc: 'Unduh rekap data keluar-masuk barang untuk pelaporan audit berkala' },
+        { number: 4, top: '65%', left: '30%', title: 'Grafik Alur Mutasi Stok', desc: 'Visualisasi volume barang masuk vs keluar selama 14 hari terakhir' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Buka Menu Mutasi Stok atau Inventaris',
+        description: 'Masuk ke tab "Inventaris & Sparepart" lalu pilih sub-navigasi "Riwayat Mutasi".',
+        highlightText: 'Sub-Menu Riwayat Mutasi'
+      },
+      {
+        number: 2,
+        title: 'Klik Tombol "+ Barang Masuk (Restock)"',
+        description: 'Klik tombol hijau "+ Barang Masuk (Restock)". Modal penerimaan barang masuk akan terbuka.',
+        highlightText: 'Tombol + Barang Masuk'
+      },
+      {
+        number: 3,
+        title: 'Pilih Suku Cadang, Jumlah Qty & Harga Beli Modal',
+        description: 'Pilih item barang yang datang, masukkan jumlah unit yang diterima, harga beli satuan faktur terbaru, serta nama supplier.',
+        highlightText: 'Input Jumlah & Harga Beli'
+      },
+      {
+        number: 4,
+        title: 'Simpan Barang Masuk',
+        description: 'Klik "Simpan Barang Masuk". Sistem otomatis menambahkan jumlah fisik di gudang dan mencatat pengeluaran uang di Buku Kas.',
+        highlightText: 'Simpan Restock'
+      }
+    ],
+    callout: {
+      type: 'tip',
+      title: 'Pembaruan Harga Pokok Penjualan (HPP)',
+      content: 'Harga beli baru yang Anda masukkan otomatis memperbarui nilai dasar valuasi stok di gudang secara akurat.'
+    }
+  },
+
+  {
+    id: 'inventory-mutations',
+    sopCode: 'SOP-KAS-06',
+    targetTab: 'mutations',
+    tabActionName: 'Buka Buku Mutasi Stok',
+    slug: 'audit-trail-riwayat-mutasi',
+    role: 'kasir',
+    title: 'Audit Trail & Riwayat Mutasi Stok (Masuk, Keluar, Opname)',
+    summary: 'Pemantauan buku mutasi digital untuk setiap perubahan stok: siapa yang mengubah, nomor referensi RO, tanggal, dan alasan perubahan.',
+    readTime: '4 menit',
+    badge: 'Kasir',
+    tags: ['mutasi', 'audit trail', 'kartu stok', 'riwayat', 'restock', 'service usage', 'opname adjustment'],
+    annotatedScreenshot: {
+      title: 'Buku Mutasi Stok Digital & Filter Penelusuran Transaksi',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_stock_mutations.png',
+      annotations: [
+        { number: 1, top: '60%', left: '30%', title: 'Grafik Mutasi Harian', desc: 'Grafik batang perbandingan barang restock vs barang terpasang pada mobil' },
+        { number: 2, top: '90%', left: '12%', title: 'Filter Tipe Mutasi', desc: 'Saring berdasarkan RESTOCK, SERVICE_USAGE, atau OPNAME_ADJUSTMENT' },
+        { number: 3, top: '90%', left: '48%', title: 'Filter Rentang Tanggal', desc: 'Pilih tanggal awal dan akhir untuk audit pembukuan mingguan/bulanan' },
+        { number: 4, top: '90%', left: '85%', title: 'Kolom Pencarian Cepat', desc: 'Ketik nama sparepart atau nomor faktur untuk melacak riwayat transaksi tertentu' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Akses Sub-Navigasi Riwayat Mutasi',
+        description: 'Buka modul Inventaris, lalu klik tab "Riwayat Mutasi". Anda akan disajikan grafik tren dan tabel kronologis mutasi barang.',
+        highlightText: 'Tab Riwayat Mutasi'
+      },
+      {
+        number: 2,
+        title: 'Filter Berdasarkan Tipe Transaksi',
+        description: 'Gunakan dropdown tipe mutasi untuk membedakan barang masuk dari supplier (RESTOCK), barang terpakai servis (SERVICE_USAGE), atau penyesuaian selisih (OPNAME_ADJUSTMENT).',
+        highlightText: 'Dropdown Filter Tipe'
+      },
+      {
+        number: 3,
+        title: 'Audit Detail Perubahan',
+        description: 'Tabel menampilkan nilai perubahan (+ atau -), sisa stok setelah transaksi, nama operator pembuat mutasi, dan nomor referensi RO terkait.',
+        highlightText: 'Tabel Riwayat Mutasi'
+      }
+    ],
+    callout: {
+      type: 'note',
+      title: 'Mencegah Kebocoran Stok',
+      content: 'Dengan audit trail ini, setiap ada suku cadang yang berkurang dapat dilacak secara pasti ke mobil mana part tersebut dipasang.'
+    }
+  },
+
+  {
+    id: 'kasir-opname',
+    sopCode: 'SOP-KAS-07',
+    targetTab: 'opname',
+    tabActionName: 'Buka Formulir Stok Opname',
+    slug: 'pelaksanaan-stok-opname-fisik',
+    role: 'kasir',
+    title: 'Pelaksanaan Stok Opname Fisik Gudang & Penyesuaian Selisih',
+    summary: 'Prosedur pencocokan jumlah fisik suku cadang di rak gudang dengan data sistem, penghitungan selisih, dan rekonsiliasi otomatis.',
+    readTime: '4 menit',
+    badge: 'Kasir',
+    tags: ['stok opname', 'audit gudang', 'selisih stok', 'rekonsiliasi', 'penghitungan fisik'],
+    annotatedScreenshot: {
+      title: 'Antarmuka Pencatatan Hitungan Fisik Stok Opname Gudang',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_stock_opname.png',
+      annotations: [
+        { number: 1, top: '15%', left: '42%', title: 'Tab Stok Opname', desc: 'Buka sesi penghitungan fisik suku cadang gudang berkala' },
+        { number: 2, top: '35%', left: '85%', title: 'Tombol Mulai Sesi Baru', desc: 'Buka sesi audit baru untuk membekukan data perbandingan sistem' },
+        { number: 3, top: '65%', left: '50%', title: 'Tabel Hitungan Fisik & Selisih', desc: 'Kolom input jumlah hitungan riil tangan dan kalkulasi selisih otomatis' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Buka Sub-Navigasi "Stok Opname"',
+        description: 'Pada modul inventaris, pilih sub-navigasi "Stok Opname". Klik tombol "+ Mulai Sesi Stok Opname Baru".',
+        highlightText: 'Mulai Sesi Opname Baru'
+      },
+      {
+        number: 2,
+        title: 'Hitung Fisik Suku Cadang di Rak Gudang',
+        description: 'Lakukan penghitungan manual barang di rak satu per satu. Masukkan angka riil yang dihitung ke dalam kolom "Hitungan Fisik".',
+        highlightText: 'Input Hitungan Fisik'
+      },
+      {
+        number: 3,
+        title: 'Tinjau Kolom Selisih (Discrepancy)',
+        description: 'Sistem otomatis menghitung selisih (Stok Fisik - Stok Sistem). Jika cocok selisih bernilai 0. Jika ada selisih, sistem menandainya dengan badge warna peringatan.',
+        highlightText: 'Review Selisih Barang'
+      },
+      {
+        number: 4,
+        title: 'Finalisasi & Rekonsiliasi Jurnal',
+        description: 'Tuliskan catatan hasil audit (misal: "Audit akhir bulan Oktober") dan klik "Finalisasi Sesi Opname". Sistem otomatis menyesuaikan stok master dan mencatat jurnal koreksi.',
+        highlightText: 'Tombol Finalisasi Sesi Opname'
+      }
+    ],
+    callout: {
+      type: 'tip',
+      title: 'Jadwal Opname Rutin',
+      content: 'Lakukan stok opname rutin setiap 2 minggu atau akhir bulan untuk barang-barang bernilai tinggi seperti oli mesin drum, aki mobil, dan ban.'
+    }
+  },
+
+  // ==========================================
+  // 4. CRM & PELANGGAN MODULES
+  // ==========================================
+  {
+    id: 'crm-database',
+    sopCode: 'SOP-CRM-01',
+    targetTab: 'customers',
+    tabActionName: 'Buka Database Pelanggan',
+    slug: 'database-crm-pelanggan',
+    role: 'crm',
+    title: 'Database Pelanggan, Profil Kontak & Riwayat Servis Kendaraan',
+    summary: 'Manajemen basis data pemilik mobil, riwayat perbaikan masa lalu, rekam jejak kilometer, dan kontak komunikasi terintegrasi.',
+    readTime: '3 menit',
+    badge: 'CRM & Pelanggan',
+    tags: ['crm', 'pelanggan', 'database', 'riwayat mobil', 'kontak', 'whatsapp'],
+    annotatedScreenshot: {
+      title: 'Database Pelanggan CRM, Riwayat Mobil & Tautan WhatsApp',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_crm_customers.png',
+      annotations: [
+        { number: 1, top: '22%', left: '85%', title: 'Tambah Pelanggan Baru', desc: 'Daftarkan data nama pemilik, nomor WhatsApp, dan alamat tinggal' },
+        { number: 2, top: '48%', left: '30%', title: 'Kartu Profil Pelanggan', desc: 'Menampilkan nama pemilik dan daftar mobil yang pernah diservis' },
+        { number: 3, top: '48%', left: '72%', title: 'Tombol Chat WhatsApp', desc: 'Kirim pesan wa.me instan ke nomor pemilik tanpa simpan kontak di HP' },
+        { number: 4, top: '48%', left: '88%', title: 'Buka Riwayat Servis', desc: 'Lihat daftar pekerjaan dan riwayat faktur mobil pelanggan di masa lalu' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Akses Tab Pelanggan',
+        description: 'Buka menu "Pelanggan" di topbar. Sistem menampilkan seluruh pelanggan terdaftar beserta jumlah kendaraan yang mereka miliki.',
+        highlightText: 'Tab Pelanggan'
+      },
+      {
+        number: 2,
+        title: 'Cari Pelanggan Berdasarkan Nama atau No HP',
+        description: 'Gunakan kolom pencarian di bagian atas untuk menemukan riwayat pelanggan dalam hitungan milidetik.',
+        highlightText: 'Kolom Pencarian Pelanggan'
+      },
+      {
+        number: 3,
+        title: 'Lihat Riwayat Servis Lengkap',
+        description: 'Klik tombol "Riwayat" pada kartu pelanggan untuk melihat tanggal servis terdahulu, keluhan lama, dan total biaya yang telah dihabiskan.',
+        highlightText: 'Tombol Riwayat Servis'
+      }
+    ],
+    callout: {
+      type: 'tip',
+      title: 'Hubungan Pelanggan Jangka Panjang',
+      content: 'Riwayat servis yang rapi membantu mekanik mendiagnosa riwayat perawatan mobil secara akurat saat pelanggan kembali berkunjung.'
+    }
+  },
+
+  {
+    id: 'crm-whatsapp',
+    sopCode: 'SOP-CRM-02',
+    targetTab: 'customers',
+    tabActionName: 'Buka Promo WhatsApp CRM',
+    slug: 'broadcast-promosi-reminder-whatsapp',
+    role: 'crm',
+    title: 'Pengiriman Pesan WhatsApp Promosi & Pengingat Servis Berkala',
+    summary: 'Komposer pesan promosi massal/personal via WhatsApp resmi bengkel dengan template variabel otomatis ({nama}, {mobil}, {plat}).',
+    readTime: '3 menit',
+    badge: 'CRM & Pelanggan',
+    tags: ['whatsapp', 'promosi', 'reminder', 'tune up', 'diskon', 'broadcast', 'template'],
+    annotatedScreenshot: {
+      title: 'Komposer Promosi WhatsApp dengan Variabel Otomatis',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_crm_whatsapp.png',
+      annotations: [
+        { number: 1, top: '28%', left: '48%', title: 'Pilih Kategori Promosi', desc: 'Pilihan template: Promo Gajian, Servis Berkala 10.000 KM, atau Uji Emisi' },
+        { number: 2, top: '45%', left: '48%', title: 'Editor Pesan Teks', desc: 'Kustomisasi pesan dengan token dinamis {nama}, {mobil}, dan {plat}' },
+        { number: 3, top: '65%', left: '48%', title: 'Target Penerima', desc: 'Kirim ke seluruh pelanggan aktif atau saring pelanggan dengan kilometer tinggi' },
+        { number: 4, top: '88%', left: '72%', title: 'Buka WhatsApp Web / App', desc: 'Tautan otomatis membuka chat WA dengan pesan yang sudah terformat rapi' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Buka Modal "Kirim Promo WhatsApp"',
+        description: 'Pada halaman Pelanggan, klik tombol hijau "Kirim Promo WhatsApp" di sudut kanan atas.',
+        highlightText: 'Tombol Kirim Promo WhatsApp'
+      },
+      {
+        number: 2,
+        title: 'Pilih Template Pesan atau Tulis Sendiri',
+        description: 'Pilih salah satu template cepat (misal: "Promo Servis Rem & Ganti Oli Awal Bulan") atau tulis teks promosi kustom.',
+        highlightText: 'Pilihan Template Pesan'
+      },
+      {
+        number: 3,
+        title: 'Kirimkan Pesan Langsung ke WhatsApp Pelanggan',
+        description: 'Klik tombol "Kirim via WhatsApp". Aplikasi otomatis mengarahkan ke aplikasi WhatsApp dengan pesan terformat rapi siap kirim.',
         highlightText: 'Tombol Kirim via WhatsApp'
       }
     ],
     callout: {
-      type: 'note',
-      title: 'Meningkatkan Kunjungan Ulang',
-      content: 'Pengingat servis berkala yang dikirimkan 2-3 bulan setelah kunjungan terbukti meningkatkan frekuensi kedatangan pelanggan (retensi) secara signifikan.'
+      type: 'tip',
+      title: 'Pesan Ramah Tanpa Blokir',
+      content: 'Kirimkan reminder berkala setiap 3-4 bulan saat mobil pelanggan mendekati jadwal servis agar terasa solutif dan tidak dianggap spam.'
     }
   },
+
   {
     id: 'crm-tracking',
-    slug: 'portal-pelacakan-publik',
+    sopCode: 'SOP-CRM-03',
+    targetTab: 'overview',
+    tabActionName: 'Buka Portal Cek Status Publik',
+    slug: 'portal-pelacakan-publik-zero-friction',
     role: 'crm',
-    title: 'Portal Publik Pelacakan Servis Tanpa Login (Zero Friction)',
-    summary: 'Akses cek status servis langsung via plat nomor dengan proteksi sensor privasi plat dan nama, serta tombol salin link dan share WhatsApp.',
-    readTime: '4 menit',
+    title: 'Portal Publik Pelacakan Servis Tanpa Login (Zero Friction) & Sensor Privasi',
+    summary: 'Halaman pelacakan mandiri publik di mana pemilik mobil dapat memantau progres servis, estimasi selesai, dan foto fisik hanya dengan mengetik nomor plat.',
+    readTime: '3 menit',
     badge: 'CRM & Pelanggan',
-    diagramType: 'ro-lifecycle',
-    tags: ['tracking', 'pelacakan', 'cek status', 'plat nomor', 'sensor', 'masking', 'privasi', 'whatsapp', 'tanpa login'],
+    tags: ['pelacakan', 'tracking', 'tanpa login', 'privasi', 'sensor', 'zero friction', 'cek status'],
+    annotatedScreenshot: {
+      title: 'Portal Pelacakan Publik Mandiri dengan Jaminan Sensor Privasi',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_public_tracking.png',
+      annotations: [
+        { number: 1, top: '38%', left: '42%', title: 'Input Plat Nomor Kendaraan', desc: 'Pemilik mobil hanya mengetik nomor plat (contoh: AG 1822 AB) tanpa perlu login' },
+        { number: 2, top: '38%', left: '66%', title: 'Tombol Lacak Progres', desc: 'Klik untuk memuat data pengerjaan mobil dan estimasi selesai secara instan' },
+        { number: 3, top: '46%', left: '68%', title: 'Badge Sensor Privasi', desc: 'Nama pemilik dan nomor HP otomatis disensor bintang (J*** W******) demi keamanan' },
+        { number: 4, top: '60%', left: '50%', title: 'Tombol Bagikan WhatsApp', desc: 'Bagikan tautan pelacakan langsung ke keluarga pemilik mobil' },
+        { number: 5, top: '85%', left: '42%', title: 'Timeline Pengerjaan Real-Time', desc: 'Indikator tahap aktif pengerjaan mobil saat ini di stall bengkel' }
+      ]
+    },
     steps: [
       {
         number: 1,
-        title: 'Akses Alur Pelacakan Mandiri',
-        description: 'Pelanggan membuka alamat portal pelacakan bengkel: /:slug/cek-status (atau mengklik tombol Cek Status di header landing page).',
-        highlightText: 'Halaman Cek Status Publik'
+        title: 'Buka Halaman Cek Status Publik',
+        description: 'Akses URL /bengkel-gps-motor/cek-status melalui browser HP apa saja tanpa perlu membuat akun atau login.',
+        highlightText: 'Portal /cek-status'
       },
       {
         number: 2,
-        title: 'Cari Berdasarkan Plat Nomor',
-        description: 'Ketik plat nomor kendaraan (contoh: AG 1822 AB) di kotak pencarian lalu klik Cek Status. Sistem otomatis menormalkan spasi dan huruf kecil.',
-        highlightText: 'Form Pencarian Plat'
+        title: 'Masukkan Nomor Plat Kendaraan',
+        description: 'Ketik nomor polisi mobil (contoh: AG 1822 AB) dan klik tombol "Lacak Progres".',
+        highlightText: 'Input Plat & Klik Lacak Progres'
       },
       {
         number: 3,
-        title: 'Perlindungan Privasi Terjamin (Sensor Masking)',
-        description: 'Demi menjaga kerahasiaan identitas pemilik mobil di internet terbuka, plat nomor disamarkan (contoh: AG 18** AB) dan nama pelanggan disensor otomatis (contoh: Budi S******). Nomor telepon, alamat, dan harga modal sparepart dihilangkan total dari respon sistem.',
-        highlightText: 'Sensor Privasi Plat & Nama'
-      },
-      {
-        number: 4,
-        title: 'Pantau 6-Tahap, Foto & Berbagi Link',
-        description: 'Pelanggan dapat melihat linimasa tahapan servis, estimasi jam selesai, foto pengerjaan Before/Progress/After teknisi, serta mengklik tombol Salin Link Tracking atau Share via WhatsApp ke keluarga.',
-        highlightText: 'Linimasa Progres & Tombol Share'
+        title: 'Pantau Tahapan & Dokumentasi Foto Asli',
+        description: 'Pelanggan dapat melihat posisi mobil saat ini (Masuk, Diagnosa, Pengerjaan, dsb.), rincian estimasi selesai, foto Before/After, serta mengklik tombol "Tanya Bengkel WA".',
+        highlightText: 'Timeline & Foto Perbaikan'
       }
     ],
     callout: {
-      type: 'note',
-      title: 'Standar Keamanan Privasi',
-      content: 'Algoritma adaptive masking memastikan data pribadi pelanggan tetap terlindungi meski tautan pelacakan dibuka oleh orang lain tanpa login.'
+      type: 'tip',
+      title: 'Jaminan Privasi Aman (Zero-Login Privacy)',
+      content: 'Portal publik menerapkan perlindungan sensor privasi ketat: nama konsumen (J*** W******) dan nomor handphone (0812-****-7890) disamarkan sehingga aman dibuka di perangkat umum.'
+    }
+  },
+
+  {
+    id: 'app-omnibox',
+    sopCode: 'SOP-CRM-04',
+    targetTab: 'overview',
+    tabActionName: 'Jalankan Omnibox (Ctrl+K)',
+    slug: 'pencarian-cepat-omnibox-ctrl-k',
+    role: 'crm',
+    title: 'Pencarian Cepat Global (Command Palette & Omnibox Ctrl+K)',
+    summary: 'Akses navigasi instan berkecepatan tinggi ke data kendaraan masuk, aksi cepat modul bengkel, dan shortcut keyboard.',
+    readTime: '2 menit',
+    badge: 'CRM & Pelanggan',
+    tags: ['omnibox', 'command palette', 'ctrl+k', 'pencarian cepat', 'keyboard shortcut', 'shortcut'],
+    annotatedScreenshot: {
+      title: 'Command Palette Omnibox: Navigasi Cepat Keyboard Ctrl+K',
+      badge: 'Tangkapan Layar Live',
+      image: '/images/docs/docs_app_omnibox.png',
+      annotations: [
+        { number: 1, top: '23%', left: '48%', title: 'Bar Pencarian Omnibox', desc: 'Ketik plat nomor (AG...), nama pemilik, atau aksi yang ingin dijalankan' },
+        { number: 2, top: '34%', left: '48%', title: 'Aksi Cepat Pertama', desc: 'Buat RO Baru langsung tanpa harus membuka menu Servis terlebih dahulu' },
+        { number: 3, top: '50%', left: '48%', title: 'Pintasan Modul Keuangan & Stok', desc: 'Catat kas, tambah restock barang masuk, atau buka stok opname fisik' },
+        { number: 4, top: '78%', left: '48%', title: 'Indikator Keyboard Shortcut', desc: 'Gunakan tombol panah Atas/Bawah dan Enter untuk navigasi tanpa mouse' }
+      ]
+    },
+    steps: [
+      {
+        number: 1,
+        title: 'Tekan Tombol Pintas Keyboard "Ctrl+K" atau "/"',
+        description: 'Di halaman dashboard mana saja, tekan kombinasi tombol keyboard Ctrl+K (atau tombol "/") untuk memunculkan kotak Omnibox di tengah layar.',
+        highlightText: 'Shortcut Keyboard Ctrl+K'
+      },
+      {
+        number: 2,
+        title: 'Ketik Nomor Plat atau Nama Pelanggan',
+        description: 'Ketik beberapa huruf atau angka (contoh: "1822" atau "Budi"). Hasil pencarian mobil yang sedang dikerjakan akan muncul seketika.',
+        highlightText: 'Ketik Kata Kunci Pencarian'
+      },
+      {
+        number: 3,
+        title: 'Tekan Enter untuk Langsung Membuka Halaman',
+        description: 'Gunakan tombol panah panah atas/bawah pada keyboard untuk memilih dan tekan Enter. Halaman detail RO terkait akan terbuka langsung.',
+        highlightText: 'Navigasi Keyboard Enter'
+      }
+    ],
+    callout: {
+      type: 'tip',
+      title: 'Ergonomi Operasional Cepat',
+      content: 'Mekanik dan kasir yang menguasai shortcut Ctrl+K dapat melayani antrean kendaraan 2x lebih cepat tanpa perlu menyentuh mouse.'
     }
   }
 ];
 
 export const DOCS_FAQS = [
   {
-    id: 'faq-stock-discrepancy',
-    question: 'Apa yang harus dilakukan jika stok fisik tidak sesuai dengan stok sistem?',
-    category: 'Inventaris & Gudang',
-    badge: 'Stok Opname',
-    answer: 'Perbedaan antara stok nyata di rak dan catatan sistem dapat terjadi karena barang rusak, salah hitung saat restock, atau part terpakai yang belum tercatat. Masalah ini diselesaikan melalui menu Stok Opname:',
+    id: 'faq-offline',
+    category: 'Jaringan & Operasional',
+    question: 'Bagaimana jika koneksi internet di bengkel tiba-tiba lambat atau mati?',
+    answer: 'Aplikasi bengkel dirancang dengan arsitektur Progressive Web App (PWA) dan optimasi lightweight. Halaman-halaman statis dan buku panduan tetap dapat diakses secara offline melalui cache lokal browser. Untuk data servis dan upload foto, mekanik dapat menjepret foto terlebih dahulu; sistem akan mengompresinya secara lokal di memori HP hingga 90%, lalu secara otomatis mengunggahnya begitu sinyal kembali stabil.',
     steps: [
-      'Buka menu Stok Opname di menu navigasi utama dashboard.',
-      'Pilih sparepart yang bermasalah pada dropdown pemilihan barang.',
-      'Periksa nilai Stok Sistem Saat Ini yang tampil di layar.',
-      'Ketik jumlah aktual hasil hitung tangan di rak pada kolom Stok Fisik Aktual di Rak.',
-      'Perhatikan indikator selisih (merah untuk Defisit, hijau untuk Surplus).',
-      'Pilih alasan penyesuaian (misal: "Barang Rusak / Pecah di Rak" atau "Audit Rutin Bulanan").',
-      'Klik Simpan Penyesuaian Stok Opname. Stok sistem langsung diperbarui dan mutasi tercatat untuk rekap audit.'
+      'Gunakan tombol "Buka Kamera (Jepret)" langsung di dalam aplikasi.',
+      'Sistem mengompresi foto dari 5 MB menjadi <300 KB di memori ponsel mekanik sebelum upload.',
+      'Data nota dan histori kasir tersimpan aman di database server lokal/VPS bengkel.'
     ],
-    tip: 'Lakukan stok opname berkala setiap akhir pekan atau akhir bulan untuk menjaga akurasi pembukuan.'
+    tip: 'Peralatan kasir disarankan terhubung melalui kabel LAN atau Wi-Fi bengkel khusus untuk kecepatan maksimal.'
   },
   {
-    id: 'faq-void-cash',
-    question: 'Bagaimana cara membatalkan atau mengoreksi transaksi kas yang salah input?',
-    category: 'Keuangan & Buku Kas',
-    badge: 'Koreksi Kas',
-    answer: 'Jika kasir salah mengetik nominal (misal Rp 500.000 terketik Rp 5.000.000) atau salah memilih kategori, Anda dapat mengoreksi atau menghapusnya langsung dari menu Buku Kas & Keuangan:',
+    id: 'faq-printer',
+    category: 'Perangkat Keras Kasir',
+    question: 'Printer apa saja yang kompatibel untuk mencetak nota kasir?',
+    answer: 'Aplikasi mendukung dua jenis printer standar bengkel otomotif: (1) Printer Kertas Standar A4 (Laser/Inkjet) melalui tombol "Cetak Nota PDF" yang menghasilkan lembar faktur berlogo resmi, dan (2) Printer POS Thermal Mini 58mm atau 80mm via tombol "Cetak Struk Kasir 58mm" yang kompatibel dengan printer bluetooth portabel murah seharga Rp 150.000-an.',
     steps: [
-      'Masuk ke tab Buku Kas & Keuangan.',
-      'Gunakan kolom pencarian transaksi atau filter periode untuk menemukan transaksi yang keliru.',
-      'Untuk Mengoreksi: Klik ikon Pensil (Edit) pada baris transaksi. Ubah nominal, kategori, metode bayar, atau deskripsi, lalu klik Perbarui Transaksi. Saldo kas langsung disesuaikan.',
-      'Untuk Membatalkan / Menghapus: Klik ikon Tong Sampah (Hapus) pada transaksi yang keliru. Konfirmasi kotak dialog yang muncul. Catatan transaksi terhapus dan saldo bersih langsung dihitung ulang.',
-      'Catatan untuk RO Servis: Menghapus catatan transaksi di Buku Kas tidak akan menghapus data pengerjaan fisik atau riwayat teknis Repair Order terkait.'
+      'Nyalakan Bluetooth di HP atau Komputer Kasir.',
+      'Hubungkan ke perangkat printer thermal (contoh: RPP02N, Zijiang, Panda, atau Epson).',
+      'Pilih cetak struk kasir 58mm; teks otomatis terformat monospace presisi.'
     ],
-    tip: 'Pastikan bukti nota fisik disimpan di laci kasir sebagai arsip rekonsiliasi jika terjadi koreksi nominal besar.'
+    tip: 'Untuk nota garansi resmi 30 hari yang diserahkan ke pelanggan korporasi/mobil mewah, gunakan format Cetak Nota PDF A4.'
   },
   {
-    id: 'faq-switch-mechanic',
-    question: 'Bagaimana cara mengganti mekanik PIC pada RO yang sedang berjalan?',
-    category: 'Servis Mobil & RO',
-    badge: 'Penugasan Teknisi',
-    answer: 'Jika mekanik yang ditugaskan berhalangan hadir, sakit, atau terjadi pergantian shift kerja di tengah servis:',
+    id: 'faq-privacy',
+    category: 'Keamanan & Privasi',
+    question: 'Apakah orang lain bisa melihat data pribadi pelanggan pada portal pelacakan publik?',
+    answer: 'Tidak. Portal pelacakan publik menerapkan jaminan sensor privasi (Zero-Login Privacy Filter). Nama pelanggan disensor dengan tanda bintang (contoh: J*** W******) dan nomor handphone disamarkan (contoh: 0812-****-7890). Pelanggan hanya dapat melihat status pengerjaan, estimasi waktu, dan foto dokumentasi fisik mobil tanpa pernah mengekspos kontak pribadi ke publik.',
     steps: [
-      'Buka menu Servis Mobil (RO) dan klik kartu order kendaraan yang bersangkutan.',
-      'Pada komponen tahapan pengerjaan, klik tombol Update Status.',
-      'Pilih tahapan saat ini (atau tahapan berikutnya).',
-      'Pada kolom Catatan Pengerjaan, tuliskan keterangan handover teknisi secara jelas (contoh: "Handover PIC: Dilanjutkan Mas Budi Santoso karena pergantian shift kerja siang").',
-      'Klik Simpan Status. Log serah terima tersimpan permanen di linimasa Riwayat Transisi Status lengkap dengan jam dan nama operator penanggung jawab.',
-      'Admin juga dapat memperbarui nama mekanik PJ utama pada formulir order servis agar tercetak rapi di nota invoice akhir.'
+      'Buka /cek-status dengan plat nomor mobil.',
+      'Periksa badge hijau bertuliskan "Nama & HP Disensor".',
+      'Data sensitif seperti rincian rekening kas bengkel dan nomor KTP pelanggan tidak pernah ditampilkan di portal publik.'
     ],
-    tip: 'Pencatatan serah terima tugas di catatan pengerjaan penting agar tidak terjadi salah paham terkait garansi servis.'
+    tip: 'Tautan tracking aman dibagikan melalui grup WhatsApp keluarga pemilik mobil.'
   },
   {
-    id: 'faq-lost-receipt-tracking',
-    question: 'Bagaimana jika pelanggan kehilangan nota atau ingin mengecek status lewat HP?',
-    category: 'Pelayanan Pelanggan',
-    badge: 'Tracking & Nota',
-    answer: 'Aplikasi Bengkel Mobil GPS Motor Kediri menyediakan 3 solusi mudah tanpa perlu repot mengetik ulang dokumen:',
+    id: 'faq-stok-minus',
+    category: 'Inventaris & Suku Cadang',
+    question: 'Kenapa sistem menolak pemasangan suku cadang ke RO dengan peringatan E10?',
+    answer: 'Peringatan E10 (Stock Underflow Protection) muncul jika mekanik mencoba memasang suku cadang yang stok fisiknya di sistem tercatat 0 atau kurang dari jumlah yang diminta. Ini adalah fitur keamanan sistem untuk mencegah hilangnya akurasi gudang dan mendeteksi adanya barang yang belum diinput saat penerimaan dari supplier.',
     steps: [
-      'Solusi 1 (Cek Mandiri di HP): Berikan link tracking bengkel: /[slug]/cek-status. Pelanggan cukup mengetik plat nomor mobilnya dari rumah. Mereka dapat melihat tahapan servis, estimasi jam selesai, dan foto pengerjaan tanpa perlu login.',
-      'Solusi 2 (Kirim Link via WhatsApp): Buka rincian RO di dashboard, lalu klik tombol Kirim WA. Sistem otomatis menyusun pesan ramah berisi nomor RO, status servis, dan link pelacakan unik ke chat WhatsApp pelanggan.',
-      'Solusi 3 (Cetak Ulang Nota PDF): Buka menu Servis Mobil (RO), cari plat nomor pelanggan, buka detail order, dan klik tombol Cetak Nota PDF. Faktur PDF resmi siap dicetak ulang seketika.'
+      'Periksa apakah barang baru datang belum diinput oleh kasir/gudang.',
+      'Buka menu "+ Tambah Stok Masuk (Restock)" untuk mencatat faktur pembelian barang masuk.',
+      'Setelah stok bertambah, kembali ke halaman RO dan pasang sparepart seperti biasa.'
     ],
-    tip: 'Plat nomor dan nama pemilik otomatis disensor di halaman publik sehingga privasi pelanggan tetap aman saat mengecek mandiri.'
+    tip: 'Jika stok fisik memang ada di rak namun sistem tercatat 0, lakukan penyesuaian cepat melalui menu Stok Opname Fisik.'
   },
   {
-    id: 'faq-photo-optimization',
-    question: 'Tips optimasi ukuran foto agar upload tetap cepat di koneksi internet bengkel?',
-    category: 'Performa & Mobile',
-    badge: 'Kompresi Foto',
-    answer: 'Koneksi internet bengkel terkadang tidak stabil, sementara kamera ponsel modern menghasilkan file foto raksasa (5MB - 12MB). Sistem kami telah mengantisipasi hal ini dengan teknologi kompresi otomatis:',
+    id: 'faq-multi-akun',
+    category: 'Akun & Hak Akses',
+    question: 'Bagaimana cara mendaftarkan mekanik atau kasir baru agar bisa login?',
+    answer: 'Pemilik bengkel (Owner/Admin) dapat mendaftarkan email Google staf melalui menu Pengaturan Pengguna. Staf tidak perlu menghafal kata sandi rumit; mereka cukup mengklik "Login dengan Google" atau menggunakan Mock Login jika sedang dalam tahap pengujian jaringan lokal.',
     steps: [
-      'Kompresi Otomatis Client-Side: Modul imageCompressor.js bawaan aplikasi otomatis mengecilkan foto resolusi tinggi menjadi maksimal 1280px dengan kualitas optimal (~80KB - 120KB) langsung di memori browser sebelum dikirim.',
-      'Gunakan Tombol Kamera Langsung: Klik tombol Buka Kamera (Jepret) di dalam aplikasi. Cara ini jauh lebih cepat dibanding memotret dari aplikasi kamera bawaan yang memenuhi memori galeri ponsel.',
-      'Pencahayaan Kolong Mesin: Pastikan lampu kerja atau senter menyala saat memotret area bawah kolong mesin atau kaki-kaki mobil agar foto tajam tanpa noise bintik gelap.',
-      'Foto Faktur Kertas: Posisikan kamera sejajar dari atas (tegak lurus / flat-lay) saat memotret nota struk pembelian agar tulisan nomor faktur dan nominal terbaca dengan jelas.',
-      'Jarak Pemotretan Ideal: Pertahankan jarak 30-50 cm dari komponen mobil agar lensa dapat mengunci fokus dengan tajam.'
+      'Buka menu Manajemen Staf (Superadmin / Admin Dashboard).',
+      'Klik "+ Hubungkan Email ke Bengkel".',
+      'Ketik alamat email Google staf dan pilih peran: Mekanik atau Kasir.',
+      'Klik Simpan. Staf dapat langsung login di perangkat masing-masing.'
     ],
-    tip: 'Pengurangan ukuran file mencapai >95% sehingga proses upload selesai dalam 1-2 detik bahkan pada jaringan ponsel 3G.'
+    tip: 'Setiap peran staf memiliki tampilan antarmuka yang disederhanakan sesuai tugas pokok mereka di lapangan.'
   }
 ];
 
 export const DOCS_METADATA = {
-  title: 'Buku Panduan & Dokumentasi Operasional',
+  title: 'Buku Panduan & Dokumentasi Operasional Terpadu',
   subtitle: 'Bengkel Mobil GPS Motor Kediri',
-  version: '2.0.0',
-  updatedAt: '2026-10-07',
+  version: '2.5.0',
+  updatedAt: '2026-10-17',
   totalModules: DOCS_MODULES.length,
   totalFaqs: DOCS_FAQS.length,
   totalRoles: DOCS_ROLES.length
@@ -831,8 +1248,8 @@ export function searchDocs(query = '', selectedRole = 'all') {
     filteredModules = filteredModules.filter(m => {
       const matchTitle = m.title.toLowerCase().includes(q);
       const matchSummary = m.summary.toLowerCase().includes(q);
-      const matchTags = m.tags.some(t => t.toLowerCase().includes(q));
-      const matchSteps = m.steps.some(s => 
+      const matchTags = m.tags && m.tags.some(t => t.toLowerCase().includes(q));
+      const matchSteps = m.steps && m.steps.some(s => 
         s.title.toLowerCase().includes(q) || 
         s.description.toLowerCase().includes(q)
       );

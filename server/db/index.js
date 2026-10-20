@@ -44,6 +44,22 @@ export function initDatabase(dbPath = DEFAULT_DB_PATH) {
     // Column already exists, ignore
   }
 
+  // Safe idempotent migrations for tenants table
+  const tenantCols = [
+    'hero_image_url TEXT',
+    'facility_image_1 TEXT',
+    'facility_image_2 TEXT',
+    'tagline TEXT',
+    'profile_completed INTEGER DEFAULT 1'
+  ];
+  for (const col of tenantCols) {
+    try {
+      db.exec(`ALTER TABLE tenants ADD COLUMN ${col};`);
+    } catch {
+      // Column already exists, ignore
+    }
+  }
+
   // Ensure default tenant and seed exist
   ensureDefaultSeed(db);
 

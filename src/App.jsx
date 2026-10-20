@@ -1,11 +1,12 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
+import AppPlatformLandingPage from './pages/AppPlatformLandingPage';
 
-const PublicTrackingPage = lazy(() => import('./pages/PublicTrackingPage'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'));
-const DocsPage = lazy(() => import('./pages/DocsPage'));
+import PublicTrackingPage from './pages/PublicTrackingPage';
+import AdminDashboard from './pages/AdminDashboard';
+import SuperadminDashboard from './pages/SuperadminDashboard';
+import DocsPage from './pages/DocsPage';
 
 function PageFallback() {
   return (
@@ -23,7 +24,7 @@ export default function App() {
 
   const parseRoute = () => {
     if (typeof window === 'undefined') {
-      return { view: 'landing', slug: 'bengkel-gps-motor', plate: '', section: '' };
+      return { view: 'platform', slug: 'bengkel-gps-motor', plate: '', section: '' };
     }
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
@@ -53,7 +54,27 @@ export default function App() {
       return { view: 'admin', slug: tenant?.slug || 'bengkel-gps-motor', plate: '', section: '' };
     }
 
-    return { view: 'landing', slug: tenant?.slug || 'bengkel-gps-motor', plate: '', section: '' };
+    if (path.startsWith('/bengkel/')) {
+      const slug = path.replace('/bengkel/', '').split('/')[0] || 'bengkel-gps-motor';
+      return { view: 'tenant', slug, plate: '', section: '' };
+    }
+
+    if (path === '/bengkel-gps-motor' || path === '/demo') {
+      return { view: 'tenant', slug: 'bengkel-gps-motor', plate: '', section: '' };
+    }
+
+    if (path === '/' || path === '/platform' || path === '/app') {
+      return { view: 'platform', slug: 'bengkel-gps-motor', plate: '', section: '' };
+    }
+
+    // Single segment custom tenant slug fallback
+    const singleSegment = path.replace(/^\//, '').split('/')[0];
+    const reserved = ['admin', 'superadmin', 'docs', 'panduan', 'login', 'masuk', 'platform', 'app'];
+    if (singleSegment && !reserved.includes(singleSegment)) {
+      return { view: 'tenant', slug: singleSegment, plate: '', section: '' };
+    }
+
+    return { view: 'platform', slug: 'bengkel-gps-motor', plate: '', section: '' };
   };
 
   const [currentRoute, setCurrentRoute] = useState(parseRoute);
@@ -79,6 +100,10 @@ export default function App() {
     } else if (view === 'docs' || view === 'panduan') {
       const anchor = extra.section ? `#${extra.section}` : '';
       newPath = `/panduan${anchor}`;
+    } else if (view === 'tenant' || view === 'landing') {
+      newPath = slug === 'bengkel-gps-motor' ? '/bengkel-gps-motor' : `/bengkel/${slug}`;
+    } else if (view === 'platform') {
+      newPath = '/';
     } else {
       newPath = '/';
     }
@@ -102,7 +127,7 @@ export default function App() {
       <Suspense fallback={<PageFallback />}>
         <SuperadminDashboard
           onNavigateAdmin={() => navigateTo('admin')}
-          onNavigateLanding={() => navigateTo('landing')}
+          onNavigateLanding={() => navigateTo('platform')}
           onNavigateDocs={(section) => navigateTo('docs', { section })}
         />
       </Suspense>
@@ -115,7 +140,7 @@ export default function App() {
         <PublicTrackingPage
           initialPlate={currentRoute.plate}
           tenantSlug={currentRoute.slug || tenant?.slug || 'bengkel-gps-motor'}
-          onNavigateHome={() => navigateTo('landing')}
+          onNavigateHome={() => navigateTo('tenant', { slug: currentRoute.slug })}
         />
       </Suspense>
     );
@@ -126,7 +151,7 @@ export default function App() {
       <Suspense fallback={<PageFallback />}>
         <DocsPage
           initialSection={currentRoute.section}
-          onNavigateHome={() => navigateTo('landing')}
+          onNavigateHome={() => navigateTo('platform')}
           onNavigateAdmin={() => navigateTo('admin')}
           onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
         />
@@ -138,7 +163,7 @@ export default function App() {
     return (
       <Suspense fallback={<PageFallback />}>
         <AdminDashboard
-          onNavigateLanding={() => navigateTo('landing')}
+          onNavigateLanding={() => navigateTo('tenant', { slug: tenant?.slug || 'bengkel-gps-motor' })}
           onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
           onNavigateSuperadmin={() => navigateTo('superadmin')}
           onNavigateDocs={(section) => navigateTo('docs', { section })}
@@ -147,12 +172,27 @@ export default function App() {
     );
   }
 
+  if (currentRoute.view === 'platform') {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <AppPlatformLandingPage
+          onNavigateTenant={(slug) => navigateTo('tenant', { slug })}
+          onOpenAdmin={() => navigateTo('admin')}
+          onOpenSuperadmin={() => navigateTo('superadmin')}
+          onNavigateDocs={(section) => navigateTo('docs', { section })}
+        />
+      </Suspense>
+    );
+  }
+
   return (
     <LandingPage
-      onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
+      tenantSlug={currentRoute.slug || 'bengkel-gps-motor'}
+      onNavigateTracking={(plate) => navigateTo('tracking', { plate, slug: currentRoute.slug })}
       onOpenAdmin={() => navigateTo('admin')}
       onOpenSuperadmin={() => navigateTo('superadmin')}
       onNavigateDocs={(section) => navigateTo('docs', { section })}
+      onNavigatePlatform={() => navigateTo('platform')}
     />
   );
 }

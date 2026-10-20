@@ -25,7 +25,12 @@ export function authMiddleware(db) {
           t.address AS tenant_address,
           t.phone_wa AS tenant_phone_wa,
           t.business_hours AS tenant_business_hours,
-          t.logo_url AS tenant_logo_url
+          t.logo_url AS tenant_logo_url,
+          t.hero_image_url AS tenant_hero_image_url,
+          t.facility_image_1 AS tenant_facility_image_1,
+          t.facility_image_2 AS tenant_facility_image_2,
+          t.tagline AS tenant_tagline,
+          t.profile_completed AS tenant_profile_completed
         FROM sessions s
         JOIN users u ON s.user_id = u.id
         JOIN tenants t ON s.tenant_id = t.id
@@ -65,8 +70,20 @@ export function authMiddleware(db) {
         name: row.tenant_name,
         address: row.tenant_address,
         phone_wa: row.tenant_phone_wa,
+        phoneWa: row.tenant_phone_wa,
         business_hours: row.tenant_business_hours,
-        logo_url: row.tenant_logo_url
+        businessHours: row.tenant_business_hours,
+        logo_url: row.tenant_logo_url,
+        logoUrl: row.tenant_logo_url,
+        hero_image_url: row.tenant_hero_image_url || null,
+        heroImageUrl: row.tenant_hero_image_url || null,
+        facility_image_1: row.tenant_facility_image_1 || null,
+        facilityImage1: row.tenant_facility_image_1 || null,
+        facility_image_2: row.tenant_facility_image_2 || null,
+        facilityImage2: row.tenant_facility_image_2 || null,
+        tagline: row.tenant_tagline || '',
+        profile_completed: Boolean(row.tenant_profile_completed),
+        profileCompleted: Boolean(row.tenant_profile_completed)
       };
       req.tenantId = row.tenant_id;
     } catch (err) {

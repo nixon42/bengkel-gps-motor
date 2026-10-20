@@ -70,6 +70,20 @@ export default function CustomersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setCreateModalOpen(false);
+        setEditModalOpen(false);
+        setVehicleModalOpen(false);
+        setHistoryModalOpen(false);
+        setPromoModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const fetchCustomers = useCallback(async () => {
     try {
       setLoading(true);
@@ -319,19 +333,31 @@ export default function CustomersPage() {
   return (
     <div className="space-y-6">
       {/* Header and Summary */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded border border-slate-200 dark:border-slate-700 space-y-4">
+      <div className="bg-white dark:bg-slate-900 p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-4 shadow-none">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-              <Users className="w-5 h-5 text-blue-600" />
-              <span>Database Pelanggan CRM (Customer Management)</span>
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Pencatatan data pemilik mobil, nomor WhatsApp, riwayat servis, dan daftar kendaraan terdaftar
-            </p>
+          <div className="flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+              <Users className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                Database Pelanggan CRM
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Pencatatan data pemilik mobil, nomor WhatsApp, riwayat servis, dan daftar kendaraan terdaftar
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={handleOpenCreate}
+              className="touch-target w-full sm:w-auto px-4 py-2.5 min-h-[44px] bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-colors shadow-sm shadow-emerald-500/10 order-1 sm:order-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Tambah Pelanggan</span>
+            </button>
+
             <button
               onClick={() => {
                 if (customers.length > 0) {
@@ -340,37 +366,31 @@ export default function CustomersPage() {
                   alert('Belum ada pelanggan terdaftar.');
                 }
               }}
-              className="touch-target px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors self-start sm:self-auto shadow-none"
+              className="touch-target w-full sm:w-auto px-3.5 py-2.5 min-h-[44px] bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center space-x-1.5 transition-colors order-2 sm:order-1"
               title="Kirim pesan promosi WhatsApp ke pelanggan"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-4 h-4 text-emerald-600" />
               <span>Kirim Promo WA</span>
-            </button>
-
-            <button
-              onClick={handleOpenCreate}
-              className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center justify-center space-x-2 transition-colors self-start sm:self-auto shadow-none"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Tambah Pelanggan</span>
             </button>
           </div>
         </div>
 
         {/* Search Input */}
-        <div className="relative max-w-md pt-2 border-t border-slate-100 dark:border-slate-700">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-4.5" />
-          <input
-            type="text"
-            placeholder="Cari nama, no. HP, alamat, plat kendaraan..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full text-xs pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="relative max-w-md">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Cari nama, no. HP, alamat, plat kendaraan..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full text-base sm:text-xs pl-10 pr-3.5 h-11 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+            />
+          </div>
         </div>
 
         {successMsg && (
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded text-emerald-800 dark:text-emerald-200 text-xs font-medium flex items-center space-x-2">
+          <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs font-medium flex items-center space-x-2">
             <Check className="w-4 h-4 text-emerald-600" />
             <span>{successMsg}</span>
           </div>
@@ -378,50 +398,50 @@ export default function CustomersPage() {
       </div>
 
       {/* Customer Cards & Directory */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-none">
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent mb-3" />
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent mb-3" />
             <p className="text-xs text-slate-500">Memuat basis data pelanggan...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 text-red-500 text-xs">
+          <div className="text-center py-16 text-rose-500 text-xs">
             <AlertCircle className="w-8 h-8 mx-auto mb-2" />
             {error}
           </div>
         ) : customers.length === 0 ? (
-          <div className="text-center py-12 text-slate-400 text-xs">
+          <div className="text-center py-16 text-slate-400 text-xs">
             Belum ada data pelanggan yang tercatat.
           </div>
         ) : (
-          <div className="divide-y divide-slate-200 dark:divide-slate-700">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {customers.map((c) => (
-              <div key={c.id} className="p-5 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors">
+              <div key={c.id} className="p-5 sm:p-6 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   {/* Left: Customer Info */}
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center space-x-2.5">
+                      <span className="text-base font-bold text-slate-900 dark:text-white">
                         {c.name}
                       </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">
+                      <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60">
                         {c.ro_count || 0}x Servis
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-                      <div className="flex items-center space-x-1 font-mono">
+                    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+                      <div className="flex items-center space-x-1.5 font-mono">
                         <Phone className="w-3.5 h-3.5 text-slate-400" />
                         <span>{c.phone}</span>
                       </div>
                       {c.address && (
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center space-x-1.5">
                           <MapPin className="w-3.5 h-3.5 text-slate-400" />
                           <span className="truncate max-w-xs">{c.address}</span>
                         </div>
                       )}
                       {c.last_visit && (
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center space-x-1.5">
                           <Clock className="w-3.5 h-3.5 text-slate-400" />
                           <span>Kunjungan terakhir: {c.last_visit}</span>
                         </div>
@@ -434,51 +454,51 @@ export default function CustomersPage() {
                         c.vehicles.map((v) => (
                           <span
                             key={v.id}
-                            className="inline-flex items-center space-x-1 font-mono text-[11px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold"
+                            className="inline-flex items-center space-x-1.5 font-mono text-xs bg-slate-900 text-emerald-400 px-2.5 py-1 rounded-lg font-bold border border-slate-800"
                           >
-                            <Car className="w-3 h-3 text-slate-300" />
+                            <Car className="w-3.5 h-3.5 text-emerald-400" />
                             <span>{v.plate_number}</span>
-                            <span className="font-sans font-normal text-[10px] text-slate-300 ml-1">
+                            <span className="font-sans font-normal text-xs text-slate-300 ml-1">
                               ({v.brand} {v.model})
                             </span>
                           </span>
                         ))
                       ) : (
-                        <span className="text-[11px] text-slate-400 italic">Belum ada kendaraan terdaftar</span>
+                        <span className="text-xs text-slate-400 italic">Belum ada kendaraan terdaftar</span>
                       )}
                     </div>
                   </div>
 
                   {/* Right: Spending & Actions */}
-                  <div className="flex items-center justify-between lg:justify-end gap-3 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-700">
+                  <div className="flex items-center justify-between lg:justify-end gap-4 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800">
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block">Total Pengeluaran</span>
-                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                      <span className="text-xs text-slate-400 block font-medium">Total Pengeluaran</span>
+                      <span className="text-base font-bold font-mono tracking-tight text-emerald-600 dark:text-emerald-400">
                         Rp {Number(c.total_spent || 0).toLocaleString('id-ID')}
                       </span>
                     </div>
 
-                    <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                    <div className="flex items-center space-x-1.5 flex-wrap gap-y-1.5">
                       <button
                         onClick={() => handleOpenWhatsAppPromo(c)}
-                        className="touch-target px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center space-x-1 transition-colors shadow-none"
+                        className="touch-target px-3 py-2 min-h-[38px] bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors shadow-none shrink-0"
                         title="Kirim pesan promosi / WhatsApp ke pelanggan ini"
                       >
-                        <MessageCircle className="w-3.5 h-3.5" />
+                        <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
                         <span>Kirim WA</span>
                       </button>
 
                       <button
                         onClick={() => handleOpenHistory(c)}
-                        className="touch-target px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded text-xs font-bold flex items-center space-x-1"
+                        className="touch-target px-3 py-2 min-h-[38px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1 transition-colors shrink-0"
                         title="Lihat riwayat servis"
                       >
-                        <History className="w-3.5 h-3.5 text-blue-600" />
+                        <History className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                         <span>Riwayat</span>
                       </button>
                       <button
                         onClick={() => handleOpenAddVehicle(c)}
-                        className="touch-target px-2.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded text-xs font-bold flex items-center space-x-1 border border-blue-200 dark:border-blue-900"
+                        className="touch-target px-3 py-2 min-h-[38px] bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded-xl text-xs font-semibold flex items-center space-x-1 border border-blue-200/80 dark:border-blue-900 transition-colors shrink-0"
                         title="Tambah kendaraan"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -486,14 +506,14 @@ export default function CustomersPage() {
                       </button>
                       <button
                         onClick={() => handleOpenEdit(c)}
-                        className="touch-target p-1.5 text-slate-600 hover:text-slate-900 dark:hover:text-white rounded"
+                        className="touch-target w-9 h-9 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0"
                         title="Edit profil"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteCustomer(c.id)}
-                        className="touch-target p-1.5 text-red-500 hover:text-red-700 rounded"
+                        className="touch-target w-9 h-9 flex items-center justify-center text-rose-500 hover:text-rose-700 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors shrink-0"
                         title="Hapus pelanggan"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -509,108 +529,132 @@ export default function CustomersPage() {
 
       {/* Modal: Tambah Pelanggan */}
       {createModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-lg w-full p-6 space-y-4 my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                <Users className="w-5 h-5 text-blue-600" />
-                <span>Tambah Pelanggan Baru</span>
-              </h3>
-              <button onClick={() => setCreateModalOpen(false)} className="touch-target text-slate-400">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setCreateModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-lg w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
+                    Tambah Pelanggan Baru
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    Daftarkan kontak pemilik kendaraan ke CRM bengkel
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCreateModalOpen(false)}
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateSubmit} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Joko Widodo"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">No. WhatsApp *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: 081234567890"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Email</label>
-                  <input
-                    type="email"
-                    placeholder="email@contoh.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Alamat Domisili</label>
-                  <input
-                    type="text"
-                    placeholder="Jl. Pemuda No. 12, Kediri"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
-                </div>
-              </div>
-
-              {/* Optional Vehicle Details */}
-              <div className="p-3 bg-slate-50 dark:bg-slate-750 rounded border border-slate-200 dark:border-slate-700 space-y-3">
-                <span className="block font-bold text-slate-800 dark:text-slate-200 text-xs">
-                  Kendaraan Pertama (Opsional)
-                </span>
+            <form onSubmit={handleCreateSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] text-slate-500 mb-1">Plat Nomor</label>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap <span className="text-rose-500">*</span></label>
                     <input
                       type="text"
-                      placeholder="Contoh: AG 1822 AB"
-                      value={formData.plateNumber}
-                      onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value.toUpperCase() })}
-                      className="w-full p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 font-mono uppercase"
+                      required
+                      placeholder="Contoh: Joko Widodo"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] text-slate-500 mb-1">Merek & Model</label>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">No. WhatsApp <span className="text-rose-500">*</span></label>
                     <input
                       type="text"
-                      placeholder="Contoh: Toyota Avanza"
-                      value={formData.model}
-                      onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                      className="w-full p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
+                      required
+                      placeholder="Contoh: 081234567890"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Email</label>
+                    <input
+                      type="email"
+                      placeholder="email@contoh.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Alamat Domisili</label>
+                    <input
+                      type="text"
+                      placeholder="Jl. Pemuda No. 12, Kediri"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Optional Vehicle Details */}
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-3">
+                  <span className="block font-bold text-slate-800 dark:text-slate-200 text-xs">
+                    Kendaraan Pertama (Opsional)
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Plat Nomor</label>
+                      <input
+                        type="text"
+                        placeholder="Contoh: AG 1822 AB"
+                        value={formData.plateNumber}
+                        onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value.toUpperCase() })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Merek & Model</label>
+                      <input
+                        type="text"
+                        placeholder="Contoh: Toyota Avanza"
+                        value={formData.model}
+                        onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+              {/* Actions (Pinned at bottom, shrink-0) */}
+              <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2.5">
                 <button
                   type="button"
                   onClick={() => setCreateModalOpen(false)}
-                  className="touch-target px-4 py-2 text-slate-600 hover:bg-slate-100 rounded font-bold"
+                  className="touch-target px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold"
+                  className="touch-target px-4 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl font-semibold shadow-sm shadow-emerald-500/10 transition-colors"
                 >
                   {submitting ? 'Menyimpan...' : 'Simpan Pelanggan'}
                 </button>
@@ -622,53 +666,75 @@ export default function CustomersPage() {
 
       {/* Modal: Edit Pelanggan */}
       {editModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-md w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Edit Data Pelanggan
-            </h3>
-            <form onSubmit={handleEditSubmit} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                />
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setEditModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-md w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
+                Edit Data Pelanggan
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEditModalOpen(false)}
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 text-xs">
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap <span className="text-rose-500">*</span></label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">No. WhatsApp <span className="text-rose-500">*</span></label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Alamat</label>
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">No. WhatsApp</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-mono"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Alamat</label>
-                <input
-                  type="text"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                />
-              </div>
-              <div className="flex items-center justify-end space-x-2 pt-2">
+
+              {/* Actions (Pinned at bottom, shrink-0) */}
+              <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2.5">
                 <button
                   type="button"
                   onClick={() => setEditModalOpen(false)}
-                  className="touch-target px-3.5 py-2 text-slate-600 rounded font-bold"
+                  className="touch-target px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold"
+                  className="touch-target px-4 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl font-semibold shadow-sm shadow-emerald-500/10 transition-colors"
                 >
                   Simpan Perubahan
                 </button>
@@ -680,80 +746,101 @@ export default function CustomersPage() {
 
       {/* Modal: Tambah Kendaraan ke Pelanggan */}
       {vehicleModalOpen && activeCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-md w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Tambah Mobil untuk {activeCustomer.name}
-            </h3>
-            <form onSubmit={handleAddVehicleSubmit} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Plat Nomor *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: AG 1822 AB"
-                  value={vehicleFormData.plateNumber}
-                  onChange={(e) => setVehicleFormData({ ...vehicleFormData, plateNumber: e.target.value.toUpperCase() })}
-                  className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 font-mono font-bold uppercase"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setVehicleModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-md w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
+                Tambah Mobil untuk {activeCustomer.name}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setVehicleModalOpen(false)}
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddVehicleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 text-xs">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Merek</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Plat Nomor <span className="text-rose-500">*</span></label>
                   <input
                     type="text"
-                    placeholder="Toyota"
-                    value={vehicleFormData.brand}
-                    onChange={(e) => setVehicleFormData({ ...vehicleFormData, brand: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
+                    required
+                    placeholder="Contoh: AG 1822 AB"
+                    value={vehicleFormData.plateNumber}
+                    onChange={(e) => setVehicleFormData({ ...vehicleFormData, plateNumber: e.target.value.toUpperCase() })}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono font-bold uppercase focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                   />
                 </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Model</label>
-                  <input
-                    type="text"
-                    placeholder="Avanza"
-                    value={vehicleFormData.model}
-                    onChange={(e) => setVehicleFormData({ ...vehicleFormData, model: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Merek</label>
+                    <input
+                      type="text"
+                      placeholder="Toyota"
+                      value={vehicleFormData.brand}
+                      onChange={(e) => setVehicleFormData({ ...vehicleFormData, brand: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Model</label>
+                    <input
+                      type="text"
+                      placeholder="Avanza"
+                      value={vehicleFormData.model}
+                      onChange={(e) => setVehicleFormData({ ...vehicleFormData, model: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tahun</label>
-                  <input
-                    type="number"
-                    placeholder="2019"
-                    value={vehicleFormData.year}
-                    onChange={(e) => setVehicleFormData({ ...vehicleFormData, year: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Warna</label>
-                  <input
-                    type="text"
-                    placeholder="Hitam"
-                    value={vehicleFormData.color}
-                    onChange={(e) => setVehicleFormData({ ...vehicleFormData, color: e.target.value })}
-                    className="w-full p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Tahun</label>
+                    <input
+                      type="number"
+                      placeholder="2019"
+                      value={vehicleFormData.year}
+                      onChange={(e) => setVehicleFormData({ ...vehicleFormData, year: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Warna</label>
+                    <input
+                      type="text"
+                      placeholder="Hitam"
+                      value={vehicleFormData.color}
+                      onChange={(e) => setVehicleFormData({ ...vehicleFormData, color: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end space-x-2 pt-2">
+              {/* Actions (Pinned at bottom, shrink-0) */}
+              <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2.5">
                 <button
                   type="button"
                   onClick={() => setVehicleModalOpen(false)}
-                  className="touch-target px-3.5 py-2 text-slate-600 rounded font-bold"
+                  className="touch-target px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold"
+                  className="touch-target px-4 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl font-semibold shadow-sm shadow-emerald-500/10 transition-colors"
                 >
                   Daftarkan Kendaraan
                 </button>
@@ -765,76 +852,112 @@ export default function CustomersPage() {
 
       {/* Modal: Riwayat Servis Pelanggan */}
       {historyModalOpen && activeCustomer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-2xl w-full p-6 space-y-4 my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                  <History className="w-5 h-5 text-blue-600" />
-                  <span>Riwayat Servis: {activeCustomer.name}</span>
-                </h3>
-                <p className="text-xs text-slate-500 font-mono mt-0.5">{activeCustomer.phone}</p>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setHistoryModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-2xl w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <History className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
+                    Riwayat Servis: {activeCustomer.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-mono mt-0.5 truncate">{activeCustomer.phone}</p>
+                </div>
               </div>
-              <button onClick={() => setHistoryModalOpen(false)} className="touch-target text-slate-400">
+              <button
+                type="button"
+                onClick={() => setHistoryModalOpen(false)}
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {historyLoading ? (
-              <div className="text-center py-8 text-xs text-slate-500">Memuat riwayat servis...</div>
-            ) : customerHistory.length === 0 ? (
-              <div className="text-center py-8 text-xs text-slate-400">
-                Belum ada riwayat order servis tercatat untuk pelanggan ini.
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {customerHistory.map((ro) => (
-                  <div key={ro.id} className="p-3.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 text-xs space-y-1">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-mono font-bold bg-slate-900 text-white px-2 py-0.5 rounded text-[11px]">
-                          {ro.plate_number}
-                        </span>
-                        <span className="font-semibold text-slate-800 dark:text-slate-200">
-                          {ro.car_brand} {ro.car_model}
+            {/* Scrollable Content Body */}
+            <div className="p-4 sm:p-5 overflow-y-auto flex-1">
+              {historyLoading ? (
+                <div className="text-center py-10 text-xs text-slate-500">Memuat riwayat servis...</div>
+              ) : customerHistory.length === 0 ? (
+                <div className="text-center py-10 text-xs text-slate-400">
+                  Belum ada riwayat order servis tercatat untuk pelanggan ini.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {customerHistory.map((ro) => (
+                    <div key={ro.id} className="p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-mono font-bold bg-slate-900 text-emerald-400 px-2 py-0.5 rounded-md text-xs border border-slate-800">
+                            {ro.plate_number}
+                          </span>
+                          <span className="font-semibold text-slate-800 dark:text-slate-200">
+                            {ro.car_brand} {ro.car_model}
+                          </span>
+                        </div>
+                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                          Rp {Number(ro.total_cost || 0).toLocaleString('id-ID')}
                         </span>
                       </div>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                        Rp {Number(ro.total_cost || 0).toLocaleString('id-ID')}
-                      </span>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 flex justify-between">
+                        <span>No. RO: {ro.ro_number} • Tgl: {ro.entry_date}</span>
+                        <span className="font-bold uppercase text-slate-700 dark:text-slate-300">{ro.status}</span>
+                      </div>
+                      {ro.complaint && (
+                        <p className="text-slate-600 dark:text-slate-300 italic pt-1 border-t border-slate-200/60 dark:border-slate-800">
+                          "{ro.complaint}"
+                        </p>
+                      )}
                     </div>
-                    <div className="text-[11px] text-slate-500 flex justify-between">
-                      <span>No. RO: {ro.ro_number} • Tgl: {ro.entry_date}</span>
-                      <span className="font-bold uppercase text-slate-700 dark:text-slate-300">{ro.status}</span>
-                    </div>
-                    {ro.complaint && (
-                      <p className="text-slate-600 dark:text-slate-300 italic pt-1">
-                        "{ro.complaint}"
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer (Pinned at bottom, shrink-0) */}
+            <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setHistoryModalOpen(false)}
+                className="touch-target px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal: Kirim WhatsApp Promosi */}
       {promoModalOpen && selectedCustomerForPromo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-xl w-full p-6 space-y-4 my-8">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
-              <div className="flex items-center space-x-2.5">
-                <div className="w-9 h-9 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setPromoModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 max-w-xl w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                   <MessageCircle className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
                     Kirim WhatsApp Pelanggan
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                     Kirim pesan promosi, pengingat servis, atau follow-up secara personal
                   </p>
                 </div>
@@ -842,123 +965,127 @@ export default function CustomersPage() {
               <button
                 type="button"
                 onClick={() => setPromoModalOpen(false)}
-                className="touch-target text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Recipient Details Card */}
-            <div className="bg-slate-50 dark:bg-slate-750 p-3.5 rounded border border-slate-200 dark:border-slate-700 text-xs space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-800 dark:text-slate-100 text-sm">
-                  {selectedCustomerForPromo.name}
-                </span>
-                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                  {selectedCustomerForPromo.phone}
-                </span>
+            {/* Scrollable Modal Content */}
+            <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
+              {/* Recipient Details Card */}
+              <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 text-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800 dark:text-slate-100 text-sm">
+                    {selectedCustomerForPromo.name}
+                  </span>
+                  <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                    {selectedCustomerForPromo.phone}
+                  </span>
+                </div>
+                <div className="text-slate-500 dark:text-slate-400 text-xs flex items-center space-x-2">
+                  <span>
+                    Kendaraan:{' '}
+                    {selectedCustomerForPromo.vehicles && selectedCustomerForPromo.vehicles.length > 0
+                      ? `${selectedCustomerForPromo.vehicles[0].brand} ${selectedCustomerForPromo.vehicles[0].model} (${selectedCustomerForPromo.vehicles[0].plate_number})`
+                      : 'Belum ada mobil terdaftar'}
+                  </span>
+                  {selectedCustomerForPromo.last_visit && (
+                    <span>• Kunjungan: {selectedCustomerForPromo.last_visit}</span>
+                  )}
+                </div>
               </div>
-              <div className="text-slate-500 dark:text-slate-400 text-[11px] flex items-center space-x-2">
-                <span>
-                  Kendaraan:{' '}
-                  {selectedCustomerForPromo.vehicles && selectedCustomerForPromo.vehicles.length > 0
-                    ? `${selectedCustomerForPromo.vehicles[0].brand} ${selectedCustomerForPromo.vehicles[0].model} (${selectedCustomerForPromo.vehicles[0].plate_number})`
-                    : 'Belum ada mobil terdaftar'}
-                </span>
-                {selectedCustomerForPromo.last_visit && (
-                  <span>• Kunjungan: {selectedCustomerForPromo.last_visit}</span>
-                )}
-              </div>
-            </div>
 
-            {/* Template Selector Pills */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                Pilih Jenis Pesan / Template:
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleSelectPromoTemplate('PROMO')}
-                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
-                    promoTemplate === 'PROMO'
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
-                  }`}
-                >
-                  🏷️ Promo Servis
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectPromoTemplate('REMINDER')}
-                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
-                    promoTemplate === 'REMINDER'
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
-                  }`}
-                >
-                  🛠️ Ganti Oli / Rutin
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectPromoTemplate('FOLLOWUP')}
-                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
-                    promoTemplate === 'FOLLOWUP'
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
-                  }`}
-                >
-                  🚗 Follow-up Servis
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectPromoTemplate('CUSTOM')}
-                  className={`touch-target px-2.5 py-2 rounded text-xs font-bold border text-center transition-all ${
-                    promoTemplate === 'CUSTOM'
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
-                  }`}
-                >
-                  ✍️ Pesan Bebas
-                </button>
-              </div>
-            </div>
-
-            {/* Editable Textarea */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Isi Pesan (Bisa diedit sebelum dikirim):
+              {/* Template Selector Pills */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Pilih Jenis Pesan / Template:
                 </label>
-                <span className="text-[11px] text-slate-400">
-                  {promoMessage.length} karakter
-                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPromoTemplate('PROMO')}
+                    className={`touch-target px-2.5 py-2 rounded-xl text-xs font-semibold border text-center transition-all ${
+                      promoTemplate === 'PROMO'
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-750'
+                    }`}
+                  >
+                    Promo Servis
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPromoTemplate('REMINDER')}
+                    className={`touch-target px-2.5 py-2 rounded-xl text-xs font-semibold border text-center transition-all ${
+                      promoTemplate === 'REMINDER'
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-750'
+                    }`}
+                  >
+                    Ganti Oli / Rutin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPromoTemplate('FOLLOWUP')}
+                    className={`touch-target px-2.5 py-2 rounded-xl text-xs font-semibold border text-center transition-all ${
+                      promoTemplate === 'FOLLOWUP'
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-750'
+                    }`}
+                  >
+                    Follow-up Servis
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPromoTemplate('CUSTOM')}
+                    className={`touch-target px-2.5 py-2 rounded-xl text-xs font-semibold border text-center transition-all ${
+                      promoTemplate === 'CUSTOM'
+                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-750'
+                    }`}
+                  >
+                    Pesan Bebas
+                  </button>
+                </div>
               </div>
-              <textarea
-                rows={7}
-                value={promoMessage}
-                onChange={(e) => setPromoMessage(e.target.value)}
-                className="w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 text-slate-900 dark:text-white text-xs font-sans leading-relaxed focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                placeholder="Tulis pesan promosi atau sapaan untuk pelanggan..."
-              />
+
+              {/* Editable Textarea */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Isi Pesan (Bisa diedit sebelum dikirim):
+                  </label>
+                  <span className="text-xs text-slate-400">
+                    {promoMessage.length} karakter
+                  </span>
+                </div>
+                <textarea
+                  rows={7}
+                  value={promoMessage}
+                  onChange={(e) => setPromoMessage(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
+                  placeholder="Tulis pesan promosi atau sapaan untuk pelanggan..."
+                />
+              </div>
             </div>
 
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+            {/* Modal Actions (Pinned at bottom, shrink-0) */}
+            <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2.5">
               <button
                 type="button"
                 onClick={() => setPromoModalOpen(false)}
-                className="touch-target px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-xs font-bold transition-colors"
+                className="touch-target px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-semibold transition-colors border border-slate-200 dark:border-slate-700"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleSendWhatsApp}
-                className="touch-target px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center space-x-2 transition-colors shadow-none"
+                className="touch-target px-4 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl text-xs font-semibold flex items-center space-x-2 transition-colors shadow-sm shadow-emerald-500/10"
               >
                 <Send className="w-4 h-4" />
-                <span>Buka WhatsApp & Kirim</span>
+                <span>Buka WhatsApp &amp; Kirim</span>
               </button>
             </div>
           </div>

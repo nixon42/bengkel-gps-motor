@@ -55,6 +55,18 @@ export default function TransactionModal({
     }
   }, [isOpen, initialData, isEdit]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // Set default category when type changes if category doesn't match type
   useEffect(() => {
     if (isOpen) {
@@ -155,10 +167,16 @@ export default function TransactionModal({
   const availableCategories = categories.filter(c => c.type === type);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80">
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
-        {/* Header */}
-        <div className="px-5 py-3.5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-750">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] my-auto animate-in fade-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header (Pinned at top, shrink-0) */}
+        <div className="px-5 sm:px-6 py-4 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-850 shrink-0">
           <div>
             <h3 className="text-base font-bold text-slate-900 dark:text-white">
               {isEdit ? 'Ubah Transaksi Kas' : 'Catat Transaksi Kas'}
@@ -169,8 +187,9 @@ export default function TransactionModal({
           </div>
           <button
             onClick={onClose}
-            className="touch-target w-11 h-11 flex items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded transition-colors"
+            className="touch-target w-10 h-10 shrink-0 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Tutup form transaksi"
+            title="Tutup Modal (Esc)"
           >
             <X className="w-5 h-5" />
           </button>
@@ -178,22 +197,23 @@ export default function TransactionModal({
 
         {/* Error notification */}
         {errorMessage && (
-          <div className="mx-5 mt-4 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded flex items-center space-x-2 text-rose-700 dark:text-rose-300 text-xs">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <div className="mx-5 sm:mx-6 mt-4 p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center space-x-2 text-rose-700 dark:text-rose-300 text-xs shrink-0">
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span className="flex-1">{errorMessage}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
           {/* Dual Mode Type Switcher */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
               onClick={() => setType('INCOME')}
-              className={`touch-target h-11 flex items-center justify-center space-x-2 rounded text-xs font-bold border transition-colors ${
+              className={`touch-target h-11 flex items-center justify-center space-x-2 rounded-xl text-xs font-bold border transition-colors ${
                 type === 'INCOME'
-                  ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-50'
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm shadow-emerald-500/10'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
               }`}
             >
               <ArrowDownLeft className="w-4 h-4" />
@@ -203,10 +223,10 @@ export default function TransactionModal({
             <button
               type="button"
               onClick={() => setType('EXPENSE')}
-              className={`touch-target h-11 flex items-center justify-center space-x-2 rounded text-xs font-bold border transition-colors ${
+              className={`touch-target h-11 flex items-center justify-center space-x-2 rounded-xl text-xs font-bold border transition-colors ${
                 type === 'EXPENSE'
-                  ? 'bg-rose-600 text-white border-rose-600'
-                  : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-50'
+                  ? 'bg-rose-600 text-white border-rose-600 shadow-sm shadow-rose-500/10'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
               }`}
             >
               <ArrowUpRight className="w-4 h-4" />
@@ -235,7 +255,7 @@ export default function TransactionModal({
                 placeholder="0"
                 value={nominal}
                 onChange={(e) => setNominal(e.target.value)}
-                className="w-full h-11 pl-9 pr-3 text-sm font-bold bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                className="w-full h-11 pl-9 pr-3 text-sm font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-mono"
                 required
               />
             </div>
@@ -250,7 +270,7 @@ export default function TransactionModal({
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full h-11 px-3 text-xs bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-semibold"
+                className="w-full h-11 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-semibold"
                 required
               >
                 {availableCategories.length === 0 ? (
@@ -272,7 +292,7 @@ export default function TransactionModal({
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-11 px-3 text-xs bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                  className="w-full h-11 px-3 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-mono"
                   required
                 />
               </div>
@@ -290,10 +310,10 @@ export default function TransactionModal({
                   key={m}
                   type="button"
                   onClick={() => setPaymentMethod(m)}
-                  className={`touch-target h-11 flex items-center justify-center space-x-1.5 rounded text-xs font-bold border transition-colors ${
+                  className={`touch-target h-11 flex items-center justify-center space-x-1.5 rounded-xl text-xs font-bold border transition-colors ${
                     paymentMethod === m
                       ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-50'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750'
                   }`}
                 >
                   <CreditCard className="w-3.5 h-3.5" />
@@ -313,7 +333,7 @@ export default function TransactionModal({
               placeholder="Contoh: Jasa servis tune up Avanza AG 1822 AB"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               required
             />
           </div>
@@ -324,22 +344,22 @@ export default function TransactionModal({
               Lampiran Bukti Struk / Nota <span className="text-slate-400 font-normal">(Opsional)</span>
             </label>
             {receiptPreview ? (
-              <div className="relative border border-slate-200 dark:border-slate-600 rounded p-2 flex items-center space-x-3 bg-slate-50 dark:bg-slate-700/50">
+              <div className="relative border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-center space-x-3 bg-slate-50 dark:bg-slate-800/50">
                 <img
                   src={receiptPreview}
                   alt="Preview Nota"
-                  className="w-12 h-12 object-cover rounded border border-slate-300 dark:border-slate-600"
+                  className="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-slate-700"
                 />
                 <div className="flex-1 min-w-0 text-xs">
                   <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                     {receiptFile ? receiptFile.name : 'Bukti struk terlampir'}
                   </p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Siap disimpan</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Siap disimpan</p>
                 </div>
                 <button
                   type="button"
                   onClick={handleRemoveReceipt}
-                  className="touch-target w-9 h-9 flex items-center justify-center text-rose-500 hover:text-rose-700 rounded transition-colors"
+                  className="touch-target w-9 h-9 flex items-center justify-center text-rose-500 hover:text-rose-700 rounded-lg transition-colors"
                   title="Hapus foto nota"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -366,7 +386,7 @@ export default function TransactionModal({
                   <button
                     type="button"
                     onClick={() => cameraInputRef.current?.click()}
-                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Buka Kamera (Foto Nota)</span>
@@ -375,34 +395,35 @@ export default function TransactionModal({
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="touch-target px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+                    className="touch-target px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors"
                   >
                     <Upload className="w-4 h-4" />
                     <span>Pilih Galeri / File</span>
                   </button>
                 </div>
-                <span className="block text-[11px] text-slate-400">
+                <span className="block text-xs text-slate-400">
                   Ambil foto nota langsung dari kamera ponsel atau pilih dari galeri
                 </span>
               </div>
             )}
           </div>
+          </div>
 
-          {/* Actions */}
-          <div className="pt-2 flex items-center justify-end space-x-2">
+          {/* Actions (Pinned at bottom, shrink-0) */}
+          <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2.5">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="touch-target px-4 py-2.5 rounded border border-slate-300 dark:border-slate-600 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="touch-target px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`touch-target px-5 py-2.5 rounded text-white text-xs font-bold transition-colors disabled:opacity-50 ${
-                type === 'INCOME' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'
+              className={`touch-target px-5 py-2.5 rounded-xl text-white text-xs font-bold transition-colors disabled:opacity-50 ${
+                type === 'INCOME' ? 'bg-[#00a86b] hover:bg-emerald-600 shadow-sm shadow-emerald-500/10' : 'bg-rose-600 hover:bg-rose-700 shadow-sm shadow-rose-500/10'
               }`}
             >
               {isSubmitting ? 'Menyimpan...' : (isEdit ? 'Perbarui Transaksi' : `Simpan ${type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran'}`)}

@@ -10,6 +10,9 @@ data/*.db-shm
 data/*.db-wal
 data/*.db*
 !data/.gitkeep
+server/db/*.db
+server/db/*.db-shm
+server/db/*.db-wal
 
 # Uploads
 uploads/*
@@ -44,7 +47,9 @@ id_ecdsa
 id_ed25519
 
 # Agent & Workspace Metadata
+.agent/
 .agents/
+.impeccable/
 ORIGINAL_REQUEST.md
 original_request.md
 TEST_INFRA.md

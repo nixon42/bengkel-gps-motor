@@ -19,6 +19,15 @@ export function tenantRoutes(db) {
     business_hours: z.string().max(100).optional(),
     logoUrl: z.string().nullable().optional(),
     logo_url: z.string().nullable().optional(),
+    heroImageUrl: z.string().nullable().optional(),
+    hero_image_url: z.string().nullable().optional(),
+    facilityImage1: z.string().nullable().optional(),
+    facility_image_1: z.string().nullable().optional(),
+    facilityImage2: z.string().nullable().optional(),
+    facility_image_2: z.string().nullable().optional(),
+    tagline: z.string().max(150).nullable().optional(),
+    profileCompleted: z.union([z.boolean(), z.number()]).optional(),
+    profile_completed: z.union([z.boolean(), z.number()]).optional(),
     monthlyRevenueTarget: z.number().nonnegative().optional(),
     monthly_revenue_target: z.number().nonnegative().optional(),
     invoiceFooter: z.string().max(255).optional(),
@@ -59,6 +68,15 @@ export function tenantRoutes(db) {
           businessHours: tenant.business_hours,
           logo_url: tenant.logo_url,
           logoUrl: tenant.logo_url,
+          hero_image_url: tenant.hero_image_url || null,
+          heroImageUrl: tenant.hero_image_url || null,
+          facility_image_1: tenant.facility_image_1 || null,
+          facilityImage1: tenant.facility_image_1 || null,
+          facility_image_2: tenant.facility_image_2 || null,
+          facilityImage2: tenant.facility_image_2 || null,
+          tagline: tenant.tagline || '',
+          profile_completed: Boolean(tenant.profile_completed),
+          profileCompleted: Boolean(tenant.profile_completed),
           created_at: tenant.created_at,
           updated_at: tenant.updated_at
         },
@@ -110,12 +128,19 @@ export function tenantRoutes(db) {
         address: parsed.address ?? currentTenant.address,
         phone_wa: parsed.phoneWa ?? parsed.phone_wa ?? currentTenant.phone_wa,
         business_hours: parsed.businessHours ?? parsed.business_hours ?? currentTenant.business_hours,
-        logo_url: parsed.logoUrl !== undefined ? parsed.logoUrl : (parsed.logo_url !== undefined ? parsed.logo_url : currentTenant.logo_url)
+        logo_url: parsed.logoUrl !== undefined ? parsed.logoUrl : (parsed.logo_url !== undefined ? parsed.logo_url : currentTenant.logo_url),
+        hero_image_url: parsed.heroImageUrl !== undefined ? parsed.heroImageUrl : (parsed.hero_image_url !== undefined ? parsed.hero_image_url : currentTenant.hero_image_url),
+        facility_image_1: parsed.facilityImage1 !== undefined ? parsed.facilityImage1 : (parsed.facility_image_1 !== undefined ? parsed.facility_image_1 : currentTenant.facility_image_1),
+        facility_image_2: parsed.facilityImage2 !== undefined ? parsed.facilityImage2 : (parsed.facility_image_2 !== undefined ? parsed.facility_image_2 : currentTenant.facility_image_2),
+        tagline: parsed.tagline !== undefined ? parsed.tagline : currentTenant.tagline,
+        profile_completed: parsed.profileCompleted !== undefined ? (parsed.profileCompleted ? 1 : 0) : (parsed.profile_completed !== undefined ? (parsed.profile_completed ? 1 : 0) : currentTenant.profile_completed ?? 1)
       };
 
       db.prepare(`
         UPDATE tenants
-        SET name = ?, slug = ?, address = ?, phone_wa = ?, business_hours = ?, logo_url = ?, updated_at = CURRENT_TIMESTAMP
+        SET name = ?, slug = ?, address = ?, phone_wa = ?, business_hours = ?, 
+            logo_url = ?, hero_image_url = ?, facility_image_1 = ?, facility_image_2 = ?, 
+            tagline = ?, profile_completed = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `).run(
         updateData.name,
@@ -124,6 +149,11 @@ export function tenantRoutes(db) {
         updateData.phone_wa,
         updateData.business_hours,
         updateData.logo_url,
+        updateData.hero_image_url,
+        updateData.facility_image_1,
+        updateData.facility_image_2,
+        updateData.tagline,
+        updateData.profile_completed,
         tenantId
       );
 
@@ -152,9 +182,43 @@ export function tenantRoutes(db) {
 
       res.json({
         success: true,
-        message: 'Pengaturan bengkel berhasil diperbarui.',
+        message: 'Pengaturan profil bengkel berhasil diperbarui.',
         tenant: updatedTenant,
         settings: updatedSettings
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // POST /api/tenant/photo (Upload or update hero, facility, or logo)
+  router.post('/photo', uploadSingle('general', 'photo'), (req, res, next) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Tidak ada file foto yang diunggah.' });
+      }
+
+      const photoUrl = req.file.relativeUrl;
+      const type = (req.body.type || req.query.type || 'hero').toLowerCase();
+      let column = 'hero_image_url';
+      if (type === 'facility1' || type === 'facility_1') column = 'facility_image_1';
+      else if (type === 'facility2' || type === 'facility_2') column = 'facility_image_2';
+      else if (type === 'logo') column = 'logo_url';
+
+      db.prepare(`
+        UPDATE tenants
+        SET ${column} = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(photoUrl, req.tenantId);
+
+      const updatedTenant = db.prepare('SELECT * FROM tenants WHERE id = ?').get(req.tenantId);
+
+      res.json({
+        success: true,
+        message: `Foto ${type} bengkel berhasil diperbarui.`,
+        photoUrl,
+        type,
+        tenant: updatedTenant
       });
     } catch (err) {
       next(err);

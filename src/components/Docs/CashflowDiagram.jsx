@@ -20,7 +20,7 @@ export default function CashflowDiagram({ className = '' }) {
             Sistem pencatatan pemasukan, pengeluaran, saldo bersih, dan dokumen PDF resmi
           </p>
         </div>
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">
+        <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">
           Akuntansi Flat
         </span>
       </div>
@@ -39,7 +39,7 @@ export default function CashflowDiagram({ className = '' }) {
               <li>• Pendapatan jasa derek / lain-lain</li>
             </ul>
           </div>
-          <div className="text-[10px] font-semibold text-emerald-800 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/50 p-1.5 rounded text-center">
+          <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/50 p-1.5 rounded text-center">
             Tunai • Transfer • QRIS
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function CashflowDiagram({ className = '' }) {
               <li>• Gaji staf teknisi & kasir bengkel</li>
             </ul>
           </div>
-          <div className="text-[10px] font-semibold text-rose-800 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/50 p-1.5 rounded text-center">
+          <div className="text-xs font-semibold text-rose-800 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/50 p-1.5 rounded text-center">
             Foto Struk Nota Fisik
           </div>
         </div>
@@ -74,10 +74,10 @@ export default function CashflowDiagram({ className = '' }) {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-1.5 mt-2">
-            <div className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center text-[10px] font-bold text-slate-700 dark:text-slate-300">
+            <div className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center text-xs font-bold text-slate-700 dark:text-slate-300">
               P&L PDF Berkop
             </div>
-            <div className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center text-[10px] font-bold text-slate-700 dark:text-slate-300">
+            <div className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-center text-xs font-bold text-slate-700 dark:text-slate-300">
               Export CSV
             </div>
           </div>

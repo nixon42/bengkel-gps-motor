@@ -128,8 +128,20 @@ export function authRoutes(db) {
           name: tenant.name,
           address: tenant.address,
           phone_wa: tenant.phone_wa,
+          phoneWa: tenant.phone_wa,
           business_hours: tenant.business_hours,
-          logo_url: tenant.logo_url
+          businessHours: tenant.business_hours,
+          logo_url: tenant.logo_url,
+          logoUrl: tenant.logo_url,
+          hero_image_url: tenant.hero_image_url || null,
+          heroImageUrl: tenant.hero_image_url || null,
+          facility_image_1: tenant.facility_image_1 || null,
+          facilityImage1: tenant.facility_image_1 || null,
+          facility_image_2: tenant.facility_image_2 || null,
+          facilityImage2: tenant.facility_image_2 || null,
+          tagline: tenant.tagline || '',
+          profile_completed: Boolean(tenant.profile_completed),
+          profileCompleted: Boolean(tenant.profile_completed)
         }
       });
     } catch (err) {

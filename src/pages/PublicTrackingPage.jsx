@@ -143,14 +143,14 @@ export default function PublicTrackingPage({
             </button>
 
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center text-white shrink-0 font-bold">
-                <Wrench className="w-4 h-4" />
+              <div className="w-9 h-9 rounded bg-[#0c2b5e] flex items-center justify-center text-white shrink-0 font-bold">
+                <Wrench className="w-4 h-4 text-emerald-400" />
               </div>
               <div>
                 <h1 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-tight">
                   {data?.tenant?.name || 'Bengkel Mobil GPS Motor Kediri'}
                 </h1>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-mono">
+                <span className="text-xs text-blue-700 dark:text-blue-400 block font-mono font-semibold">
                   Portal Pelacakan Publik (Zero-Login)
                 </span>
               </div>
@@ -176,9 +176,13 @@ export default function PublicTrackingPage({
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
         
         {/* Search Header Banner */}
-        <div className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 sm:p-6 shadow-none">
-          <div className="max-w-2xl mx-auto text-center space-y-2 mb-5">
-            <h2 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+        <div className="rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 sm:p-8 shadow-none">
+          <div className="max-w-2xl mx-auto text-center space-y-2 mb-6">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-mono font-bold uppercase tracking-wide">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Transparansi 100% • Sambiresik Kediri</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
               Cek Status Servis Mobil Anda
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
@@ -193,38 +197,51 @@ export default function PublicTrackingPage({
                 value={plateQuery}
                 onChange={(e) => setPlateQuery(e.target.value)}
                 placeholder="Contoh: AG 1822 AB"
-                className="touch-target w-full uppercase px-4 py-2.5 rounded border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-mono text-base font-bold tracking-wider placeholder:font-normal placeholder:normal-case placeholder:text-slate-400 focus:outline-none focus:border-blue-600 dark:focus:border-blue-400"
+                className="touch-target w-full uppercase px-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white font-mono text-base font-bold tracking-widest text-center placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:border-blue-600 dark:focus:border-blue-400"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="touch-target sm:w-auto px-6 py-2.5 rounded bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm flex items-center justify-center space-x-2 transition-colors shrink-0 disabled:opacity-50"
+              className="touch-target sm:w-auto px-6 py-3 rounded bg-[#0c2b5e] hover:bg-blue-900 active:bg-blue-950 text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors shrink-0 disabled:opacity-50 shadow-none"
             >
               {loading ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
                   <span>Mencari...</span>
                 </>
               ) : (
                 <>
-                  <Search className="w-4 h-4" />
-                  <span>Cek Status</span>
+                  <Search className="w-4 h-4 text-emerald-400" />
+                  <span>Lacak Progres</span>
                 </>
               )}
             </button>
           </form>
 
           {/* Quick Demo Plate Helper */}
-          <div className="max-w-xl mx-auto mt-3 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-            <span>Coba plat nomor demo:</span>
-            <button
-              type="button"
-              onClick={() => handleDemoClick('AG 1822 AB')}
-              className="text-blue-600 dark:text-blue-400 font-mono font-bold hover:underline"
-            >
-              AG 1822 AB (Avanza)
-            </button>
+          <div className="max-w-xl mx-auto mt-3.5 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2">
+              <span>Uji coba plat:</span>
+              <button
+                type="button"
+                onClick={() => handleDemoClick('AG 1822 AB')}
+                className="touch-target px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-[#0c2b5e] dark:text-blue-300 font-mono font-bold hover:underline"
+              >
+                AG 1822 AB (Avanza)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDemoClick('AG 1044 RK')}
+                className="touch-target px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono font-bold hover:underline"
+              >
+                AG 1044 RK (Innova)
+              </button>
+            </div>
+            <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Nama &amp; HP Disensor</span>
+            </span>
           </div>
         </div>
 
@@ -284,7 +301,7 @@ export default function PublicTrackingPage({
                         <p className="text-slate-600 dark:text-slate-400">{hist.complaint || 'Perawatan berkala'}</p>
                       </div>
                       <div className="text-right">
-                        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 font-mono text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 font-mono text-xs font-bold">
                           {hist.status}
                         </span>
                         {hist.total_cost > 0 && (

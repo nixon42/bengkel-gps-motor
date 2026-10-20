@@ -17,7 +17,7 @@ export default function PnlChart({ data = [] }) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-slate-400 text-sm">
+      <div className="h-64 flex items-center justify-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-slate-400 text-sm">
         Tidak ada data grafik laba rugi
       </div>
     );
@@ -32,8 +32,8 @@ export default function PnlChart({ data = [] }) {
   const barWidth = Math.min(22, (groupWidth - 14) / 2);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 shadow-none">
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-none">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">Tren Laba Rugi Bulanan (P&L)</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400">Komparasi Pemasukan vs Pengeluaran 6 Bulan Terakhir</p>
@@ -76,7 +76,8 @@ export default function PnlChart({ data = [] }) {
                   x={startX - 6}
                   y={y + 3}
                   textAnchor="end"
-                  className="text-[9px] fill-slate-400 dark:fill-slate-500 font-mono"
+                  fontSize="9"
+                  className="fill-slate-400 dark:fill-slate-500 font-mono"
                 >
                   {val >= 1000000 ? `${(val / 1000000).toFixed(0)}Jt` : `${(val / 1000).toFixed(0)}Rb`}
                 </text>
@@ -137,7 +138,7 @@ export default function PnlChart({ data = [] }) {
                   x={groupX + barWidth + 2}
                   y={chartHeight + 38}
                   textAnchor="middle"
-                  className={`text-[10px] ${isHovered ? 'fill-blue-600 dark:fill-blue-400 font-bold' : 'fill-slate-600 dark:fill-slate-400'}`}
+                  className={`text-xs ${isHovered ? 'fill-blue-600 dark:fill-blue-400 font-bold' : 'fill-slate-600 dark:fill-slate-400'}`}
                 >
                   {item.label || item.month}
                 </text>
@@ -147,7 +148,8 @@ export default function PnlChart({ data = [] }) {
                   x={groupX + barWidth + 2}
                   y={Math.min(incomeY, expenseY) - 5}
                   textAnchor="middle"
-                  className={`text-[8.5px] font-bold ${item.net >= 0 ? 'fill-emerald-600 dark:fill-emerald-400' : 'fill-rose-600 dark:fill-rose-400'}`}
+                  fontSize="9"
+                  className={`font-bold ${item.net >= 0 ? 'fill-emerald-600 dark:fill-emerald-400' : 'fill-rose-600 dark:fill-rose-400'}`}
                 >
                   {item.net >= 0 ? `+${(item.net / 1000000).toFixed(1)}Jt` : `-${(Math.abs(item.net) / 1000000).toFixed(1)}Jt`}
                 </text>
@@ -158,7 +160,7 @@ export default function PnlChart({ data = [] }) {
 
         {/* Live Detail Box */}
         {activeItem && (
-          <div className="mt-2 p-3 bg-slate-100 dark:bg-slate-700/80 rounded border border-slate-200 dark:border-slate-600 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="mt-3 p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="font-bold text-slate-800 dark:text-white">
               Periode: {activeItem.label || activeItem.month}
             </div>

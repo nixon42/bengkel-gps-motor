@@ -31,12 +31,12 @@ const STAGE_TABS = [
 ];
 
 const STAGE_COLORS = {
-  'MASUK': 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600',
-  'DIAGNOSA': 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300 border-sky-300 dark:border-sky-800',
-  'PENGERJAAN': 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 border-amber-300 dark:border-amber-800',
-  'MENUNGGU_PART': 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300 border-purple-300 dark:border-purple-800',
-  'SELESAI': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
-  'DIAMBIL': 'bg-zinc-200 text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100 border-zinc-400 dark:border-zinc-600'
+  'MASUK': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700',
+  'DIAGNOSA': 'bg-sky-50 text-sky-800 dark:bg-sky-950/50 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
+  'PENGERJAAN': 'bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+  'MENUNGGU_PART': 'bg-purple-50 text-purple-800 dark:bg-purple-950/50 dark:text-purple-300 border-purple-200 dark:border-purple-800/60',
+  'SELESAI': 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+  'DIAMBIL': 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700'
 };
 
 export default function RepairOrdersPage() {
@@ -270,56 +270,111 @@ export default function RepairOrdersPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner & KPI Stat Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700">
-          <span className="text-xs text-slate-500 font-medium block">Total Repair Orders</span>
-          <span className="text-2xl font-bold text-slate-900 dark:text-white mt-1 block">
-            {stats.total}
-          </span>
-          <span className="text-[11px] text-blue-600 font-medium">Semua status order</span>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* 1. Total RO */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Total Repair Orders
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
+              <Wrench className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white block">
+              {stats.total}
+            </span>
+            <span className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-1 block">
+              Semua status terdata
+            </span>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700">
-          <span className="text-xs text-slate-500 font-medium block">Pemeriksaan & Diagnosa</span>
-          <span className="text-2xl font-bold text-sky-600 mt-1 block">
-            {(stats.masuk || 0) + (stats.diagnosa || 0)}
-          </span>
-          <span className="text-[11px] text-slate-500">Masuk ({stats.masuk}) • Diagnosa ({stats.diagnosa})</span>
+        {/* 2. Diagnosa */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Pemeriksaan & Diagnosa
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-sky-600 dark:text-sky-400 block">
+              {(stats.masuk || 0) + (stats.diagnosa || 0)}
+            </span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block">
+              Masuk ({stats.masuk || 0}) • Diagnosa ({stats.diagnosa || 0})
+            </span>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700">
-          <span className="text-xs text-slate-500 font-medium block">Dalam Pengerjaan</span>
-          <span className="text-2xl font-bold text-amber-600 mt-1 block">
-            {(stats.pengerjaan || 0) + (stats.menunggu_part || 0)}
-          </span>
-          <span className="text-[11px] text-slate-500">Proses ({stats.pengerjaan}) • Tunggu Part ({stats.menunggu_part})</span>
+        {/* 3. Pengerjaan */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Dalam Pengerjaan
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+              <Car className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-amber-600 dark:text-amber-400 block">
+              {(stats.pengerjaan || 0) + (stats.menunggu_part || 0)}
+            </span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block">
+              Proses ({stats.pengerjaan || 0}) • Tunggu Part ({stats.menunggu_part || 0})
+            </span>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 p-4 rounded border border-slate-200 dark:border-slate-700">
-          <span className="text-xs text-slate-500 font-medium block">Selesai Siap Diambil</span>
-          <span className="text-2xl font-bold text-emerald-600 mt-1 block">
-            {stats.selesai || 0}
-          </span>
-          <span className="text-[11px] text-slate-500">Sudah Diambil ({stats.diambil || 0})</span>
+        {/* 4. Selesai */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Selesai Siap Diambil
+            </span>
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <span className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-emerald-600 dark:text-emerald-400 block">
+              {stats.selesai || 0}
+            </span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 block">
+              Sudah Diambil ({stats.diambil || 0})
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Action Bar & Controls */}
-      <div className="bg-white dark:bg-slate-800 p-5 rounded border border-slate-200 dark:border-slate-700 space-y-4">
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-              <Wrench className="w-5 h-5 text-blue-600" />
-              <span>Repair Orders & Servis Kendaraan</span>
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
+                <Wrench className="w-4 h-4" />
+              </div>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                Repair Orders & Servis Kendaraan
+              </h2>
+              <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40">
+                {stats.total || 0} Order Terdata
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Kelola siklus servis 6-tahap, pemasangan suku cadang, foto pengerjaan, dan pencetakan nota PDF
             </p>
           </div>
 
           <button
             onClick={() => setCreateModalOpen(true)}
-            className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center justify-center space-x-2 transition-colors self-start sm:self-auto"
+            className="touch-target w-full sm:w-auto px-5 py-2.5 bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-colors shadow-xs shrink-0 min-h-[44px]"
           >
             <Plus className="w-4 h-4" />
             <span>Buat RO Baru</span>
@@ -327,75 +382,80 @@ export default function RepairOrdersPage() {
         </div>
 
         {/* Search Bar & Stage Tabs */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-700">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Cari plat nomor, nama pelanggan, no. RO..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full text-xs pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-750 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full text-base sm:text-xs pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs transition-colors min-h-[44px] sm:min-h-0"
             />
           </div>
 
-          <div className="flex items-center space-x-1 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-            {STAGE_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => {
-                  setActiveStage(tab.key);
-                  setPage(1);
-                }}
-                className={`touch-target px-3 py-1.5 rounded text-xs font-bold whitespace-nowrap transition-colors ${
-                  activeStage === tab.key
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="w-full lg:w-auto overflow-x-auto no-scrollbar -mx-1 px-1 py-1">
+            <div className="inline-flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-950/60 rounded-xl border border-slate-200/80 dark:border-slate-800/80 min-w-full sm:min-w-0">
+              {STAGE_TABS.map((tab) => {
+                const isActive = activeStage === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => {
+                      setActiveStage(tab.key);
+                      setPage(1);
+                    }}
+                    className={`touch-target px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shrink-0 transition-all min-h-[38px] flex items-center ${
+                      isActive
+                        ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Repair Orders List Table */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         {loading ? (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent mb-3" />
             <p className="text-xs text-slate-500">Memuat data order perbaikan...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 text-red-500 text-xs">
+          <div className="text-center py-16 text-rose-500 text-xs">
             <AlertCircle className="w-8 h-8 mx-auto mb-2" />
             {error}
           </div>
         ) : repairOrders.length === 0 ? (
-          <div className="text-center py-12 text-slate-400 text-xs">
+          <div className="text-center py-16 text-slate-400 text-xs">
             Tidak ada Repair Order yang cocok dengan filter.
           </div>
         ) : (
           <div>
             {/* Mobile Card List View (< 768px) */}
-            <div className="md:hidden divide-y divide-slate-200 dark:divide-slate-700">
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
               {repairOrders.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => setSelectedRoId(item.id)}
-                  className="p-4 hover:bg-slate-50 dark:hover:bg-slate-750/50 cursor-pointer space-y-2.5 transition-colors"
+                  className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer space-y-2.5 transition-colors"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center space-x-2 min-w-0">
-                      <span className="font-mono bg-slate-900 text-white px-2 py-0.5 rounded text-xs font-bold shrink-0">
+                      <span className="font-mono bg-slate-900 text-emerald-400 px-2 py-0.5 rounded text-xs font-bold border border-slate-700 shrink-0">
                         {item.plate_number}
                       </span>
                       <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs truncate">
                         {item.car_brand} {item.car_model}
                       </span>
                     </div>
-                    <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
+                    <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
                       {item.status}
                     </span>
                   </div>
@@ -403,38 +463,38 @@ export default function RepairOrdersPage() {
                   <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                     <div className="truncate">
                       <span className="font-medium text-slate-800 dark:text-slate-200">{item.customer_name}</span>
-                      {item.customer_phone && <span className="font-mono ml-1.5 text-[11px]">({item.customer_phone})</span>}
+                      {item.customer_phone && <span className="font-mono ml-1.5 text-xs">({item.customer_phone})</span>}
                     </div>
-                    <span className="text-[11px] shrink-0 font-mono">{item.entry_date}</span>
+                    <span className="text-xs shrink-0 font-mono">{item.entry_date}</span>
                   </div>
 
                   {item.complaint && (
-                    <div className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-750 p-2.5 rounded border border-slate-100 dark:border-slate-700">
+                    <div className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
                       <p className="line-clamp-2">{item.complaint}</p>
-                      <span className="block text-[10px] text-slate-400 mt-1">PJ: {item.mechanic_name || 'Mas Agus'}</span>
+                      <span className="block text-xs text-slate-400 mt-1">PJ: {item.mechanic_name || 'Mas Agus'}</span>
                     </div>
                   )}
 
                   <div className="flex items-center justify-between pt-1">
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Total Biaya</span>
-                      <span className="font-bold text-slate-900 dark:text-white text-sm">
+                      <span className="text-xs text-slate-400 uppercase tracking-wider block">Total Biaya</span>
+                      <span className="font-bold font-mono text-slate-900 dark:text-white text-sm">
                         Rp {Number(item.total_cost || 0).toLocaleString('id-ID')}
                       </span>
                     </div>
                     <div className="flex items-center space-x-1.5" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => setSelectedRoId(item.id)}
-                        className="touch-target px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold"
+                        className="touch-target px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-emerald-400 rounded-lg text-xs font-bold border border-slate-700/60 shadow-xs transition-colors"
                       >
                         Kelola
                       </button>
                       <button
                         onClick={() => window.open(`/api/repair-orders/${item.id}/invoice-pdf`, '_blank')}
-                        className="touch-target p-1.5 text-slate-600 hover:text-slate-900 dark:hover:text-white rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+                        className="touch-target p-1.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 hover:bg-slate-50 transition-colors"
                         title="Cetak PDF"
                       >
-                        <FileText className="w-4 h-4 text-red-500" />
+                        <FileText className="w-4 h-4 text-rose-500" />
                       </button>
                     </div>
                   </div>
@@ -445,33 +505,33 @@ export default function RepairOrdersPage() {
             {/* Desktop Table View (>= 768px) */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-50 dark:bg-slate-750 text-slate-600 dark:text-slate-300 font-bold uppercase border-b border-slate-200 dark:border-slate-700">
+                <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs border-b border-slate-200/80 dark:border-slate-800">
                   <tr>
-                    <th className="py-3 px-4">Kendaraan & Plat</th>
-                    <th className="py-3 px-4">Pelanggan</th>
-                    <th className="py-3 px-4">Keluhan Awal</th>
-                    <th className="py-3 px-4">Status Tahapan</th>
-                    <th className="py-3 px-4 text-right">Total Biaya</th>
-                    <th className="py-3 px-4 text-center">Aksi</th>
+                    <th className="py-3.5 px-4">Kendaraan & Plat</th>
+                    <th className="py-3.5 px-4">Pelanggan</th>
+                    <th className="py-3.5 px-4">Keluhan Awal</th>
+                    <th className="py-3.5 px-4">Status Tahapan</th>
+                    <th className="py-3.5 px-4 text-right">Total Biaya</th>
+                    <th className="py-3.5 px-4 text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {repairOrders.map((item) => (
                     <tr
                       key={item.id}
                       onClick={() => setSelectedRoId(item.id)}
-                      className="hover:bg-slate-50 dark:hover:bg-slate-750 cursor-pointer transition-colors"
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 cursor-pointer transition-colors"
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
-                          <span className="font-mono bg-slate-900 text-white px-2 py-0.5 rounded text-xs font-bold">
+                          <span className="font-mono bg-slate-900 text-emerald-400 px-2 py-0.5 rounded text-xs font-bold border border-slate-700">
                             {item.plate_number}
                           </span>
                           <div className="font-semibold text-slate-800 dark:text-slate-200">
                             {item.car_brand} {item.car_model}
                           </div>
                         </div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">
+                        <div className="text-xs text-slate-500 mt-0.5">
                           {item.ro_number} • Tgl: {item.entry_date}
                         </div>
                       </td>
@@ -480,23 +540,23 @@ export default function RepairOrdersPage() {
                         <div className="font-semibold text-slate-800 dark:text-slate-200">
                           {item.customer_name}
                         </div>
-                        <div className="text-[11px] font-mono text-slate-500">
+                        <div className="text-xs font-mono text-slate-500">
                           {item.customer_phone || '-'}
                         </div>
                       </td>
 
                       <td className="py-3 px-4 max-w-xs truncate text-slate-600 dark:text-slate-300">
                         {item.complaint || '-'}
-                        <span className="block text-[10px] text-slate-400">PJ: {item.mechanic_name || 'Mas Agus'}</span>
+                        <span className="block text-xs text-slate-400">PJ: {item.mechanic_name || 'Mas Agus'}</span>
                       </td>
 
                       <td className="py-3 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${STAGE_COLORS[item.status] || 'bg-slate-100 text-slate-800'}`}>
                           {item.status}
                         </span>
                       </td>
 
-                      <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
+                      <td className="py-3 px-4 text-right font-bold font-mono text-slate-900 dark:text-white">
                         Rp {Number(item.total_cost || 0).toLocaleString('id-ID')}
                       </td>
 
@@ -504,16 +564,16 @@ export default function RepairOrdersPage() {
                         <div className="flex items-center justify-center space-x-1.5">
                           <button
                             onClick={() => setSelectedRoId(item.id)}
-                            className="touch-target px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-bold"
+                            className="touch-target px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-emerald-400 rounded-lg text-xs font-bold border border-slate-700/60 shadow-xs transition-colors"
                           >
                             Kelola
                           </button>
                           <button
                             onClick={() => window.open(`/api/repair-orders/${item.id}/invoice-pdf`, '_blank')}
-                            className="touch-target p-1 text-slate-600 hover:text-slate-900 dark:hover:text-white rounded"
+                            className="touch-target p-1.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 hover:bg-slate-50 transition-colors"
                             title="Cetak PDF"
                           >
-                            <FileText className="w-4 h-4 text-red-500" />
+                            <FileText className="w-4 h-4 text-rose-500" />
                           </button>
                         </div>
                       </td>
@@ -528,22 +588,31 @@ export default function RepairOrdersPage() {
 
       {/* Modal: Buat Repair Order Baru */}
       {createModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-xl w-full p-6 space-y-4 my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setCreateModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-xl w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl relative my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-5 pb-4 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                <Wrench className="w-5 h-5 text-blue-600" />
+                <Wrench className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <span>Buat Repair Order Servis Baru</span>
               </h3>
               <button
+                type="button"
                 onClick={() => setCreateModalOpen(false)}
-                className="touch-target text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="w-9 h-9 touch-target flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateSubmit} className="space-y-4 text-xs">
+            <form onSubmit={handleCreateSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="p-5 overflow-y-auto flex-1 space-y-4 text-xs">
               {/* Autocomplete Customer Field */}
               <div className="relative">
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
@@ -575,7 +644,7 @@ export default function RepairOrdersPage() {
                           <span className="text-[11px] text-slate-500 ml-2 font-mono">{c.phone}</span>
                         </div>
                         {c.vehicles && c.vehicles.length > 0 && (
-                          <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">
+                          <span className="font-mono text-xs bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">
                             {c.vehicles[0].plate_number}
                           </span>
                         )}
@@ -623,7 +692,7 @@ export default function RepairOrdersPage() {
                     <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
                       Merek & Model Mobil
                     </label>
-                    <span className="text-[10px] text-slate-400">Pilih riwayat atau ketik manual</span>
+                    <span className="text-xs text-slate-400">Pilih riwayat atau ketik manual</span>
                   </div>
                   <div className="space-y-1.5">
                     {/* Dropdown pilihan mobil yang pernah ditangani tenant */}
@@ -698,7 +767,7 @@ export default function RepairOrdersPage() {
                     <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
                       Warna Mobil
                     </label>
-                    <span className="text-[10px] text-slate-400">Pilih / ketik</span>
+                    <span className="text-xs text-slate-400">Pilih / ketik</span>
                   </div>
                   <div className="space-y-1.5">
                     <select
@@ -778,7 +847,7 @@ export default function RepairOrdersPage() {
                     <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
                       Mekanik PJ
                     </label>
-                    <span className="text-[10px] text-slate-400">Pilih / ketik</span>
+                    <span className="text-xs text-slate-400">Pilih / ketik</span>
                   </div>
                   <div className="space-y-1.5">
                     <select
@@ -842,28 +911,28 @@ export default function RepairOrdersPage() {
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('today_17')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         Hari ini 17:00
                       </button>
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('tomorrow_12')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         Besok 12:00
                       </button>
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('tomorrow_17')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         Besok 17:00
                       </button>
                       <button
                         type="button"
                         onClick={() => setEstimatedPreset('in_2_days')}
-                        className="touch-target px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        className="touch-target px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       >
                         2 Hari Lagi
                       </button>
@@ -871,7 +940,7 @@ export default function RepairOrdersPage() {
                         <button
                           type="button"
                           onClick={() => setFormData({ ...formData, estimasiSelesai: '' })}
-                          className="touch-target text-[10px] text-rose-500 hover:underline px-1 py-0.5"
+                          className="touch-target text-xs text-rose-500 hover:underline px-1 py-0.5"
                           title="Hapus estimasi"
                         >
                           Reset
@@ -881,24 +950,26 @@ export default function RepairOrdersPage() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-700">
-                <button
-                  type="button"
-                  onClick={() => setCreateModalOpen(false)}
-                  className="touch-target px-4 py-2 text-slate-600 hover:bg-slate-100 rounded font-bold"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={createSubmitting}
-                  className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-bold"
-                >
-                  {createSubmitting ? 'Menyimpan...' : 'Buat Repair Order'}
-                </button>
-              </div>
-            </form>
+            {/* Fixed Footer pinned at bottom, shrink-0 */}
+            <div className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2">
+              <button
+                type="button"
+                onClick={() => setCreateModalOpen(false)}
+                className="touch-target px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                disabled={createSubmitting}
+                className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors"
+              >
+                {createSubmitting ? 'Menyimpan...' : 'Buat Repair Order'}
+              </button>
+            </div>
+          </form>
           </div>
         </div>
       )}

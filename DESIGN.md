@@ -16,6 +16,7 @@ colors:
   neutral-bg-dark: "#0f172a"
   neutral-surface-dark: "#1e293b"
   neutral-border-dark: "#334155"
+  neutral-muted: "#64748b"
   neutral-text-dark: "#f8fafc"
 typography:
   display:

@@ -21,7 +21,7 @@ export default function StockFlowDiagram({ className = '' }) {
             Siklus keluar-masuk sparepart dan rekonsiliasi opname fisik
           </p>
         </div>
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">
+        <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">
           Mutasi Otomatis
         </span>
       </div>

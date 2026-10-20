@@ -179,32 +179,36 @@ export default function StockMutationsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header Card */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5 shadow-none">
+      {/* Executive Header Bar */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2">
-              <ArrowDownUp className="w-6 h-6 text-blue-600" />
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                Buku Mutasi Stok Sparepart
-              </h1>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200">
-                {pagination.total} Catatan
-              </span>
+          <div className="flex items-start sm:items-center space-x-3.5">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-100 dark:border-emerald-800/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 shadow-xs">
+              <ArrowDownUp className="w-6 h-6" />
             </div>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Catatan riwayat transaksi barang masuk (restock), pemakaian barang keluar (servis), dan penyesuaian audit opname.
-            </p>
+            <div>
+              <div className="flex items-center space-x-2.5">
+                <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  Buku Mutasi Stok Sparepart
+                </h1>
+                <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-mono">
+                  {pagination.total} Log
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                Catatan riwayat transaksi barang masuk (restock), pemakaian barang keluar (servis), dan penyesuaian audit opname.
+              </p>
+            </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
             <button
               onClick={() => {
                 setSelectedPartId(null);
                 setRestockModalOpen(true);
               }}
-              className="touch-target px-3.5 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+              className="touch-target w-full sm:w-auto px-4 py-2.5 min-h-[44px] rounded-xl bg-[#00a86b] hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold flex items-center justify-center space-x-2 transition-all shadow-xs"
             >
               <ArrowDownRight className="w-4 h-4" />
               <span>+ Barang Masuk (Restock)</span>
@@ -215,22 +219,22 @@ export default function StockMutationsPage() {
                 setSelectedPartId(null);
                 setStockOutModalOpen(true);
               }}
-              className="touch-target px-3.5 py-2 rounded bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+              className="touch-target flex-1 sm:flex-none px-4 py-2.5 min-h-[44px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center justify-center space-x-2 transition-all shadow-xs"
             >
               <ArrowUpRight className="w-4 h-4" />
               <span>- Barang Keluar (Pemakaian)</span>
             </button>
 
-            <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2">
+            <div className="flex items-center gap-1.5 w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-slate-200 dark:border-slate-700 pt-2 sm:pt-0 sm:pl-2">
               <a
                 href={getExportUrl('csv')}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Unduh riwayat mutasi stok ke CSV"
-                className="touch-target px-2.5 py-2 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1"
+                className="touch-target flex-1 sm:flex-none px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors"
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>Unduh CSV</span>
+                <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                <span>CSV</span>
               </a>
 
               <a
@@ -238,10 +242,10 @@ export default function StockMutationsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Cetak laporan mutasi stok ke PDF"
-                className="touch-target px-2.5 py-2 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1"
+                className="touch-target flex-1 sm:flex-none px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors"
               >
-                <FileText className="w-3.5 h-3.5 text-blue-600" />
-                <span>Cetak PDF</span>
+                <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <span>PDF</span>
               </a>
             </div>
           </div>
@@ -252,7 +256,7 @@ export default function StockMutationsPage() {
       <StockMovementChart movements={movements} />
 
       {/* Filter Bar */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 space-y-3">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 sm:p-5 space-y-4 shadow-sm">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Tipe filter */}
           <div>
@@ -262,7 +266,7 @@ export default function StockMutationsPage() {
                 setFilterType(e.target.value);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full px-3.5 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-emerald-500 font-medium transition-all"
             >
               <option value="">Semua Tipe Mutasi</option>
               <option value="IN">Barang Masuk (IN)</option>
@@ -279,7 +283,7 @@ export default function StockMutationsPage() {
                 setFilterPartId(e.target.value);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full px-3.5 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-emerald-500 font-medium transition-all"
             >
               <option value="">Semua Sparepart</option>
               {spareparts.map((p) => (
@@ -299,7 +303,7 @@ export default function StockMutationsPage() {
                 setStartDate(e.target.value);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+              className="touch-target w-full px-3.5 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-emerald-500 font-mono transition-all"
               placeholder="Dari Tanggal"
             />
           </div>
@@ -313,67 +317,69 @@ export default function StockMutationsPage() {
                 setEndDate(e.target.value);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+              className="touch-target w-full px-3.5 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-emerald-500 font-mono transition-all"
               placeholder="Sampai Tanggal"
             />
           </div>
 
           {/* Search text */}
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Cari item, faktur, catatan..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full pl-10 pr-3.5 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
             />
           </div>
         </div>
 
-        {/* Filter Badges */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
-          <span className="text-slate-400 font-medium">Tipe Cepat:</span>
-          <button
-            onClick={() => { setFilterType(''); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
-              filterType === ''
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300'
-            }`}
-          >
-            Semua
-          </button>
-          <button
-            onClick={() => { setFilterType('IN'); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
-              filterType === 'IN'
-                ? 'bg-emerald-600 text-white border-emerald-600'
-                : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
-            }`}
-          >
-            Masuk (Restock)
-          </button>
-          <button
-            onClick={() => { setFilterType('OUT'); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
-              filterType === 'OUT'
-                ? 'bg-rose-600 text-white border-rose-600'
-                : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'
-            }`}
-          >
-            Keluar (Pemakaian)
-          </button>
-          <button
-            onClick={() => { setFilterType('ADJUSTMENT'); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
-              filterType === 'ADJUSTMENT'
-                ? 'bg-slate-700 text-white border-slate-700'
-                : 'bg-slate-100 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300'
-            }`}
-          >
-            Penyesuaian Opname
-          </button>
+        {/* Quick Filter Segmented Rail */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+          <div className="p-1 rounded-xl bg-slate-100 dark:bg-slate-950/60 flex items-center gap-1 overflow-x-auto no-scrollbar w-full sm:w-auto -mx-0.5 px-0.5">
+            <span className="text-xs font-bold text-slate-400 px-2 shrink-0">Tipe Cepat:</span>
+            <button
+              onClick={() => { setFilterType(''); setPage(1); }}
+              className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                filterType === ''
+                  ? 'bg-slate-900 dark:bg-slate-800 text-white dark:text-emerald-400 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60'
+              }`}
+            >
+              Semua
+            </button>
+            <button
+              onClick={() => { setFilterType('IN'); setPage(1); }}
+              className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                filterType === 'IN'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+              }`}
+            >
+              Masuk (Restock)
+            </button>
+            <button
+              onClick={() => { setFilterType('OUT'); setPage(1); }}
+              className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                filterType === 'OUT'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+              }`}
+            >
+              Keluar (Pemakaian)
+            </button>
+            <button
+              onClick={() => { setFilterType('ADJUSTMENT'); setPage(1); }}
+              className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                filterType === 'ADJUSTMENT'
+                  ? 'bg-slate-700 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
+              }`}
+            >
+              Penyesuaian Opname
+            </button>
+          </div>
 
           {(filterType || filterPartId || startDate || endDate || search) && (
             <button
@@ -385,7 +391,7 @@ export default function StockMutationsPage() {
                 setSearch('');
                 setPage(1);
               }}
-              className="touch-target ml-auto px-2 py-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 text-xs underline"
+              className="touch-target px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-bold transition-colors"
             >
               Reset Filter
             </button>
@@ -393,10 +399,10 @@ export default function StockMutationsPage() {
         </div>
       </div>
 
-      {/* Main Table */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden shadow-none">
+      {/* Main Table Container */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-sm">
         {error && (
-          <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border-b border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2">
+          <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border-b border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2 font-medium">
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
             <span>{error}</span>
           </div>
@@ -404,7 +410,7 @@ export default function StockMutationsPage() {
 
         {loading ? (
           <div className="py-16 text-center text-slate-400 text-xs flex flex-col items-center justify-center space-y-2">
-            <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
+            <RefreshCw className="w-6 h-6 animate-spin text-emerald-600" />
             <span>Memuat riwayat mutasi stok...</span>
           </div>
         ) : movements.length === 0 ? (
@@ -416,7 +422,7 @@ export default function StockMutationsPage() {
         ) : (
           <div>
             {/* Mobile Card List View (< 768px) */}
-            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
               {movements.map((m) => {
                 const isIncoming = m.type === 'IN';
                 const isOutgoing = m.type === 'OUT';
@@ -426,7 +432,7 @@ export default function StockMutationsPage() {
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center space-x-2">
                         {renderTypeBadge(m.type)}
-                        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                        <span className="font-mono text-xs text-slate-500 dark:text-slate-400 font-medium">
                           {formatDateIndo(m.date)}
                         </span>
                       </div>
@@ -445,16 +451,16 @@ export default function StockMutationsPage() {
                     </div>
 
                     <div>
-                      <div className="font-bold text-slate-900 dark:text-white text-xs leading-tight">
+                      <div className="font-extrabold text-slate-900 dark:text-white text-xs leading-snug">
                         {m.sparepart_name || '-'}
                       </div>
-                      <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                      <div className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
                         {m.sparepart_sku || '-'}
                       </div>
                     </div>
 
                     {(m.total_price || m.supplier || m.invoice_number || m.notes) && (
-                      <div className="bg-slate-50 dark:bg-slate-700/30 p-2.5 rounded border border-slate-100 dark:border-slate-700 text-xs space-y-1">
+                      <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-xs space-y-1.5">
                         {m.total_price ? (
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500 dark:text-slate-400">Total Nilai:</span>
@@ -466,17 +472,17 @@ export default function StockMutationsPage() {
                         {m.supplier && (
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500 dark:text-slate-400">Supplier:</span>
-                            <span className="font-medium text-slate-800 dark:text-slate-200">{m.supplier}</span>
+                            <span className="font-semibold text-slate-800 dark:text-slate-200">{m.supplier}</span>
                           </div>
                         )}
                         {m.invoice_number && (
                           <div className="flex items-center justify-between">
                             <span className="text-slate-500 dark:text-slate-400">No. Faktur:</span>
-                            <span className="font-mono text-blue-600 dark:text-blue-400">{m.invoice_number}</span>
+                            <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">{m.invoice_number}</span>
                           </div>
                         )}
                         {m.notes && (
-                          <p className="text-[11px] text-slate-600 dark:text-slate-300 pt-0.5 border-t border-slate-200/50 dark:border-slate-700/50">
+                          <p className="text-xs text-slate-600 dark:text-slate-300 pt-1 border-t border-slate-200/50 dark:border-slate-700/50 italic">
                             {m.notes}
                           </p>
                         )}
@@ -490,148 +496,148 @@ export default function StockMutationsPage() {
             {/* Desktop Table View (>= 768px) */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-3 sm:px-4">Tanggal</th>
-                  <th className="py-3 px-3">Tipe</th>
-                  <th className="py-3 px-3">SKU & Sparepart</th>
-                  <th className="py-3 px-3">Jumlah</th>
-                  <th className="py-3 px-3">Nilai (Rp)</th>
-                  <th className="py-3 px-3">Faktur / RO / Supplier</th>
-                  <th className="py-3 px-3">Catatan</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                {movements.map((m) => {
-                  const isIncoming = m.type === 'IN';
-                  const isOutgoing = m.type === 'OUT';
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 font-bold uppercase tracking-wider text-xs">
+                    <th className="py-3.5 px-4">Tanggal</th>
+                    <th className="py-3.5 px-3">Tipe</th>
+                    <th className="py-3.5 px-4">SKU &amp; Sparepart</th>
+                    <th className="py-3.5 px-3">Jumlah</th>
+                    <th className="py-3.5 px-4">Nilai (Rp)</th>
+                    <th className="py-3.5 px-4">Faktur / RO / Supplier</th>
+                    <th className="py-3.5 px-4">Catatan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                  {movements.map((m) => {
+                    const isIncoming = m.type === 'IN';
+                    const isOutgoing = m.type === 'OUT';
 
-                  return (
-                    <tr 
-                      key={m.id} 
-                      className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
-                    >
-                      {/* Tanggal */}
-                      <td className="py-3 px-3 sm:px-4 whitespace-nowrap">
-                        <div className="font-medium text-slate-900 dark:text-white">
-                          {formatDateIndo(m.date)}
-                        </div>
-                        {m.created_at && (
-                          <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                            {m.created_at.slice(11, 16)} WIB
+                    return (
+                      <tr 
+                        key={m.id} 
+                        className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors"
+                      >
+                        {/* Tanggal */}
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <div className="font-semibold text-slate-900 dark:text-white">
+                            {formatDateIndo(m.date)}
                           </div>
-                        )}
-                      </td>
+                          {m.created_at && (
+                            <div className="text-xs text-slate-400 font-mono mt-0.5">
+                              {m.created_at.slice(11, 16)} WIB
+                            </div>
+                          )}
+                        </td>
 
-                      {/* Tipe Badge */}
-                      <td className="py-3 px-3 whitespace-nowrap">
-                        {renderTypeBadge(m.type)}
-                      </td>
+                        {/* Tipe Badge */}
+                        <td className="py-3.5 px-3 whitespace-nowrap">
+                          {renderTypeBadge(m.type)}
+                        </td>
 
-                      {/* SKU & Sparepart */}
-                      <td className="py-3 px-3">
-                        <div className="font-bold text-slate-900 dark:text-white leading-tight">
-                          {m.sparepart_name || '-'}
-                        </div>
-                        <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
-                          {m.sparepart_sku || '-'}
-                        </div>
-                      </td>
+                        {/* SKU & Sparepart */}
+                        <td className="py-3.5 px-4">
+                          <div className="font-extrabold text-slate-900 dark:text-white leading-snug">
+                            {m.sparepart_name || '-'}
+                          </div>
+                          <div className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                            {m.sparepart_sku || '-'}
+                          </div>
+                        </td>
 
-                      {/* Qty & Satuan */}
-                      <td className="py-3 px-3 whitespace-nowrap">
-                        <span className={`text-sm font-bold font-mono ${
-                          isIncoming 
-                            ? 'text-emerald-700 dark:text-emerald-400' 
-                            : isOutgoing 
-                            ? 'text-rose-700 dark:text-rose-400' 
-                            : 'text-slate-700 dark:text-slate-300'
-                        }`}>
-                          {isIncoming ? `+${m.quantity}` : isOutgoing ? `-${m.quantity}` : `${m.quantity}`}{' '}
-                          <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
-                            {m.sparepart_unit || 'pcs'}
-                          </span>
-                        </span>
-                      </td>
-
-                      {/* Nilai Rp */}
-                      <td className="py-3 px-3 whitespace-nowrap font-mono">
-                        {m.total_price ? (
-                          <div>
-                            <span className="font-bold text-slate-900 dark:text-white block">
-                              {formatRp(m.total_price)}
+                        {/* Qty & Satuan */}
+                        <td className="py-3.5 px-3 whitespace-nowrap">
+                          <span className={`text-sm font-bold font-mono ${
+                            isIncoming 
+                              ? 'text-emerald-700 dark:text-emerald-400' 
+                              : isOutgoing 
+                              ? 'text-rose-700 dark:text-rose-400' 
+                              : 'text-slate-700 dark:text-slate-300'
+                          }`}>
+                            {isIncoming ? `+${m.quantity}` : isOutgoing ? `-${m.quantity}` : `${m.quantity}`}{' '}
+                            <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+                              {m.sparepart_unit || 'pcs'}
                             </span>
-                            {m.unit_price ? (
-                              <span className="text-[10px] text-slate-400 block">
-                                @{formatRp(m.unit_price)}
+                          </span>
+                        </td>
+
+                        {/* Nilai Rp */}
+                        <td className="py-3.5 px-4 whitespace-nowrap font-mono">
+                          {m.total_price ? (
+                            <div>
+                              <span className="font-bold text-slate-900 dark:text-white block">
+                                {formatRp(m.total_price)}
                               </span>
-                            ) : null}
-                          </div>
-                        ) : (
-                          <span className="text-slate-400">-</span>
-                        )}
-                      </td>
+                              {m.unit_price ? (
+                                <span className="text-xs text-slate-400 block font-normal">
+                                  @{formatRp(m.unit_price)}
+                                </span>
+                              ) : null}
+                            </div>
+                          ) : (
+                            <span className="text-slate-400">-</span>
+                          )}
+                        </td>
 
-                      {/* Referensi / Supplier / Faktur / RO */}
-                      <td className="py-3 px-3 text-slate-700 dark:text-slate-300">
-                        {m.supplier && (
-                          <div className="font-medium text-slate-800 dark:text-slate-200">
-                            {m.supplier}
-                          </div>
-                        )}
-                        {m.invoice_number && (
-                          <div className="text-[11px] font-mono text-blue-600 dark:text-blue-400">
-                            Faktur: {m.invoice_number}
-                          </div>
-                        )}
-                        {m.repair_order_id && (
-                          <div className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">
-                            RO: {m.repair_order_id.slice(0, 8)}...
-                          </div>
-                        )}
-                        {!m.supplier && !m.invoice_number && !m.repair_order_id && (
-                          <span className="text-slate-400">-</span>
-                        )}
-                      </td>
+                        {/* Referensi / Supplier / Faktur / RO */}
+                        <td className="py-3.5 px-4 text-slate-700 dark:text-slate-300">
+                          {m.supplier && (
+                            <div className="font-semibold text-slate-800 dark:text-slate-200">
+                              {m.supplier}
+                            </div>
+                          )}
+                          {m.invoice_number && (
+                            <div className="text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold">
+                              Faktur: {m.invoice_number}
+                            </div>
+                          )}
+                          {m.repair_order_id && (
+                            <div className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                              RO: {m.repair_order_id.slice(0, 8)}...
+                            </div>
+                          )}
+                          {!m.supplier && !m.invoice_number && !m.repair_order_id && (
+                            <span className="text-slate-400">-</span>
+                          )}
+                        </td>
 
-                      {/* Catatan */}
-                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={m.notes}>
-                        {m.notes || '-'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {/* Catatan */}
+                        <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={m.notes}>
+                          {m.notes || '-'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         {/* Pagination Bar */}
-        <div className="bg-slate-50 dark:bg-slate-700/40 border-t border-slate-200 dark:border-slate-700 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        <div className="bg-slate-50/70 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 px-5 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="text-slate-600 dark:text-slate-400">
             Menampilkan{' '}
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="font-bold text-slate-900 dark:text-white">
               {pagination.total > 0 ? (pagination.page - 1) * pagination.limit + 1 : 0}
             </span>{' '}
             -{' '}
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="font-bold text-slate-900 dark:text-white">
               {Math.min(pagination.page * pagination.limit, pagination.total)}
             </span>{' '}
             dari{' '}
-            <span className="font-semibold text-slate-900 dark:text-white">{pagination.total}</span> catatan mutasi
+            <span className="font-bold text-slate-900 dark:text-white">{pagination.total}</span> catatan mutasi
           </div>
 
           <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1">
-              <span className="text-slate-500">Per hal:</span>
+            <div className="flex items-center space-x-1.5">
+              <span className="text-slate-500 font-medium">Per hal:</span>
               <select
                 value={limit}
                 onChange={(e) => {
                   setLimit(Number(e.target.value));
                   setPage(1);
                 }}
-                className="touch-target px-2 py-1 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs"
+                className="touch-target px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium"
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
@@ -643,20 +649,20 @@ export default function StockMutationsPage() {
               <button
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={page <= 1}
-                className="touch-target px-3 py-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-600 text-xs font-semibold flex items-center space-x-1"
+                className="touch-target px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold flex items-center space-x-1 transition-colors"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 <span>Prev</span>
               </button>
 
-              <span className="px-2 py-1 text-slate-700 dark:text-slate-300 font-medium">
+              <span className="px-2.5 py-1 text-slate-700 dark:text-slate-300 font-bold">
                 Hal {page} dari {pagination.totalPages || 1}
               </span>
 
               <button
                 onClick={() => setPage((prev) => Math.min(pagination.totalPages || 1, prev + 1))}
                 disabled={page >= (pagination.totalPages || 1)}
-                className="touch-target px-3 py-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-600 text-xs font-semibold flex items-center space-x-1"
+                className="touch-target px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold flex items-center space-x-1 transition-colors"
               >
                 <span>Next</span>
                 <ChevronRight className="w-3.5 h-3.5" />

@@ -10,6 +10,11 @@ CREATE TABLE IF NOT EXISTS tenants (
   phone_wa TEXT NOT NULL,
   business_hours TEXT DEFAULT 'Senin - Sabtu: 08:00 - 17:00 WIB',
   logo_url TEXT,
+  hero_image_url TEXT,
+  facility_image_1 TEXT,
+  facility_image_2 TEXT,
+  tagline TEXT,
+  profile_completed INTEGER DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

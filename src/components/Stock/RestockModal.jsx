@@ -44,6 +44,18 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
     }
   }, [isOpen, initialPartId, spareparts]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handlePartChange = (e) => {
@@ -157,40 +169,47 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 overflow-y-auto">
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-lg my-8 p-5 sm:p-6 shadow-none text-slate-900 dark:text-slate-100">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700 mb-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 w-full max-w-lg max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl text-slate-900 dark:text-slate-100 my-auto animate-in fade-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header (Pinned at top, shrink-0) */}
+        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+          <div className="flex items-center space-x-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <ArrowDownRight className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+            <div className="min-w-0">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
                 Barang Masuk (Restock Stok)
               </h3>
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                 Otomatis menambahkan jumlah stok di inventaris
-              </span>
+              </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-11 h-11 min-w-[44px] min-h-[44px] touch-target flex items-center justify-center rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+            className="w-10 h-10 touch-target shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Tutup Modal (Esc)"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 rounded bg-rose-50 dark:bg-rose-900/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden text-xs">
+          <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
+            {error && (
+              <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
           {/* Sparepart Select */}
           <div>
             <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
@@ -200,7 +219,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
               required
               value={formData.sparepartId}
               onChange={handlePartChange}
-              className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
             >
               <option value="">-- Pilih Suku Cadang --</option>
               {spareparts.map(p => (
@@ -223,7 +242,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                 required
                 value={formData.tanggal}
                 onChange={e => setFormData({ ...formData, tanggal: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
 
@@ -237,7 +256,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                 required
                 value={formData.qty}
                 onChange={handleQtyChange}
-                className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-mono text-xs"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
           </div>
@@ -254,7 +273,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                 step="500"
                 value={formData.buyPrice}
                 onChange={handlePriceChange}
-                className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-mono text-xs"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
 
@@ -267,7 +286,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                 min="0"
                 value={formData.totalPrice}
                 onChange={e => setFormData({ ...formData, totalPrice: Number(e.target.value) || 0 })}
-                className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-mono text-xs"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
           </div>
@@ -284,7 +303,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                 placeholder="Distributor / Toko Part"
                 value={formData.supplier}
                 onChange={e => setFormData({ ...formData, supplier: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
 
@@ -298,7 +317,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                 placeholder="INV-XXXXX"
                 value={formData.invoiceNumber}
                 onChange={e => setFormData({ ...formData, invoiceNumber: e.target.value })}
-                className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs font-mono"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
           </div>
@@ -314,7 +333,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
               placeholder="Catatan tambahan batch pembelian..."
               value={formData.catatan}
               onChange={e => setFormData({ ...formData, catatan: e.target.value })}
-              className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs"
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
             />
           </div>
 
@@ -326,22 +345,22 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
             </label>
 
             {proofPhotoPreview ? (
-              <div className="flex items-center space-x-3 p-2.5 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+              <div className="flex items-center space-x-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                 <img
                   src={proofPhotoPreview}
                   alt="Preview Nota"
-                  className="w-14 h-14 object-cover rounded border border-slate-300 dark:border-slate-600 flex-shrink-0"
+                  className="w-14 h-14 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shrink-0"
                 />
                 <div className="flex-1 min-w-0 text-xs">
                   <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                     {proofPhotoFile ? proofPhotoFile.name : 'Bukti nota terlampir'}
                   </p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Siap disimpan dengan stok masuk</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Siap disimpan dengan stok masuk</p>
                 </div>
                 <button
                   type="button"
                   onClick={handleRemovePhoto}
-                  className="touch-target w-9 h-9 flex items-center justify-center text-rose-500 hover:text-rose-700 rounded transition-colors"
+                  className="touch-target w-9 h-9 flex items-center justify-center text-rose-500 hover:text-rose-700 rounded-lg transition-colors"
                   title="Hapus foto nota"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -368,7 +387,7 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                   <button
                     type="button"
                     onClick={() => cameraInputRef.current?.click()}
-                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Buka Kamera (Foto Nota)</span>
@@ -377,33 +396,35 @@ export default function RestockModal({ isOpen, onClose, onSaved, initialPartId =
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="touch-target px-3.5 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded text-xs font-semibold flex items-center space-x-1.5 transition-colors shadow-none"
+                    className="touch-target px-3.5 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors shadow-none"
                   >
                     <UploadCloud className="w-4 h-4 text-slate-500" />
                     <span>Pilih dari Galeri</span>
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Ambil foto fisik nota pembelian langsung dari kamera HP atau unggah dari memori.
                 </p>
               </div>
             )}
           </div>
 
-          {/* Actions */}
-          <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-700">
+          </div>
+
+          {/* Actions (Pinned at bottom, shrink-0) */}
+          <div className="p-4 sm:p-5 border-t border-slate-200/80 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex justify-end space-x-2.5">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="touch-target px-4 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300"
+              className="touch-target px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-slate-700 dark:text-slate-300 transition-colors"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="touch-target px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center space-x-1.5 transition-colors"
+              className="touch-target px-4 py-2 rounded-xl bg-[#00a86b] hover:bg-emerald-600 text-white font-semibold flex items-center space-x-1.5 transition-colors shadow-sm shadow-emerald-500/10"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Barang Masuk'}</span>

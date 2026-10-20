@@ -1,7 +1,13 @@
 import React from 'react';
 import { MapPin, Clock, Phone, Navigation, MessageCircle } from 'lucide-react';
 
-export default function LocationSection() {
+export default function LocationSection({ tenant }) {
+  const address = tenant?.address || 'Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur 64182';
+  const businessHours = tenant?.business_hours || tenant?.businessHours || 'Senin - Sabtu: 08:00 - 17:00 WIB';
+  const phoneWa = tenant?.phone_wa || tenant?.phoneWa || '0856-0330-7330';
+  const tenantName = tenant?.name || 'Bengkel GPS Motor Kediri';
+  const cleanWa = phoneWa.replace(/\D/g, '').replace(/^0/, '62');
+
   return (
     <section id="lokasi" className="bg-slate-50 dark:bg-slate-950/50 py-12 md:py-20 border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,7 +18,7 @@ export default function LocationSection() {
             Lokasi Workshop &amp; Jam Operasional
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-            Terletak strategis di Sambiresik, Kecamatan Gampengrejo, Kabupaten Kediri. Mudah diakses dari Kediri Kota maupun jalan utama Papar-Pare.
+            Kunjungi workshop {tenantName}. Kami siap melayani konsultasi langsung, cek berkala, dan penanganan darurat.
           </p>
         </div>
 
@@ -30,10 +36,10 @@ export default function LocationSection() {
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Alamat Workshop</h3>
                   <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1 leading-relaxed">
-                    Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur 64182
+                    {address}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    (Akses jalur Gampengrejo - Menang - Kediri Kota)
+                    (Akses mudah kendaraan roda empat &amp; area parkir luas)
                   </p>
                 </div>
               </div>
@@ -46,8 +52,8 @@ export default function LocationSection() {
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Jam Operasional</h3>
                   <div className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1 space-y-1">
-                    <p><span className="font-semibold text-slate-900 dark:text-slate-200">Senin - Sabtu:</span> 08:00 - 17:00 WIB</p>
-                    <p><span className="font-semibold text-slate-900 dark:text-slate-200">Minggu / Darurat:</span> Melalui Konfirmasi WhatsApp</p>
+                    <p><span className="font-semibold text-slate-900 dark:text-slate-200">Operasional:</span> {businessHours}</p>
+                    <p><span className="font-semibold text-slate-900 dark:text-slate-200">Darurat:</span> Melalui Konfirmasi WhatsApp</p>
                   </div>
                 </div>
               </div>
@@ -60,7 +66,7 @@ export default function LocationSection() {
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">Telepon &amp; WhatsApp Resmi</h3>
                   <p className="text-base font-mono font-bold text-emerald-700 dark:text-emerald-400 mt-1">
-                    0856-0330-7330
+                    {phoneWa}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     Konsultasi teknis awal &amp; estimasi ketersediaan pit servis
@@ -73,7 +79,7 @@ export default function LocationSection() {
             {/* Actions */}
             <div className="pt-6 border-t border-slate-100 dark:border-slate-700 space-y-2.5">
               <a
-                href="https://maps.google.com/?q=Bengkel+Mobil+GPS+Motor+Kediri+Sambiresik"
+                href={`https://maps.google.com/?q=${encodeURIComponent(tenantName + ' ' + address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="touch-target w-full flex items-center justify-center space-x-2 py-3 px-4 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-colors"
@@ -83,7 +89,7 @@ export default function LocationSection() {
               </a>
 
               <a
-                href="https://wa.me/6285603307330?text=Halo%20Bengkel%20GPS%20Motor%2C%20saya%20ingin%20konsultasi%20layanan%20servis."
+                href={`https://wa.me/${cleanWa}?text=${encodeURIComponent(`Halo ${tenantName}, saya ingin konsultasi layanan servis mobil.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="touch-target w-full flex items-center justify-center space-x-2 py-3 px-4 rounded border border-emerald-600 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm transition-colors hover:bg-emerald-100"

@@ -119,6 +119,15 @@ input, textarea {
 }
 
 /* Slim themed flat scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.dark * {
+  scrollbar-color: #334155 transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -143,6 +152,18 @@ input, textarea {
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background-color: #475569;
+}
+
+/* Hide scrollbars for horizontal pill rails */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Tabular figures for numbers, currency, timestamps */

@@ -16,6 +16,7 @@
     "install:vps": "bash scripts/install-production.sh"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "better-sqlite3": "^13.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

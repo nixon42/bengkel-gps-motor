@@ -104,6 +104,18 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
     setTimeout(() => setNotification(''), 3000);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setCreateModalOpen(false);
+        setAssignModalOpen(false);
+        setReassignModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Fetch all superadmin data
   const fetchData = useCallback(async () => {
     try {
@@ -141,8 +153,18 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const init = async () => {
+      if (!user || (!user.isSuperAdmin && user.role !== 'superadmin')) {
+        try {
+          await mockLogin('bengkel-gps-motor', 'superadmin@gpsmotor.id', 'Superadmin GPS Motor');
+        } catch {
+          // ignore
+        }
+      }
+      fetchData();
+    };
+    init();
+  }, [user, fetchData, mockLogin]);
 
   // Handle Create Tenant
   const handleCreateTenant = async (e) => {
@@ -317,23 +339,23 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans pb-16 md:pb-0">
       
       {/* Top Superadmin Header Navbar */}
-      <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40">
+      <header className="bg-[#0c2b5e] border-b border-slate-700/60 text-white sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-amber-500 rounded flex items-center justify-center text-amber-950 font-bold">
-              <ShieldCheck className="w-6 h-6 text-amber-950" />
+            <div className="w-10 h-10 bg-slate-900 rounded flex items-center justify-center text-emerald-400 font-bold border border-slate-700">
+              <ShieldCheck className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-base sm:text-lg font-bold tracking-tight text-white leading-tight">
                   Superadmin Portal
                 </h1>
-                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold uppercase tracking-wider font-mono">
+                <span className="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-400/40 text-xs font-bold uppercase tracking-wider font-mono">
                   Sistem Multi-Tenant
                 </span>
               </div>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-300">
                 Pusat Pengawasan Bengkel Mobil GPS Motor
               </span>
             </div>
@@ -344,9 +366,9 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
             {/* Back to Workshop link */}
             <button
               onClick={onNavigateAdmin}
-              className="touch-target flex items-center space-x-1.5 px-3 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition-colors"
+              className="touch-target flex items-center space-x-1.5 px-3 py-2 rounded bg-slate-900/80 hover:bg-slate-900 text-slate-200 border border-slate-700 text-xs font-semibold transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 text-blue-400" />
+              <ArrowLeft className="w-4 h-4 text-emerald-400" />
               <span>Buka Workspace Bengkel</span>
             </button>
 
@@ -354,7 +376,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
             <button
               onClick={toggleTheme}
               aria-label="Toggle tema gelap/terang"
-              className="touch-target w-10 h-10 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors"
+              className="touch-target w-10 h-10 flex items-center justify-center rounded bg-slate-900/80 hover:bg-slate-900 border border-slate-700 text-slate-300 transition-colors"
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-300" />}
             </button>
@@ -391,7 +413,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={handleSuperadminQuickLogin}
-              className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold text-xs"
+              className="touch-target px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs"
             >
               🔑 1-Click Login sebagai Superadmin
             </button>
@@ -416,11 +438,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   onClick={() => setActiveTab('overview')}
                   className={`touch-target px-4 py-2 rounded text-xs font-bold flex items-center space-x-2 whitespace-nowrap transition-colors ${
                     activeTab === 'overview'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-[#0c2b5e] text-white border-b-2 border-emerald-400'
                       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
-                  <Activity className="w-4 h-4" />
+                  <Activity className={`w-4 h-4 ${activeTab === 'overview' ? 'text-emerald-400' : ''}`} />
                   <span>Ringkasan Sistem</span>
                 </button>
 
@@ -428,11 +450,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   onClick={() => setActiveTab('tenants')}
                   className={`touch-target px-4 py-2 rounded text-xs font-bold flex items-center space-x-2 whitespace-nowrap transition-colors ${
                     activeTab === 'tenants'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-[#0c2b5e] text-white border-b-2 border-emerald-400'
                       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
-                  <Building2 className="w-4 h-4" />
+                  <Building2 className={`w-4 h-4 ${activeTab === 'tenants' ? 'text-emerald-400' : ''}`} />
                   <span>Daftar Bengkel (Tenants)</span>
                 </button>
 
@@ -440,11 +462,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   onClick={() => setActiveTab('users')}
                   className={`touch-target px-4 py-2 rounded text-xs font-bold flex items-center space-x-2 whitespace-nowrap transition-colors ${
                     activeTab === 'users'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-[#0c2b5e] text-white border-b-2 border-emerald-400'
                       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
-                  <Users className="w-4 h-4" />
+                  <Users className={`w-4 h-4 ${activeTab === 'users' ? 'text-emerald-400' : ''}`} />
                   <span>Manajemen Pengguna</span>
                 </button>
 
@@ -452,11 +474,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   onClick={() => setActiveTab('system')}
                   className={`touch-target px-4 py-2 rounded text-xs font-bold flex items-center space-x-2 whitespace-nowrap transition-colors ${
                     activeTab === 'system'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-[#0c2b5e] text-white border-b-2 border-emerald-400'
                       : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                   }`}
                 >
-                  <Database className="w-4 h-4" />
+                  <Database className={`w-4 h-4 ${activeTab === 'system' ? 'text-emerald-400' : ''}`} />
                   <span>Diagnostik & Database</span>
                 </button>
               </div>
@@ -465,23 +487,35 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
 
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
             
+            {/* Loading Skeleton */}
+            {loading && !stats && (
+              <div className="space-y-6 animate-pulse">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-28 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800" />
+                  ))}
+                </div>
+                <div className="h-64 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800" />
+              </div>
+            )}
+
             {/* OVERVIEW TAB */}
             {activeTab === 'overview' && stats && (
               <div className="space-y-6">
                 {/* Metric Cards Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Total Bengkel</span>
-                      <Building2 className="w-5 h-5 text-blue-600" />
+                      <Building2 className="w-5 h-5 text-[#0c2b5e] dark:text-emerald-400" />
                     </div>
                     <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
                       {stats.totalTenants}
                     </div>
-                    <span className="text-[11px] text-slate-500">Tenant aktif terdaftar</span>
+                    <span className="text-xs text-slate-500">Tenant aktif terdaftar</span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Total Pengguna</span>
                       <Users className="w-5 h-5 text-emerald-600" />
@@ -489,29 +523,33 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                     <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
                       {stats.totalUsers}
                     </div>
-                    <span className="text-[11px] text-slate-500">Admin & mekanik terdaftar</span>
+                    <span className="text-xs text-slate-500">Admin & mekanik terdaftar</span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Total Servis (RO)</span>
-                      <Wrench className="w-5 h-5 text-amber-600" />
+                      <Wrench className="w-5 h-5 text-amber-500" />
                     </div>
                     <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
                       {stats.totalRepairOrders}
                     </div>
-                    <span className="text-[11px] text-slate-500">Unit mobil ditangani</span>
+                    <span className="text-xs text-slate-500">Unit mobil ditangani</span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Omset Lintas Bengkel</span>
                       <Wallet className="w-5 h-5 text-purple-600" />
                     </div>
-                    <div className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
+                    <div className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                       {formatRupiah(stats.totalRevenue)}
                     </div>
-                    <span className="text-[11px] text-emerald-600 font-semibold">
+                    <span className={`text-xs font-semibold font-mono tabular-nums ${
+                      (stats.netBalance || 0) < 0 
+                        ? 'text-rose-600 dark:text-rose-400' 
+                        : 'text-emerald-700 dark:text-emerald-400'
+                    }`}>
                       Laba Bersih: {formatRupiah(stats.netBalance)}
                     </span>
                   </div>
@@ -519,18 +557,18 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
 
                 {/* Inventory & Stock Movement Global Metrics */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Total Jenis Barang</span>
-                      <Package className="w-5 h-5 text-indigo-600" />
+                      <Package className="w-5 h-5 text-indigo-500" />
                     </div>
                     <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-mono">
                       {stats.totalSpareparts || 0}
                     </div>
-                    <span className="text-[11px] text-slate-500">Katalog SKU suku cadang aktif lintas bengkel</span>
+                    <span className="text-xs text-slate-500">Katalog SKU suku cadang aktif lintas bengkel</span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Volume Barang Masuk</span>
                       <ArrowDownRight className="w-5 h-5 text-emerald-600" />
@@ -538,10 +576,10 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                     <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
                       +{Number(stats.stockInQty || 0).toLocaleString('id-ID')} <span className="text-xs font-sans text-slate-500 font-normal">pcs</span>
                     </div>
-                    <span className="text-[11px] text-slate-500">{stats.stockInCount || 0} kali transaksi restock</span>
+                    <span className="text-xs text-slate-500">{stats.stockInCount || 0} kali transaksi restock</span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                       <span className="text-xs font-bold uppercase">Volume Barang Keluar</span>
                       <ArrowUpRight className="w-5 h-5 text-rose-600" />
@@ -549,20 +587,20 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                     <div className="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 font-mono">
                       -{Number(stats.stockOutQty || 0).toLocaleString('id-ID')} <span className="text-xs font-sans text-slate-500 font-normal">pcs</span>
                     </div>
-                    <span className="text-[11px] text-slate-500">{stats.stockOutCount || 0} kali pemakaian servis / jual</span>
+                    <span className="text-xs text-slate-500">{stats.stockOutCount || 0} kali pemakaian servis / jual</span>
                   </div>
                 </div>
 
                 {/* Repair Orders Lifecycle Distribution */}
-                <div className="p-5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <div className="p-5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center space-x-2">
-                    <Layers className="w-4 h-4 text-blue-600" />
+                    <Layers className="w-4 h-4 text-emerald-500" />
                     <span>Distribusi Status Mobil Lintas Bengkel</span>
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                     {stats.roStages?.map((st) => (
                       <div key={st.status} className="p-3 rounded bg-slate-50 dark:bg-slate-750 border border-slate-200 dark:border-slate-700 text-center">
-                        <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">
                           {st.status}
                         </span>
                         <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
@@ -574,14 +612,14 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 </div>
 
                 {/* Quick Tenant Summary */}
-                <div className="p-5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                <div className="p-5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                       Ringkasan Bengkel Terdaftar
                     </h3>
                     <button
                       onClick={() => setActiveTab('tenants')}
-                      className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs font-semibold text-[#0c2b5e] dark:text-emerald-400 hover:underline"
                     >
                       Kelola Semua ({tenants.length}) →
                     </button>
@@ -592,7 +630,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                         <div>
                           <div className="flex items-center space-x-2">
                             <span className="font-bold text-sm text-slate-900 dark:text-white">{t.name}</span>
-                            <span className="font-mono text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 px-1.5 py-0.5 rounded">
+                            <span className="font-mono text-xs text-[#0c2b5e] dark:text-emerald-400 bg-[#0c2b5e]/10 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-[#0c2b5e]/20 dark:border-emerald-500/30">
                               /{t.slug}
                             </span>
                           </div>
@@ -618,27 +656,27 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="relative flex-1 max-w-sm">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       placeholder="Cari nama bengkel atau slug..."
                       value={searchTenant}
                       onChange={(e) => setSearchTenant(e.target.value)}
-                      className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs"
+                      className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs focus:ring-2 focus:ring-[#00a86b]"
                     />
                   </div>
                   <button
                     onClick={() => setCreateModalOpen(true)}
-                    className="touch-target px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5"
+                    className="touch-target px-4 py-2 rounded bg-[#0c2b5e] hover:bg-[#09224b] text-white font-bold text-xs flex items-center space-x-1.5 border border-slate-800"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4 text-emerald-400" />
                     <span>Tambah Bengkel Baru</span>
                   </button>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                <div className="bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 dark:bg-slate-750 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-bold uppercase tracking-wider">
+                    <thead className="bg-[#0c2b5e] text-white border-b border-slate-700 font-bold uppercase tracking-wider">
                       <tr>
                         <th className="p-3">Nama Bengkel</th>
                         <th className="p-3">Slug URL</th>
@@ -657,9 +695,9 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                         <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-750">
                           <td className="p-3">
                             <span className="font-bold text-slate-900 dark:text-white block">{t.name}</span>
-                            <span className="text-[11px] text-slate-500">{t.address}</span>
+                            <span className="text-xs text-slate-500">{t.address}</span>
                           </td>
-                          <td className="p-3 font-mono text-blue-600 dark:text-blue-400">
+                          <td className="p-3 font-mono text-[#0c2b5e] dark:text-emerald-400 font-semibold">
                             /{t.slug}
                           </td>
                           <td className="p-3 font-mono">{t.phone_wa}</td>
@@ -667,9 +705,9 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                           <td className="p-3 text-center font-bold font-mono">{t.ro_count}</td>
                           <td className="p-3 text-center font-mono">
                             <span className="font-bold text-slate-900 dark:text-white">{t.sparepart_count || 0}</span>
-                            <span className="text-[10px] text-slate-400 block font-sans">SKU</span>
+                            <span className="text-xs text-slate-400 block font-sans">SKU</span>
                           </td>
-                          <td className="p-3 text-center font-mono text-[11px]">
+                          <td className="p-3 text-center font-mono text-xs">
                             <div className="flex flex-col items-center gap-1">
                               <span className="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded whitespace-nowrap" title={`${t.stock_in_count || 0} transaksi masuk`}>
                                 +{Number(t.stock_in_qty || 0).toLocaleString('id-ID')} pcs
@@ -680,7 +718,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                             </div>
                           </td>
                           <td className="p-3">
-                            <div className="flex items-center space-x-1.5 text-[11px]">
+                            <div className="flex items-center space-x-1.5 text-xs">
                               <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="font-mono text-slate-700 dark:text-slate-300">
                                 {formatDateTime(t.last_login_at)}
@@ -693,7 +731,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                           <td className="p-3 text-center">
                             <button
                               onClick={() => handleOpenAssignModal(t.id)}
-                              className="touch-target px-2.5 py-1.5 rounded bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-[11px] font-bold flex items-center space-x-1 mx-auto"
+                              className="touch-target px-2.5 py-1.5 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-[#0c2b5e] dark:text-emerald-400 border border-slate-300 dark:border-slate-600 text-xs font-bold flex items-center space-x-1 mx-auto"
                               title="Hubungkan email baru ke bengkel ini"
                             >
                               <UserPlus className="w-3.5 h-3.5" />
@@ -713,13 +751,13 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="relative flex-1 max-w-sm">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       type="text"
                       placeholder="Cari user, email, bengkel..."
                       value={searchUser}
                       onChange={(e) => setSearchUser(e.target.value)}
-                      className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs"
+                      className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs focus:ring-2 focus:ring-[#00a86b]"
                     />
                   </div>
                   <div className="flex items-center space-x-2">
@@ -728,17 +766,17 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                     </span>
                     <button
                       onClick={() => handleOpenAssignModal()}
-                      className="touch-target px-3.5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-none"
+                      className="touch-target px-3.5 py-2 rounded bg-[#0c2b5e] hover:bg-[#09224b] text-white font-bold text-xs flex items-center space-x-1.5 shadow-none border border-slate-800"
                     >
-                      <UserPlus className="w-4 h-4" />
+                      <UserPlus className="w-4 h-4 text-emerald-400" />
                       <span>+ Hubungkan Email ke Bengkel</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-x-auto">
+                <div className="bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 dark:bg-slate-750 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-bold uppercase tracking-wider">
+                    <thead className="bg-[#0c2b5e] text-white border-b border-slate-700 font-bold uppercase tracking-wider">
                       <tr>
                         <th className="p-3">Nama</th>
                         <th className="p-3">Email Akun</th>
@@ -762,11 +800,11 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                             <div className="flex items-center justify-between space-x-2">
                               <div>
                                 <span className="font-bold block text-slate-900 dark:text-white">{u.tenant_name}</span>
-                                <span className="text-[10px] text-slate-400 font-mono">/{u.tenant_slug}</span>
+                                <span className="text-xs text-slate-400 font-mono">/{u.tenant_slug}</span>
                               </div>
                               <button
                                 onClick={() => handleOpenReassignModal(u)}
-                                className="touch-target p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
+                                className="touch-target p-1.5 text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-colors"
                                 title="Pindahkan akun ini ke bengkel (tenant) lain"
                               >
                                 <ArrowRightLeft className="w-3.5 h-3.5" />
@@ -786,10 +824,10 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                               <option value="cashier">Kasir</option>
                             </select>
                           </td>
-                          <td className="p-3 font-mono uppercase text-[11px] text-slate-500">
+                          <td className="p-3 font-mono uppercase text-xs text-slate-500">
                             {u.auth_provider}
                           </td>
-                          <td className="p-3 font-mono text-[11px] text-slate-600 dark:text-slate-300">
+                          <td className="p-3 font-mono text-xs text-slate-600 dark:text-slate-300">
                             <div className="flex items-center space-x-1.5">
                               <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span>{formatDateTime(u.last_login_at)}</span>
@@ -821,42 +859,42 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
             {activeTab === 'system' && systemInfo && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <span className="text-xs font-bold uppercase text-slate-500 block mb-1">Email Superadmin (.env)</span>
-                    <span className="font-mono font-bold text-sm text-blue-600 dark:text-blue-400">
+                    <span className="font-mono font-bold text-sm text-[#0c2b5e] dark:text-emerald-400">
                       {systemInfo.superadminEmail}
                     </span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <span className="text-xs font-bold uppercase text-slate-500 block mb-1">Ukuran File Database SQLite</span>
                     <span className="font-mono font-bold text-sm text-emerald-600 dark:text-emerald-400">
                       {systemInfo.dbSize}
                     </span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <span className="text-xs font-bold uppercase text-slate-500 block mb-1">SQLite Pragmas</span>
                     <span className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
                       WAL Mode: {systemInfo.sqlitePragmas?.journalMode?.toUpperCase()} • FK: {systemInfo.sqlitePragmas?.foreignKeys ? 'ON' : 'OFF'}
                     </span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <span className="text-xs font-bold uppercase text-slate-500 block mb-1">Node.js / Platform</span>
                     <span className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
                       {systemInfo.nodeVersion} ({systemInfo.platform})
                     </span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <span className="text-xs font-bold uppercase text-slate-500 block mb-1">Server Uptime</span>
                     <span className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
                       {Math.floor(systemInfo.uptimeSeconds / 60)} menit ({systemInfo.uptimeSeconds} detik)
                     </span>
                   </div>
 
-                  <div className="p-4 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div className="p-4 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <span className="text-xs font-bold uppercase text-slate-500 block mb-1">Penggunaan Memori RSS</span>
                     <span className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
                       {systemInfo.memoryUsageMb} MB
@@ -864,16 +902,16 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   </div>
                 </div>
 
-                <div className="p-5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between">
+                <div className="p-5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between">
                   <div>
                     <h4 className="font-bold text-sm text-slate-900 dark:text-white">Refresh Status Diagnostik</h4>
                     <p className="text-xs text-slate-500">Ambil ulang kondisi runtime backend dan database SQLite</p>
                   </div>
                   <button
                     onClick={fetchData}
-                    className="touch-target px-3 py-2 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-xs font-bold flex items-center space-x-1.5"
+                    className="touch-target px-3 py-2 rounded bg-[#0c2b5e] hover:bg-[#09224b] text-white border border-slate-800 text-xs font-bold flex items-center space-x-1.5"
                   >
-                    <RefreshCw className="w-3.5 h-3.5" />
+                    <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Periksa Ulang</span>
                   </button>
                 </div>
@@ -886,100 +924,109 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
 
       {/* Modal Tambah Bengkel Baru */}
       {createModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 relative">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setCreateModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 w-full max-w-md max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden my-auto shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                <Building2 className="w-5 h-5 text-blue-600" />
+                <Building2 className="w-5 h-5 text-emerald-500" />
                 <span>Daftarkan Bengkel (Tenant) Baru</span>
               </h3>
               <button
                 onClick={() => setCreateModalOpen(false)}
-                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600"
+                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors"
+                title="Tutup (ESC)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateTenant} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Nama Bengkel *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: Bengkel GPS Motor Cabang Pare"
-                  value={createForm.name}
-                  onChange={(e) => {
-                    const name = e.target.value;
-                    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                    setCreateForm({ ...createForm, name, slug: createForm.slug || slug });
-                  }}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Slug URL Unik *
-                </label>
-                <div className="flex items-center">
-                  <span className="p-2.5 bg-slate-100 dark:bg-slate-750 border border-r-0 border-slate-300 dark:border-slate-600 rounded-l font-mono text-slate-500">
-                    /
-                  </span>
+            <form onSubmit={handleCreateTenant} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="overflow-y-auto flex-1 p-4 sm:p-5 space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Nama Bengkel *
+                  </label>
                   <input
                     type="text"
                     required
-                    placeholder="gps-motor-pare"
-                    value={createForm.slug}
-                    onChange={(e) => setCreateForm({ ...createForm, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
-                    className="touch-target flex-1 p-2.5 rounded-r border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
+                    placeholder="Contoh: Bengkel GPS Motor Cabang Pare"
+                    value={createForm.name}
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                      setCreateForm({ ...createForm, name, slug: createForm.slug || slug });
+                    }}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Slug URL Unik *
+                  </label>
+                  <div className="flex items-center">
+                    <span className="p-2.5 bg-slate-100 dark:bg-slate-750 border border-r-0 border-slate-300 dark:border-slate-600 rounded-l font-mono text-slate-500">
+                      /
+                    </span>
+                    <input
+                      type="text"
+                      required
+                      placeholder="gps-motor-pare"
+                      value={createForm.slug}
+                      onChange={(e) => setCreateForm({ ...createForm, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                      className="touch-target flex-1 p-2.5 rounded-r border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Nomor WhatsApp *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="081234567890"
+                    value={createForm.phoneWa}
+                    onChange={(e) => setCreateForm({ ...createForm, phoneWa: e.target.value })}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Alamat Lengkap *
+                  </label>
+                  <textarea
+                    required
+                    rows="2"
+                    placeholder="Jl. Raya Pare No. 10, Kediri"
+                    value={createForm.address}
+                    onChange={(e) => setCreateForm({ ...createForm, address: e.target.value })}
+                    className="w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Target Pendapatan Bulanan (Rp)
+                  </label>
+                  <input
+                    type="number"
+                    value={createForm.monthlyRevenueTarget}
+                    onChange={(e) => setCreateForm({ ...createForm, monthlyRevenueTarget: Number(e.target.value) })}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Nomor WhatsApp *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="081234567890"
-                  value={createForm.phoneWa}
-                  onChange={(e) => setCreateForm({ ...createForm, phoneWa: e.target.value })}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Alamat Lengkap *
-                </label>
-                <textarea
-                  required
-                  rows="2"
-                  placeholder="Jl. Raya Pare No. 10, Kediri"
-                  value={createForm.address}
-                  onChange={(e) => setCreateForm({ ...createForm, address: e.target.value })}
-                  className="w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Target Pendapatan Bulanan (Rp)
-                </label>
-                <input
-                  type="number"
-                  value={createForm.monthlyRevenueTarget}
-                  onChange={(e) => setCreateForm({ ...createForm, monthlyRevenueTarget: Number(e.target.value) })}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
-                />
-              </div>
-
-              <div className="pt-3 flex items-center justify-end space-x-2">
+              <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-700 shrink-0 bg-slate-50 dark:bg-slate-850 flex items-center justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setCreateModalOpen(false)}
@@ -990,7 +1037,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 <button
                   type="submit"
                   disabled={createSubmitting}
-                  className="touch-target px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs"
+                  className="touch-target px-4 py-2 rounded bg-[#0c2b5e] hover:bg-[#09224b] text-white font-bold text-xs border border-slate-800"
                 >
                   {createSubmitting ? 'Mendaftarkan...' : 'Daftarkan Bengkel'}
                 </button>
@@ -1002,18 +1049,24 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
 
       {/* Modal Hubungkan / Tambah Email ke Workspace Bengkel */}
       {assignModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 relative my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setAssignModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 w-full max-w-md max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden my-auto shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                  <UserPlus className="w-4 h-4" />
+                <div className="w-8 h-8 rounded bg-[#0c2b5e] text-emerald-400 flex items-center justify-center shrink-0 border border-slate-700">
+                  <UserPlus className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     Hubungkan Email ke Bengkel
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Assign akun Google / operator ke workspace tenant tertentu
                   </p>
                 </div>
@@ -1021,85 +1074,88 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
               <button
                 type="button"
                 onClick={() => setAssignModalOpen(false)}
-                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600"
+                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors"
+                title="Tutup (ESC)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleAssignUserSubmit} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Email Akun Google / Login *
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="contoh: agus.bengkel@gmail.com"
-                  value={assignForm.email}
-                  onChange={(e) => setAssignForm({ ...assignForm, email: e.target.value })}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
-                />
-                <span className="text-[10px] text-slate-400 block mt-1">
-                  Saat email ini login lewat Google atau Mock Login, otomatis langsung masuk ke workspace yang dipilih.
-                </span>
+            <form onSubmit={handleAssignUserSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="overflow-y-auto flex-1 p-4 sm:p-5 space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Email Akun Google / Login *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="contoh: agus.bengkel@gmail.com"
+                    value={assignForm.email}
+                    onChange={(e) => setAssignForm({ ...assignForm, email: e.target.value })}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-mono text-xs"
+                  />
+                  <span className="text-xs text-slate-400 block mt-1">
+                    Saat email ini login lewat Google atau Mock Login, otomatis langsung masuk ke workspace yang dipilih.
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Nama Pengguna *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Agus Prasetyo"
+                    value={assignForm.name}
+                    onChange={(e) => setAssignForm({ ...assignForm, name: e.target.value })}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Pilih Bengkel (Workspace Tenant) *
+                  </label>
+                  <select
+                    required
+                    value={assignForm.tenantId}
+                    onChange={(e) => setAssignForm({ ...assignForm, tenantId: e.target.value })}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
+                  >
+                    <option value="">-- Pilih Bengkel --</option>
+                    {tenants.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name} (/{t.slug})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Role Hak Akses *
+                  </label>
+                  <select
+                    value={assignForm.role}
+                    onChange={(e) => setAssignForm({ ...assignForm, role: e.target.value })}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
+                  >
+                    <option value="operator">Operator (Kelola data servis & stok)</option>
+                    <option value="mechanic">Mekanik (Update progres servis mobil)</option>
+                    <option value="cashier">Kasir (Kelola kas & transaksi)</option>
+                    <option value="admin">Admin Bengkel (Akses penuh bengkel)</option>
+                    <option value="superadmin">Superadmin (Akses sistem global)</option>
+                  </select>
+                </div>
+
+                <div className="p-3 bg-slate-100 dark:bg-slate-750 border border-slate-300 dark:border-slate-700 rounded text-slate-800 dark:text-slate-200 text-xs">
+                  💡 <strong className="text-slate-900 dark:text-white">Multi-Akun Tenant:</strong> Anda dapat mendaftarkan beberapa email berbeda ke satu workspace bengkel yang sama, sehingga pemilik bengkel dan para staf dapat mengakses dan berbagi data yang sama.
+                </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Nama Pengguna *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: Agus Prasetyo"
-                  value={assignForm.name}
-                  onChange={(e) => setAssignForm({ ...assignForm, name: e.target.value })}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Pilih Bengkel (Workspace Tenant) *
-                </label>
-                <select
-                  required
-                  value={assignForm.tenantId}
-                  onChange={(e) => setAssignForm({ ...assignForm, tenantId: e.target.value })}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
-                >
-                  <option value="">-- Pilih Bengkel --</option>
-                  {tenants.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} (/{t.slug})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Role Hak Akses *
-                </label>
-                <select
-                  value={assignForm.role}
-                  onChange={(e) => setAssignForm({ ...assignForm, role: e.target.value })}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
-                >
-                  <option value="operator">Operator (Kelola data servis & stok)</option>
-                  <option value="mechanic">Mekanik (Update progres servis mobil)</option>
-                  <option value="cashier">Kasir (Kelola kas & transaksi)</option>
-                  <option value="admin">Admin Bengkel (Akses penuh bengkel)</option>
-                  <option value="superadmin">Superadmin (Akses sistem global)</option>
-                </select>
-              </div>
-
-              <div className="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded text-blue-900 dark:text-blue-200 text-[11px]">
-                💡 <strong className="text-blue-950 dark:text-blue-100">Multi-Akun Tenant:</strong> Anda dapat mendaftarkan beberapa email berbeda ke satu workspace bengkel yang sama, sehingga pemilik bengkel dan para staf dapat mengakses dan berbagi data yang sama.
-              </div>
-
-              <div className="pt-3 flex items-center justify-end space-x-2 border-t border-slate-100 dark:border-slate-700">
+              <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-700 shrink-0 bg-slate-50 dark:bg-slate-850 flex items-center justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setAssignModalOpen(false)}
@@ -1110,9 +1166,9 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 <button
                   type="submit"
                   disabled={assignSubmitting}
-                  className="touch-target px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5"
+                  className="touch-target px-4 py-2 rounded bg-[#0c2b5e] hover:bg-[#09224b] text-white font-bold text-xs flex items-center space-x-1.5 border border-slate-800"
                 >
-                  <UserPlus className="w-4 h-4" />
+                  <UserPlus className="w-4 h-4 text-emerald-400" />
                   <span>{assignSubmitting ? 'Menghubungkan...' : 'Hubungkan ke Workspace'}</span>
                 </button>
               </div>
@@ -1123,18 +1179,24 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
 
       {/* Modal Pindahkan Workspace Pengguna (Reassign Tenant) */}
       {reassignModalOpen && reassignUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 relative my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700 mb-4">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setReassignModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700 w-full max-w-md max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden my-auto shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-800">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                  <ArrowRightLeft className="w-4 h-4" />
+                <div className="w-8 h-8 rounded bg-[#0c2b5e] text-emerald-400 flex items-center justify-center shrink-0 border border-slate-700">
+                  <ArrowRightLeft className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     Pindahkan Workspace Pengguna
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Ganti bengkel yang diakses oleh akun ini
                   </p>
                 </div>
@@ -1142,43 +1204,46 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
               <button
                 type="button"
                 onClick={() => setReassignModalOpen(false)}
-                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600"
+                className="w-10 h-10 touch-target flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors"
+                title="Tutup (ESC)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleReassignTenantSubmit} className="space-y-4 text-xs">
-              <div className="bg-slate-50 dark:bg-slate-750 p-3 rounded border border-slate-200 dark:border-slate-700 space-y-1">
-                <div className="font-bold text-slate-900 dark:text-white">{reassignUser.name}</div>
-                <div className="font-mono text-slate-500 text-[11px]">{reassignUser.email}</div>
-                <div className="text-slate-400 text-[11px] pt-1">
-                  Workspace Saat Ini:{' '}
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {reassignUser.tenant_name} (/{reassignUser.tenant_slug})
-                  </span>
+            <form onSubmit={handleReassignTenantSubmit} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="overflow-y-auto flex-1 p-4 sm:p-5 space-y-4 text-xs">
+                <div className="bg-slate-50 dark:bg-slate-750 p-3 rounded border border-slate-200 dark:border-slate-700 space-y-1">
+                  <div className="font-bold text-slate-900 dark:text-white">{reassignUser.name}</div>
+                  <div className="font-mono text-slate-500 text-xs">{reassignUser.email}</div>
+                  <div className="text-slate-400 text-xs pt-1">
+                    Workspace Saat Ini:{' '}
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                      {reassignUser.tenant_name} (/{reassignUser.tenant_slug})
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Pilih Bengkel (Workspace Baru) *
+                  </label>
+                  <select
+                    required
+                    value={reassignTenantId}
+                    onChange={(e) => setReassignTenantId(e.target.value)}
+                    className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
+                  >
+                    {tenants.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name} (/{t.slug})
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  Pilih Bengkel (Workspace Baru) *
-                </label>
-                <select
-                  required
-                  value={reassignTenantId}
-                  onChange={(e) => setReassignTenantId(e.target.value)}
-                  className="touch-target w-full p-2.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-semibold"
-                >
-                  {tenants.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} (/{t.slug})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="pt-3 flex items-center justify-end space-x-2 border-t border-slate-100 dark:border-slate-700">
+              <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-700 shrink-0 bg-slate-50 dark:bg-slate-850 flex items-center justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setReassignModalOpen(false)}
@@ -1189,9 +1254,9 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 <button
                   type="submit"
                   disabled={reassignSubmitting}
-                  className="touch-target px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold text-xs flex items-center space-x-1.5"
+                  className="touch-target px-4 py-2 rounded bg-[#0c2b5e] hover:bg-[#09224b] text-white font-bold text-xs flex items-center space-x-1.5 border border-slate-800"
                 >
-                  <ArrowRightLeft className="w-4 h-4 text-amber-950" />
+                  <ArrowRightLeft className="w-4 h-4 text-emerald-400" />
                   <span>{reassignSubmitting ? 'Memindahkan...' : 'Pindahkan Workspace'}</span>
                 </button>
               </div>

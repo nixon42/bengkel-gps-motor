@@ -19,6 +19,7 @@ import {
   Layers,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   AlertCircle
 } from 'lucide-react';
 import PartFormModal from '../components/Inventory/PartFormModal';
@@ -52,6 +53,7 @@ export default function InventoryPage() {
   const [restockModalOpen, setRestockModalOpen] = useState(false);
   const [stockOutModalOpen, setStockOutModalOpen] = useState(false);
   const [selectedPartId, setSelectedPartId] = useState(null);
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
 
   // Debounce search input
   useEffect(() => {
@@ -246,28 +248,30 @@ export default function InventoryPage() {
   return (
     <div className="space-y-6">
       {/* Top Action Header */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5 shadow-none">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2">
-              <Package className="w-6 h-6 text-blue-600" />
-              <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
+                <Package className="w-5 h-5" />
+              </div>
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                 Katalog Inventaris & Sparepart
               </h1>
-              <span className="px-2 py-0.5 text-xs font-semibold rounded bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200">
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40">
                 {pagination.total} Item
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Kelola suku cadang, pantau ambang batas minimum, margin keuntungan, dan mutasi stok fisik.
             </p>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             <button
               onClick={openCreateModal}
-              className="touch-target px-3.5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+              className="touch-target w-full sm:w-auto px-4 py-2.5 min-h-[44px] rounded-xl bg-[#00a86b] hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold flex items-center justify-center space-x-1.5 transition-colors shadow-xs"
             >
               <Plus className="w-4 h-4" />
               <span>Tambah Sparepart</span>
@@ -275,93 +279,110 @@ export default function InventoryPage() {
 
             <button
               onClick={() => openRestockModal()}
-              className="touch-target px-3.5 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+              className="touch-target flex-1 sm:flex-none px-3.5 py-2.5 min-h-[44px] rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-emerald-400 text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors shadow-xs border border-slate-700/60"
             >
-              <ArrowDownRight className="w-4 h-4" />
+              <ArrowDownRight className="w-4 h-4 text-emerald-400" />
               <span>Restock Masuk</span>
             </button>
 
             <button
               onClick={() => openStockOutModal()}
-              className="touch-target px-3.5 py-2 rounded bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+              className="touch-target flex-1 sm:flex-none px-3.5 py-2.5 min-h-[44px] rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-semibold flex items-center justify-center space-x-1.5 transition-colors shadow-xs"
             >
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight className="w-4 h-4 text-rose-500" />
               <span>Pakai Keluar</span>
             </button>
 
-            <button
-              onClick={() => setValuationModalOpen(true)}
-              className="touch-target px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors"
-            >
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
-              <span>Valuasi Nilai</span>
-            </button>
-
-            {/* Export Buttons */}
-            <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2">
-              <a
-                href="/api/inventory/export/csv"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Unduh CSV seluruh inventaris"
-                className="touch-target px-2.5 py-2 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1"
+            {/* Laporan & Ekspor Dropdown */}
+            <div className="relative w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                className="touch-target w-full sm:w-auto px-3.5 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center justify-center space-x-1.5 transition-colors shadow-xs"
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>CSV</span>
-              </a>
+                <FileText className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                <span>Laporan &amp; Ekspor</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${exportDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-              <a
-                href="/api/inventory/export/pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Cetak PDF katalog inventaris"
-                className="touch-target px-2.5 py-2 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center space-x-1"
-              >
-                <FileText className="w-3.5 h-3.5 text-blue-600" />
-                <span>PDF</span>
-              </a>
+              {exportDropdownOpen && (
+                <div 
+                  className="absolute right-0 mt-1.5 w-56 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl z-30 p-1.5 animate-in fade-in-0 zoom-in-95 duration-100"
+                  onClick={() => setExportDropdownOpen(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setValuationModalOpen(true)}
+                    className="w-full px-3 py-2 rounded-xl text-left text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 font-medium transition-colors"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Valuasi Nilai Gudang</span>
+                  </button>
 
-              <a
-                href="/api/inventory/export/low-stock/pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Cetak PDF daftar stok kritis / menipis"
-                className="touch-target px-2.5 py-2 rounded border border-amber-300 dark:border-amber-700/60 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-xs font-medium flex items-center space-x-1"
-              >
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                <span>Stok Kritis PDF</span>
-              </a>
+                  <div className="border-t border-slate-100 dark:border-slate-800 my-1" />
+
+                  <a
+                    href="/api/inventory/export/csv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full px-3 py-2 rounded-xl text-left text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 font-medium transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                    <span>Unduh CSV Katalog</span>
+                  </a>
+
+                  <a
+                    href="/api/inventory/export/pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full px-3 py-2 rounded-xl text-left text-xs text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-2 font-medium transition-colors"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span>Cetak PDF Katalog</span>
+                  </a>
+
+                  <a
+                    href="/api/inventory/export/low-stock/pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full px-3 py-2 rounded-xl text-left text-xs text-amber-800 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40 flex items-center space-x-2 font-medium transition-colors"
+                  >
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>Cetak PDF Stok Kritis</span>
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* KPI Strip */}
         {valuationSummary && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-700">
-            <div className="p-3 rounded bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-700">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">Total Item SKU</span>
-              <span className="text-base font-bold text-slate-900 dark:text-white block mt-0.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Total Item SKU</span>
+              <span className="text-lg font-bold font-mono tabular-nums text-slate-900 dark:text-white block mt-0.5">
                 {valuationSummary.total_items} SKU
               </span>
             </div>
 
-            <div className="p-3 rounded bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-700">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block">Total Unit Fisik</span>
-              <span className="text-base font-bold text-slate-900 dark:text-white block mt-0.5">
+            <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">Total Unit Fisik</span>
+              <span className="text-lg font-bold font-mono tabular-nums text-slate-900 dark:text-white block mt-0.5">
                 {valuationSummary.total_stock_count} Unit
               </span>
             </div>
 
-            <div className="p-3 rounded bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
-              <span className="text-[11px] font-medium text-amber-800 dark:text-amber-300 block">Stok Menipis</span>
-              <span className="text-base font-bold text-amber-700 dark:text-amber-400 block mt-0.5">
+            <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/60">
+              <span className="text-xs font-medium text-amber-800 dark:text-amber-300 block">Stok Menipis</span>
+              <span className="text-lg font-bold font-mono tabular-nums text-amber-700 dark:text-amber-400 block mt-0.5">
                 {valuationSummary.low_stock_items_count} Item
               </span>
             </div>
 
-            <div className="p-3 rounded bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800">
-              <span className="text-[11px] font-medium text-rose-800 dark:text-rose-300 block">Stok Habis (0)</span>
-              <span className="text-base font-bold text-rose-700 dark:text-rose-400 block mt-0.5">
+            <div className="p-3.5 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/60">
+              <span className="text-xs font-medium text-rose-800 dark:text-rose-300 block">Stok Habis (0)</span>
+              <span className="text-lg font-bold font-mono tabular-nums text-rose-700 dark:text-rose-400 block mt-0.5">
                 {valuationSummary.out_of_stock_items_count} Item
               </span>
             </div>
@@ -370,17 +391,17 @@ export default function InventoryPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 space-y-3">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 sm:p-5 shadow-xs space-y-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Search input */}
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Cari nama sparepart atau SKU..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="touch-target w-full pl-9 pr-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full pl-9 pr-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50/50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder:text-slate-400 text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             />
           </div>
 
@@ -392,7 +413,7 @@ export default function InventoryPage() {
                 setCategory(e.target.value);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50/50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             >
               <option value="">Semua Kategori</option>
               {categories.map((c) => (
@@ -415,7 +436,7 @@ export default function InventoryPage() {
                 setStockStatus(e.target.value);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50/50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             >
               <option value="">Semua Status Stok</option>
               <option value="in_stock">Aman (Stok &gt; Min)</option>
@@ -434,7 +455,7 @@ export default function InventoryPage() {
                 setSortOrder(so);
                 setPage(1);
               }}
-              className="touch-target w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="touch-target w-full px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50/50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
             >
               <option value="created_at:desc">Terbaru Ditambahkan</option>
               <option value="name:asc">Nama (A - Z)</option>
@@ -449,44 +470,44 @@ export default function InventoryPage() {
         </div>
 
         {/* Filter Badges Strip */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-1 text-xs">
-          <span className="text-slate-400 font-medium">Status Cepat:</span>
+        <div className="flex items-center gap-2 pt-1 text-xs overflow-x-auto no-scrollbar -mx-1 px-1 py-1">
+          <span className="text-slate-400 font-medium shrink-0">Status Cepat:</span>
           <button
             onClick={() => { setStockStatus(''); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
+            className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
               stockStatus === ''
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300'
+                ? 'bg-slate-900 dark:bg-slate-800 text-white dark:text-emerald-400 border-slate-700 shadow-xs'
+                : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
             }`}
           >
             Semua
           </button>
           <button
             onClick={() => { setStockStatus('in_stock'); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
+            className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
               stockStatus === 'in_stock'
-                ? 'bg-emerald-600 text-white border-emerald-600'
-                : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100'
             }`}
           >
             Aman
           </button>
           <button
             onClick={() => { setStockStatus('low_stock'); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
+            className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
               stockStatus === 'low_stock'
-                ? 'bg-amber-600 text-white border-amber-600'
-                : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300'
+                ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 hover:bg-amber-100'
             }`}
           >
             Menipis
           </button>
           <button
             onClick={() => { setStockStatus('out_of_stock'); setPage(1); }}
-            className={`touch-target px-2.5 py-1 rounded border text-xs font-medium transition-colors ${
+            className={`touch-target shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-lg border text-xs font-semibold transition-colors ${
               stockStatus === 'out_of_stock'
-                ? 'bg-rose-600 text-white border-rose-600'
-                : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'
+                ? 'bg-rose-600 text-white border-rose-600 shadow-xs'
+                : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 hover:bg-rose-100'
             }`}
           >
             Habis (0)
@@ -500,7 +521,7 @@ export default function InventoryPage() {
                 setStockStatus('');
                 setPage(1);
               }}
-              className="touch-target ml-auto px-2 py-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 text-xs underline"
+              className="touch-target shrink-0 ml-auto px-3 py-1.5 min-h-[38px] text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 text-xs underline"
             >
               Reset Filter
             </button>
@@ -509,7 +530,7 @@ export default function InventoryPage() {
       </div>
 
       {/* Main Table / Data View */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 overflow-hidden shadow-none">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
         {error && (
           <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border-b border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
@@ -531,12 +552,12 @@ export default function InventoryPage() {
         ) : (
           <div>
             {/* Mobile Card List View (< 768px) */}
-            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
               {items.map((item) => (
                 <div key={item.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="flex items-center space-x-3 min-w-0">
-                      <div className="w-12 h-12 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                      <div className="w-12 h-12 rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
                         {item.photo_url ? (
                           <img
                             src={item.photo_url}
@@ -555,10 +576,10 @@ export default function InventoryPage() {
                         <div className="font-bold text-slate-900 dark:text-white text-sm leading-tight truncate">
                           {item.name || item.nama}
                         </div>
-                        <div className="flex items-center space-x-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                        <div className="flex items-center space-x-2 text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
                           <span>{item.sku}</span>
                           <span>•</span>
-                          <span className="font-sans font-medium px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                          <span className="font-sans font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                             {item.category || item.kategori}
                           </span>
                         </div>
@@ -570,35 +591,35 @@ export default function InventoryPage() {
                   </div>
 
                   {/* Price & Margin info */}
-                  <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-700/30 p-2.5 rounded border border-slate-100 dark:border-slate-700 text-xs">
+                  <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 text-xs">
                     <div>
-                      <span className="text-[10px] text-slate-400 block">Harga Beli</span>
-                      <span className="font-mono font-medium text-slate-700 dark:text-slate-300 text-[11px]">
+                      <span className="text-xs text-slate-400 block">Harga Beli</span>
+                      <span className="font-mono font-medium text-slate-700 dark:text-slate-300 text-xs">
                         {formatRp(item.buy_price ?? item.hargaBeli)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block">Harga Jual</span>
-                      <span className="font-mono font-bold text-slate-900 dark:text-white text-[11px]">
+                      <span className="text-xs text-slate-400 block">Harga Jual</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white text-xs">
                         {formatRp(item.sell_price ?? item.hargaJual)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block">Margin</span>
+                      <span className="text-xs text-slate-400 block">Margin</span>
                       {renderProfitMargin(item)}
                     </div>
                   </div>
 
                   {/* Action buttons */}
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[130px]">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[130px]">
                       {item.supplier ? `Supplier: ${item.supplier}` : ''}
                     </span>
-                    <div className="inline-flex items-center space-x-1.5">
+                    <div className="inline-flex items-center space-x-1.5 shrink-0">
                       <button
                         onClick={() => openRestockModal(item.id)}
                         title="Restock barang masuk"
-                        className="touch-target px-2.5 py-1.5 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold flex items-center space-x-1"
+                        className="touch-target px-2.5 py-1.5 min-h-[38px] rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold flex items-center space-x-1 transition-colors"
                       >
                         <ArrowDownRight className="w-3.5 h-3.5" />
                         <span>Masuk</span>
@@ -606,7 +627,7 @@ export default function InventoryPage() {
                       <button
                         onClick={() => openStockOutModal(item.id)}
                         title="Pengeluaran barang keluar"
-                        className="touch-target px-2.5 py-1.5 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 hover:bg-rose-100 text-xs font-bold flex items-center space-x-1"
+                        className="touch-target px-2.5 py-1.5 min-h-[38px] rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 hover:bg-rose-100 text-xs font-bold flex items-center space-x-1 transition-colors"
                       >
                         <ArrowUpRight className="w-3.5 h-3.5" />
                         <span>Keluar</span>
@@ -614,14 +635,14 @@ export default function InventoryPage() {
                       <button
                         onClick={() => openEditModal(item)}
                         title="Ubah detail sparepart"
-                        className="touch-target p-1.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                        className="touch-target w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeletePart(item)}
                         title="Hapus sparepart"
-                        className="touch-target p-1.5 rounded bg-slate-100 dark:bg-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-100"
+                        className="touch-target w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -635,27 +656,27 @@ export default function InventoryPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 font-semibold uppercase tracking-wider text-[11px]">
-                    <th className="py-3 px-3 sm:px-4">Foto & Item</th>
-                    <th className="py-3 px-3">Kategori</th>
-                    <th className="py-3 px-3">Stok & Status</th>
-                    <th className="py-3 px-3">Harga Beli</th>
-                    <th className="py-3 px-3">Harga Jual</th>
-                    <th className="py-3 px-3">Margin Laba</th>
-                    <th className="py-3 px-3 hidden md:table-cell">Supplier</th>
-                    <th className="py-3 px-3 text-right">Aksi</th>
+                  <tr className="bg-slate-50 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 border-b border-slate-200/80 dark:border-slate-800 font-bold uppercase tracking-wider text-xs">
+                    <th className="py-3.5 px-3 sm:px-4">Foto & Item</th>
+                    <th className="py-3.5 px-3">Kategori</th>
+                    <th className="py-3.5 px-3">Stok & Status</th>
+                    <th className="py-3.5 px-3">Harga Beli</th>
+                    <th className="py-3.5 px-3">Harga Jual</th>
+                    <th className="py-3.5 px-3">Margin Laba</th>
+                    <th className="py-3.5 px-3 hidden md:table-cell">Supplier</th>
+                    <th className="py-3.5 px-3 text-right">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {items.map((item) => (
                     <tr 
                       key={item.id} 
-                      className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                     >
                       {/* Foto & Item Name */}
                       <td className="py-3 px-3 sm:px-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                          <div className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
                             {item.photo_url ? (
                               <img
                                 src={item.photo_url}
@@ -674,7 +695,7 @@ export default function InventoryPage() {
                             <div className="font-bold text-slate-900 dark:text-white leading-tight">
                               {item.name || item.nama}
                             </div>
-                            <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">
+                            <div className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">
                               {item.sku}
                             </div>
                           </div>
@@ -683,7 +704,7 @@ export default function InventoryPage() {
 
                       {/* Kategori */}
                       <td className="py-3 px-3">
-                        <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                        <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                           {item.category || item.kategori}
                         </span>
                       </td>
@@ -719,23 +740,16 @@ export default function InventoryPage() {
                           <button
                             onClick={() => openRestockModal(item.id)}
                             title="Restock barang masuk"
-                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60"
+                            className="touch-target px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-xs font-bold flex items-center space-x-1 transition-colors"
                           >
-                            <ArrowDownRight className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            onClick={() => openStockOutModal(item.id)}
-                            title="Pengeluaran barang keluar"
-                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/60"
-                          >
-                            <ArrowUpRight className="w-4 h-4" />
+                            <ArrowDownRight className="w-3.5 h-3.5" />
+                            <span>Restock</span>
                           </button>
 
                           <button
                             onClick={() => openEditModal(item)}
                             title="Ubah detail sparepart"
-                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+                            className="touch-target p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -743,7 +757,7 @@ export default function InventoryPage() {
                           <button
                             onClick={() => handleDeletePart(item)}
                             title="Hapus / Nonaktifkan sparepart"
-                            className="touch-target w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded bg-slate-100 dark:bg-slate-700 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+                            className="touch-target p-2 rounded-lg text-rose-600/70 hover:text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40 transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

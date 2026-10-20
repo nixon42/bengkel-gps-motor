@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { initSupabaseAdapter } from './lib/supabaseAdapter';
 import './index.css';
+
+// Initialize direct Supabase integration for static hosting / GitHub Pages
+initSupabaseAdapter();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

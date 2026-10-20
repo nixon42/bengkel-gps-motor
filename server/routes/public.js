@@ -158,6 +158,13 @@ export function publicRoutes(db) {
           businessHours: tenant.business_hours,
           logo_url: tenant.logo_url,
           logoUrl: tenant.logo_url,
+          hero_image_url: tenant.hero_image_url || null,
+          heroImageUrl: tenant.hero_image_url || null,
+          facility_image_1: tenant.facility_image_1 || null,
+          facilityImage1: tenant.facility_image_1 || null,
+          facility_image_2: tenant.facility_image_2 || null,
+          facilityImage2: tenant.facility_image_2 || null,
+          tagline: tenant.tagline || '',
           invoice_footer: settings.invoice_footer || 'Terima kasih atas kunjungan Anda.'
         },
         services: DEFAULT_SERVICES,
@@ -176,6 +183,23 @@ export function publicRoutes(db) {
       next(err);
     }
   }
+
+  // GET /api/public/tenants (List active tenants for App platform landing page)
+  router.get('/tenants', (req, res, next) => {
+    try {
+      const tenants = db.prepare(`
+        SELECT id, slug, name, address, phone_wa, business_hours, logo_url, hero_image_url, facility_image_1, tagline 
+        FROM tenants 
+        ORDER BY created_at ASC
+      `).all();
+      res.json({
+        success: true,
+        tenants
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
 
   // GET /api/public/:slug/tracking or /api/public/tracking
   async function handleGetTracking(req, res, next) {

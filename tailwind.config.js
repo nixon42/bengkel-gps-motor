@@ -25,6 +25,7 @@ export default {
         },
         slate: {
           750: '#243044',
+          850: '#172033',
         },
         surface: {
           light: '#ffffff',

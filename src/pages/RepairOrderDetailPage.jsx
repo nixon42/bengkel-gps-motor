@@ -20,7 +20,8 @@ import {
   Check,
   ChevronRight,
   ShieldCheck,
-  Package
+  Package,
+  X
 } from 'lucide-react';
 import { compressImageClient } from '../utils/imageCompressor.js';
 
@@ -36,12 +37,12 @@ const STAGE_LABELS = {
 };
 
 const STAGE_COLORS = {
-  'MASUK': 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600',
-  'DIAGNOSA': 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300 border-sky-300 dark:border-sky-800',
-  'PENGERJAAN': 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 border-amber-300 dark:border-amber-800',
-  'MENUNGGU_PART': 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300 border-purple-300 dark:border-purple-800',
-  'SELESAI': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
-  'DIAMBIL': 'bg-zinc-200 text-zinc-900 dark:bg-zinc-700 dark:text-zinc-100 border-zinc-400 dark:border-zinc-600'
+  'MASUK': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700',
+  'DIAGNOSA': 'bg-sky-50 text-sky-800 dark:bg-sky-950/50 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
+  'PENGERJAAN': 'bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+  'MENUNGGU_PART': 'bg-purple-50 text-purple-800 dark:bg-purple-950/50 dark:text-purple-300 border-purple-200 dark:border-purple-800/60',
+  'SELESAI': 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+  'DIAMBIL': 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-700'
 };
 
 function formatEstimatedDate(val) {
@@ -127,6 +128,17 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
       fetchRoDetails();
     }
   }, [roId]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setStatusModalOpen(false);
+        setPartModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const loadInventory = async () => {
     try {
@@ -341,21 +353,21 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-8 text-center">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 text-center shadow-xs">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent mb-3" />
-        <p className="text-sm text-slate-500">Memuat rincian Repair Order...</p>
+        <p className="text-xs text-slate-500">Memuat rincian Repair Order...</p>
       </div>
     );
   }
 
   if (error || !ro) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-8 text-center">
-        <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-3" />
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 text-center shadow-xs">
+        <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
         <p className="text-base font-bold text-slate-800 dark:text-slate-200">{error || 'Data tidak ditemukan'}</p>
         <button
           onClick={onBack}
-          className="touch-target mt-4 px-4 py-2 bg-blue-600 text-white rounded text-sm font-semibold inline-flex items-center space-x-2"
+          className="touch-target mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold inline-flex items-center space-x-2"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Daftar</span>
@@ -369,29 +381,29 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
   return (
     <div className="space-y-6">
       {/* Top Header & Actions */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3.5">
             <button
               onClick={onBack}
-              className="touch-target p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="touch-target p-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               title="Kembali"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-mono bg-slate-900 text-white px-2.5 py-1 rounded text-sm font-bold tracking-wider">
+                <span className="font-mono bg-slate-900 text-emerald-400 px-2.5 py-0.5 rounded-md text-xs sm:text-sm font-bold tracking-wider border border-slate-700">
                   {ro.plate_number}
                 </span>
-                <span className={`px-2.5 py-1 rounded text-xs font-bold border ${STAGE_COLORS[ro.status] || 'bg-slate-100 text-slate-800'}`}>
+                <span className={`px-2.5 py-0.5 rounded-md text-xs font-bold border ${STAGE_COLORS[ro.status] || 'bg-slate-100 text-slate-800'}`}>
                   {ro.status}
                 </span>
               </div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-1">
                 {ro.car_brand} {ro.car_model} ({ro.car_year || '-'}) - {ro.customer_name}
               </h2>
-              <p className="text-xs text-slate-500 font-mono">
+              <p className="text-xs text-slate-500 font-mono mt-0.5">
                 No. Order: {ro.ro_number} • Token: {ro.tracking_token} • Tanggal Masuk: {ro.entry_date}
               </p>
             </div>
@@ -400,14 +412,14 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleDownloadPdf}
-              className="touch-target px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded text-xs font-bold flex items-center space-x-1.5 transition-colors"
+              className="touch-target px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors border border-slate-200 dark:border-slate-700 shadow-xs"
             >
-              <FileText className="w-4 h-4 text-red-600" />
+              <FileText className="w-4 h-4 text-rose-500" />
               <span>Cetak Nota PDF</span>
             </button>
             <button
               onClick={handleShareWhatsApp}
-              className="touch-target px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors"
+              className="touch-target px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-xs"
             >
               <Share2 className="w-4 h-4" />
               <span>Kirim WA</span>
@@ -416,7 +428,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
               href={`/bengkel-gps-motor/cek-status?plate=${encodeURIComponent(ro.plate_number)}`}
               target="_blank"
               rel="noreferrer"
-              className="touch-target px-3.5 py-2 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded text-xs font-bold flex items-center space-x-1.5 border border-blue-200 dark:border-blue-900"
+              className="touch-target px-3.5 py-2 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded-xl text-xs font-bold flex items-center space-x-1.5 border border-blue-200 dark:border-blue-900 shadow-xs"
             >
               <ExternalLink className="w-4 h-4" />
               <span>Cek Tracking</span>
@@ -425,7 +437,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
         </div>
 
         {successMsg && (
-          <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded text-emerald-800 dark:text-emerald-200 text-xs font-medium flex items-center space-x-2">
+          <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs font-medium flex items-center space-x-2">
             <Check className="w-4 h-4 text-emerald-600" />
             <span>{successMsg}</span>
           </div>
@@ -433,15 +445,19 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
       </div>
 
       {/* 6-Stage Lifecycle Stepper */}
-      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-2">
-            <ShieldCheck className="w-4 h-4 text-blue-600" />
-            <span>Tahapan Pengerjaan (6-Stage Lifecycle)</span>
-          </h3>
+          <div className="flex items-center space-x-2">
+            <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+              Tahapan Pengerjaan (6-Stage Lifecycle)
+            </h3>
+          </div>
           <button
             onClick={() => handleOpenStatusModal(STAGE_ORDER[Math.min(currentStageIndex + 1, STAGE_ORDER.length - 1)])}
-            className="touch-target px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded flex items-center space-x-1.5"
+            className="touch-target px-3.5 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white text-xs font-bold rounded-xl flex items-center space-x-1.5 shadow-xs transition-colors"
           >
             <span>Update Status</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -449,7 +465,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
         </div>
 
         {/* Stepper Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           {STAGE_ORDER.map((stageKey, idx) => {
             const isCompleted = idx <= currentStageIndex;
             const isCurrent = stageKey === ro.status;
@@ -459,25 +475,25 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
               <div
                 key={stageKey}
                 onClick={() => handleOpenStatusModal(stageKey)}
-                className={`cursor-pointer rounded p-3 border transition-all ${
+                className={`cursor-pointer rounded-xl p-3 border transition-all ${
                   isCurrent
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-100 ring-2 ring-blue-500'
+                    ? 'border-emerald-500/60 bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 ring-2 ring-emerald-500/50 shadow-xs'
                     : isCompleted
-                    ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20 text-slate-800 dark:text-slate-200'
-                    : 'border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400'
+                    ? 'border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200'
+                    : 'border-slate-200/60 dark:border-slate-800/60 bg-slate-50/30 dark:bg-slate-900/40 text-slate-400'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] font-bold">
+                  <span className="text-xs font-bold">
                     {STAGE_LABELS[stageKey]}
                   </span>
                   {isCompleted ? (
-                    <CheckCircle2 className={`w-4 h-4 ${isCurrent ? 'text-blue-600' : 'text-emerald-600'}`} />
+                    <CheckCircle2 className={`w-4 h-4 ${isCurrent ? 'text-emerald-600' : 'text-emerald-500'}`} />
                   ) : (
                     <Clock className="w-4 h-4 text-slate-400" />
                   )}
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                <div className="text-xs text-slate-500 dark:text-slate-400">
                   {logEntry ? (
                     <span>{new Date(logEntry.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
                   ) : (
@@ -495,8 +511,8 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
         {/* Left Column (2 Cols) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Vehicle & Customer Info Card */}
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               Informasi Servis & Keluhan
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
@@ -519,7 +535,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                 <span className="block text-xs text-slate-500">Estimasi Selesai</span>
                 <span className="font-semibold text-slate-800 dark:text-slate-200">{formatEstimatedDate(ro.estimated_completion)}</span>
               </div>
-              <div className="sm:col-span-2 bg-slate-50 dark:bg-slate-750 p-3 rounded border border-slate-200 dark:border-slate-700">
+              <div className="sm:col-span-2 bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
                 <span className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Keluhan Pelanggan:</span>
                 <p className="text-slate-800 dark:text-slate-200 text-xs italic">{ro.complaint || '-'}</p>
               </div>
@@ -527,18 +543,18 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
           </div>
 
           {/* Attached Spareparts Table */}
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-2">
-                  <Package className="w-4 h-4 text-blue-600" />
+                  <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   <span>Suku Cadang & Sparepart Terpasang</span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">Pemakaian sparepart otomatis memotong stok gudang inventaris</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pemakaian sparepart otomatis memotong stok gudang inventaris</p>
               </div>
               <button
                 onClick={handleOpenPartModal}
-                className="touch-target px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors"
+                className="touch-target px-3.5 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-xs"
               >
                 <Plus className="w-4 h-4" />
                 <span>Pasang Sparepart</span>
@@ -546,20 +562,20 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
             </div>
 
             {spareparts.length === 0 ? (
-              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50 dark:bg-slate-800/50 rounded border border-dashed border-slate-200 dark:border-slate-700">
+              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
                 Belum ada suku cadang yang dipasang pada order ini.
               </div>
             ) : (
               <div>
                 {/* Mobile Spareparts Card List (< 640px) */}
-                <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
+                <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
                   {spareparts.map((sp) => (
                     <div key={sp.id} className="py-2.5 flex items-center justify-between gap-2 text-xs">
                       <div className="min-w-0 pr-2">
                         <div className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                           {sp.item_name}
                         </div>
-                        <div className="text-[11px] text-slate-500 font-mono mt-0.5">
+                        <div className="text-xs text-slate-500 font-mono mt-0.5">
                           {sp.quantity} × Rp {Number(sp.unit_price).toLocaleString('id-ID')}
                         </div>
                       </div>
@@ -569,7 +585,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                         </span>
                         <button
                           onClick={() => handleRemoveSparepart(sp.id)}
-                          className="touch-target p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors"
+                          className="touch-target p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors"
                           title="Lepas dan kembalikan stok"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -582,7 +598,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                 {/* Desktop Table View (>= 640px) */}
                 <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold uppercase">
+                    <thead className="bg-slate-50 dark:bg-slate-950/60 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 dark:border-slate-800">
                       <tr>
                         <th className="py-2.5 px-3">Nama Suku Cadang</th>
                         <th className="py-2.5 px-3 text-center">Qty</th>
@@ -591,7 +607,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                         <th className="py-2.5 px-3 text-center">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                       {spareparts.map((sp) => (
                         <tr key={sp.id} className="hover:bg-slate-50 dark:hover:bg-slate-750">
                           <td className="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">
@@ -625,14 +641,14 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
           </div>
 
           {/* Photo Gallery Documentation */}
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center space-x-2">
-              <Camera className="w-4 h-4 text-blue-600" />
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center space-x-2">
+              <Camera className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Dokumentasi Foto Servis (Transparansi Pelanggan)</span>
             </h3>
 
             {/* Upload Box */}
-            <form onSubmit={handleUploadPhoto} className="mb-6 p-4 bg-slate-50 dark:bg-slate-750 rounded border border-slate-200 dark:border-slate-700 space-y-3">
+            <form onSubmit={handleUploadPhoto} className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800 space-y-3">
               {/* Hidden file inputs */}
               <input
                 ref={roCameraRef}
@@ -662,7 +678,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
               {/* Photo Source Buttons & Preview */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1.5">
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">
                   Sumber Foto Dokumentasi
                 </label>
                 <div className="flex flex-wrap items-center gap-2">
@@ -670,7 +686,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                     type="button"
                     onClick={() => roCameraRef.current?.click()}
                     disabled={photoUploading}
-                    className="touch-target px-3.5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-none"
+                    className="touch-target px-3.5 py-2 bg-[#00a86b] hover:bg-emerald-600 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-xs"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Buka Kamera (Jepret)</span>
@@ -680,14 +696,14 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                     type="button"
                     onClick={() => roFileRef.current?.click()}
                     disabled={photoUploading}
-                    className="touch-target px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded text-xs font-semibold flex items-center space-x-1.5 transition-colors"
+                    className="touch-target px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors shadow-xs"
                   >
                     <Upload className="w-4 h-4" />
                     <span>Pilih Galeri / File</span>
                   </button>
 
                   {photoFile && (
-                    <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded px-2.5 py-1 text-xs text-blue-700 dark:text-blue-300">
+                    <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-xl px-2.5 py-1 text-xs text-blue-700 dark:text-blue-300">
                       <span className="font-medium truncate max-w-[150px] sm:max-w-[200px]">
                         {photoFile.name}
                       </span>
@@ -711,11 +727,11 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
               {/* Stage & Caption Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
                 <div className="sm:col-span-4">
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Tahap Servis</label>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Tahap Servis</label>
                   <select
                     value={photoStage}
                     onChange={(e) => setPhotoStage(e.target.value)}
-                    className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
                   >
                     <option value="BEFORE">BEFORE (Kondisi Awal)</option>
                     <option value="PROGRESS">PROGRESS (Saat Dikerjakan)</option>
@@ -723,20 +739,20 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
                   </select>
                 </div>
                 <div className="sm:col-span-5">
-                  <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Keterangan / Caption</label>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Keterangan / Caption</label>
                   <input
                     type="text"
                     placeholder="Contoh: Kondisi busi lama aus / ganti oli"
                     value={photoCaption}
                     onChange={(e) => setPhotoCaption(e.target.value)}
-                    className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
                   />
                 </div>
                 <div className="sm:col-span-3 flex items-end">
                   <button
                     type="submit"
                     disabled={!photoFile || photoUploading}
-                    className="touch-target w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors"
+                    className="touch-target w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 disabled:opacity-50 text-white dark:text-emerald-400 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-colors shadow-xs border border-slate-700/60"
                   >
                     <Upload className="w-4 h-4" />
                     <span>{photoUploading ? 'Mengunggah...' : 'Unggah Foto'}</span>
@@ -747,28 +763,28 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
             {/* Photos Grid */}
             {photos.length === 0 ? (
-              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50 dark:bg-slate-800/50 rounded border border-dashed border-slate-200 dark:border-slate-700">
+              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
                 Belum ada foto yang diunggah.
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {photos.map((p) => (
-                  <div key={p.id} className="relative rounded overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-900 group">
+                  <div key={p.id} className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 group shadow-xs">
                     <img src={p.photo_url} alt={p.caption || 'Foto servis'} className="w-full h-32 object-cover" />
-                    <div className="absolute top-1 left-1">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-900/80 text-white">
+                    <div className="absolute top-1.5 left-1.5">
+                      <span className="px-2 py-0.5 rounded text-xs font-bold bg-slate-900/90 text-emerald-400 border border-slate-700 font-mono">
                         {p.stage}
                       </span>
                     </div>
                     <button
                       onClick={() => handleDeletePhoto(p.id)}
-                      className="touch-target absolute top-1 right-1 p-1 bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="touch-target absolute top-1.5 right-1.5 p-1.5 bg-rose-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                       title="Hapus foto"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                     {p.caption && (
-                      <div className="p-1.5 bg-white dark:bg-slate-800 text-[11px] text-slate-700 dark:text-slate-300 truncate">
+                      <div className="p-2 bg-white dark:bg-slate-900 text-xs text-slate-700 dark:text-slate-300 truncate border-t border-slate-100 dark:border-slate-800">
                         {p.caption}
                       </div>
                     )}
@@ -782,23 +798,23 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
         {/* Right Column (Financial Summary & Audit Logs) */}
         <div className="space-y-6">
           {/* Financial Breakdown Card */}
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
-            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-700">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-1.5">
-                <DollarSign className="w-4 h-4 text-emerald-600" />
+                <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Rincian Biaya & Tagihan</span>
               </h3>
               {!editingCosts ? (
                 <button
                   onClick={() => setEditingCosts(true)}
-                  className="touch-target text-xs text-blue-600 hover:underline font-bold"
+                  className="touch-target text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold"
                 >
                   Edit Jasa
                 </button>
               ) : (
                 <button
                   onClick={handleSaveCosts}
-                  className="touch-target text-xs bg-emerald-600 text-white px-2.5 py-1 rounded font-bold"
+                  className="touch-target text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold shadow-xs transition-colors"
                 >
                   Simpan
                 </button>
@@ -807,47 +823,47 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">Subtotal Biaya Jasa:</span>
+                <span className="text-slate-500 dark:text-slate-400">Subtotal Biaya Jasa:</span>
                 {editingCosts ? (
                   <input
                     type="number"
                     value={serviceFeeInput}
                     onChange={(e) => setServiceFeeInput(e.target.value)}
-                    className="w-28 p-1 text-right border rounded bg-white dark:bg-slate-750 text-xs font-bold"
+                    className="w-28 p-1.5 text-right border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-xs font-bold"
                   />
                 ) : (
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  <span className="font-semibold font-mono text-slate-800 dark:text-slate-200">
                     Rp {Number(ro.service_fee || 0).toLocaleString('id-ID')}
                   </span>
                 )}
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">Subtotal Suku Cadang:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                <span className="text-slate-500 dark:text-slate-400">Subtotal Suku Cadang:</span>
+                <span className="font-semibold font-mono text-slate-800 dark:text-slate-200">
                   Rp {Number(ro.sparepart_fee || 0).toLocaleString('id-ID')}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">Potongan / Diskon:</span>
+                <span className="text-slate-500 dark:text-slate-400">Potongan / Diskon:</span>
                 {editingCosts ? (
                   <input
                     type="number"
                     value={discountInput}
                     onChange={(e) => setDiscountInput(e.target.value)}
-                    className="w-28 p-1 text-right border rounded bg-white dark:bg-slate-750 text-xs font-bold text-red-600"
+                    className="w-28 p-1.5 text-right border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-xs font-bold text-rose-600"
                   />
                 ) : (
-                  <span className="font-semibold text-red-600">
+                  <span className="font-semibold font-mono text-rose-600 dark:text-rose-400">
                     -Rp {Number(ro.discount || 0).toLocaleString('id-ID')}
                   </span>
                 )}
               </div>
 
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <span className="text-sm font-bold text-slate-900 dark:text-white">TOTAL BIAYA:</span>
-                <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="text-base font-bold font-mono text-emerald-600 dark:text-emerald-400">
                   Rp {Number(ro.total_cost || 0).toLocaleString('id-ID')}
                 </span>
               </div>
@@ -855,23 +871,23 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
           </div>
 
           {/* Audit Logs Trail */}
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-5">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-100 dark:border-slate-700 flex items-center space-x-1.5">
-              <Clock className="w-4 h-4 text-blue-600" />
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-100 dark:border-slate-800 flex items-center space-x-1.5">
+              <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Riwayat Transisi Status</span>
             </h3>
 
             <div className="space-y-4">
               {logs.map((log) => (
-                <div key={log.id} className="relative pl-5 border-l-2 border-blue-500 text-xs">
+                <div key={log.id} className="relative pl-4 border-l-2 border-blue-500 dark:border-blue-400 text-xs">
                   <div className="font-bold text-slate-800 dark:text-slate-200">
                     {log.previous_status ? `${log.previous_status} ➔ ` : ''}{log.new_status}
                   </div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {log.actor_name} • {new Date(log.created_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </div>
                   {log.notes && (
-                    <p className="text-[11px] text-slate-600 dark:text-slate-300 italic mt-1 bg-slate-50 dark:bg-slate-750 p-1.5 rounded">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 italic mt-1 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
                       "{log.notes}"
                     </p>
                   )}
@@ -884,76 +900,97 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
       {/* Modal: Transition Status */}
       {statusModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-md w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Perbarui Status Pengerjaan
-            </h3>
-            <form onSubmit={handleSubmitStatus} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Status</label>
-                <select
-                  value={targetStatus}
-                  onChange={(e) => setTargetStatus(e.target.value)}
-                  className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 font-bold"
-                >
-                  {STAGE_ORDER.map((st) => (
-                    <option key={st} value={st}>{STAGE_LABELS[st]}</option>
-                  ))}
-                </select>
-              </div>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setStatusModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
+                Perbarui Status Pengerjaan
+              </h3>
+              <button
+                type="button"
+                onClick={() => setStatusModalOpen(false)}
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Catatan Pengerjaan</label>
-                <textarea
-                  rows={3}
-                  value={statusNotes}
-                  onChange={(e) => setStatusNotes(e.target.value)}
-                  placeholder="Contoh: Penggantian busi selesai, siap uji jalan"
-                  className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-                />
-              </div>
-
-              {targetStatus === 'DIAMBIL' && (
-                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded border border-emerald-200 dark:border-emerald-800 space-y-2">
-                  <label className="flex items-center space-x-2 text-xs font-bold text-emerald-900 dark:text-emerald-100 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={autoRecordIncome}
-                      onChange={(e) => setAutoRecordIncome(e.target.checked)}
-                      className="rounded text-emerald-600"
-                    />
-                    <span>Catat otomatis ke Buku Kas sebagai Pemasukan</span>
-                  </label>
-                  {autoRecordIncome && (
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Metode Pembayaran</label>
-                      <select
-                        value={paymentMethod}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="w-full text-xs p-1.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 font-bold"
-                      >
-                        <option value="QRIS">QRIS Instan</option>
-                        <option value="CASH">Tunai (CASH - Laci Kasir)</option>
-                        <option value="TRANSFER">Transfer Bank</option>
-                      </select>
-                    </div>
-                  )}
+            <form onSubmit={handleSubmitStatus} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 text-xs">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Status</label>
+                  <select
+                    value={targetStatus}
+                    onChange={(e) => setTargetStatus(e.target.value)}
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold text-slate-900 dark:text-white"
+                  >
+                    {STAGE_ORDER.map((st) => (
+                      <option key={st} value={st}>{STAGE_LABELS[st]}</option>
+                    ))}
+                  </select>
                 </div>
-              )}
 
-              <div className="flex items-center justify-end space-x-2 pt-2">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Catatan Pengerjaan</label>
+                  <textarea
+                    rows={3}
+                    value={statusNotes}
+                    onChange={(e) => setStatusNotes(e.target.value)}
+                    placeholder="Contoh: Penggantian busi selesai, siap uji jalan"
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                  />
+                </div>
+
+                {targetStatus === 'DIAMBIL' && (
+                  <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800 space-y-2">
+                    <label className="flex items-center space-x-2 text-xs font-bold text-emerald-900 dark:text-emerald-100 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={autoRecordIncome}
+                        onChange={(e) => setAutoRecordIncome(e.target.checked)}
+                        className="rounded text-emerald-600"
+                      />
+                      <span>Catat otomatis ke Buku Kas sebagai Pemasukan</span>
+                    </label>
+                    {autoRecordIncome && (
+                      <div>
+                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Metode Pembayaran</label>
+                        <select
+                          value={paymentMethod}
+                          onChange={(e) => setPaymentMethod(e.target.value)}
+                          className="w-full text-xs p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold"
+                        >
+                          <option value="QRIS">QRIS Instan</option>
+                          <option value="CASH">Tunai (CASH - Laci Kasir)</option>
+                          <option value="TRANSFER">Transfer Bank</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Actions (Pinned at bottom, shrink-0) */}
+              <div className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setStatusModalOpen(false)}
-                  className="touch-target px-3.5 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded"
+                  className="touch-target px-3.5 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={statusSubmitting}
-                  className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded"
+                  className="touch-target px-4 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
                 >
                   {statusSubmitting ? 'Menyimpan...' : 'Simpan Status'}
                 </button>
@@ -965,72 +1002,93 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
 
       {/* Modal: Add Sparepart */}
       {partModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60">
-          <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 max-w-md w-full p-6 space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Pasang Sparepart ke Repair Order
-            </h3>
-            <form onSubmit={handleAddSparepart} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Pilih Suku Cadang</label>
-                <select
-                  value={selectedPartId}
-                  onChange={handleSelectPart}
-                  required
-                  className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-                >
-                  <option value="">-- Pilih dari Katalog Inventaris --</option>
-                  {inventoryList.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.sku} - {item.name} (Stok: {item.stock} {item.unit})
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70"
+          onClick={() => setPartModalOpen(false)}
+        >
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full max-h-[92vh] sm:max-h-[88vh] flex flex-col overflow-hidden shadow-2xl my-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header (Pinned at top, shrink-0) */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
+                Pasang Sparepart ke Repair Order
+              </h3>
+              <button
+                type="button"
+                onClick={() => setPartModalOpen(false)}
+                className="touch-target w-10 h-10 shrink-0 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Tutup Modal (Esc)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleAddSparepart} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 text-xs">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Jumlah (Qty)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={partQty}
-                    onChange={(e) => setPartQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                    className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Pilih Suku Cadang</label>
+                  <select
+                    value={selectedPartId}
+                    onChange={handleSelectPart}
                     required
-                  />
+                    className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                  >
+                    <option value="">-- Pilih dari Katalog Inventaris --</option>
+                    {inventoryList.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.sku} - {item.name} (Stok: {item.stock} {item.unit})
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Harga Satuan (Rp)</label>
-                  <input
-                    type="number"
-                    value={partPrice}
-                    onChange={(e) => setPartPrice(Number(e.target.value))}
-                    className="w-full text-xs p-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 font-bold"
-                    required
-                  />
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Jumlah (Qty)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={partQty}
+                      onChange={(e) => setPartQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                      className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Harga Satuan (Rp)</label>
+                    <input
+                      type="number"
+                      value={partPrice}
+                      onChange={(e) => setPartPrice(Number(e.target.value))}
+                      className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold text-slate-900 dark:text-white"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800 text-xs flex justify-between font-bold">
+                  <span className="text-slate-600 dark:text-slate-400">Subtotal Penambahan:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-mono">
+                    Rp {(partQty * partPrice).toLocaleString('id-ID')}
+                  </span>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-slate-750 rounded text-xs flex justify-between font-bold">
-                <span>Subtotal Penambahan:</span>
-                <span className="text-blue-600 dark:text-blue-400">
-                  Rp {(partQty * partPrice).toLocaleString('id-ID')}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-end space-x-2 pt-2">
+              {/* Actions (Pinned at bottom, shrink-0) */}
+              <div className="p-4 sm:p-5 border-t border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 flex items-center justify-end space-x-2">
                 <button
                   type="button"
                   onClick={() => setPartModalOpen(false)}
-                  className="touch-target px-3.5 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded"
+                  className="touch-target px-3.5 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 rounded-xl transition-colors"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={partSubmitting || !selectedPartId}
-                  className="touch-target px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded"
+                  className="touch-target px-4 py-2 bg-[#00a86b] hover:bg-emerald-600 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
                 >
                   {partSubmitting ? 'Memproses...' : 'Pasang Part'}
                 </button>

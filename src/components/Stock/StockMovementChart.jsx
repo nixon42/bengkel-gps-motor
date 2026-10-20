@@ -50,33 +50,33 @@ export default function StockMovementChart({ movements = [] }) {
   const barWidth = Math.max(6, (groupWidth - 8) / 2);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 mb-6 shadow-none">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-700 gap-2">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
-            <BarChart2 className="w-4 h-4" />
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 mb-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-100 dark:border-emerald-800/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+            <BarChart2 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
               Grafik Alur Mutasi Stok (14 Hari Terakhir)
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Perbandingan volume unit suku cadang masuk (restock) vs keluar (servis)
             </p>
           </div>
         </div>
 
         {/* Legend & Stats */}
-        <div className="flex items-center space-x-4 text-xs">
-          <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" />
+        <div className="flex items-center space-x-2 text-xs">
+          <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             <span className="text-slate-600 dark:text-slate-300 font-medium">Masuk:</span>
-            <span className="font-bold text-slate-900 dark:text-white font-mono">{totalIn} pcs</span>
+            <span className="font-bold text-emerald-700 dark:text-emerald-400 font-mono">{totalIn} pcs</span>
           </div>
-          <div className="flex items-center space-x-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block" />
+          <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40">
+            <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
             <span className="text-slate-600 dark:text-slate-300 font-medium">Keluar:</span>
-            <span className="font-bold text-slate-900 dark:text-white font-mono">{totalOut} pcs</span>
+            <span className="font-bold text-blue-700 dark:text-blue-400 font-mono">{totalOut} pcs</span>
           </div>
         </div>
       </div>
@@ -98,14 +98,15 @@ export default function StockMovementChart({ movements = [] }) {
                   y1={y}
                   x2={width - 10}
                   y2={y}
-                  className="stroke-slate-100 dark:stroke-slate-700"
+                  className="stroke-slate-100 dark:stroke-slate-800"
                   strokeDasharray={ratio > 0 ? "3 3" : "none"}
                 />
                 <text
                   x="24"
                   y={y + 3}
                   textAnchor="end"
-                  className="text-[9px] fill-slate-400 font-mono"
+                  fontSize="9"
+                  className="fill-slate-400 dark:fill-slate-500 font-mono font-medium"
                 >
                   {val}
                 </text>
@@ -131,7 +132,7 @@ export default function StockMovementChart({ movements = [] }) {
                     width={barWidth}
                     height={inBarH}
                     className="fill-emerald-500 hover:fill-emerald-600 transition-colors"
-                    rx="1.5"
+                    rx="2"
                   >
                     <title>{`${d.date}: ${d.inQty} unit masuk`}</title>
                   </rect>
@@ -145,7 +146,7 @@ export default function StockMovementChart({ movements = [] }) {
                     width={barWidth}
                     height={outBarH}
                     className="fill-blue-500 hover:fill-blue-600 transition-colors"
-                    rx="1.5"
+                    rx="2"
                   >
                     <title>{`${d.date}: ${d.outQty} unit keluar`}</title>
                   </rect>
@@ -156,7 +157,8 @@ export default function StockMovementChart({ movements = [] }) {
                   x={groupX + barWidth}
                   y={height - 8}
                   textAnchor="middle"
-                  className="text-[9px] fill-slate-400 font-mono"
+                  fontSize="9"
+                  className="fill-slate-400 dark:fill-slate-500 font-mono font-medium"
                 >
                   {d.label}
                 </text>
