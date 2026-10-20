@@ -3,6 +3,7 @@ import {
   Wrench, Sparkles, Building2, MapPin, Phone, Clock, 
   Camera, Upload, Check, CheckCircle2, ArrowRight, ShieldCheck, Image, X
 } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUrl';
 
 const PRESET_PACKS = [
   {
@@ -268,7 +269,7 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
                 
                 <div className="aspect-[16/10] rounded overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
                   <img 
-                    src={formData.heroImageUrl} 
+                    src={resolveAssetUrl(formData.heroImageUrl)} 
                     alt="Preview Hero"
                     className="w-full h-full object-cover" 
                   />
@@ -310,7 +311,7 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
                 
                 <div className="aspect-[16/10] rounded overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
                   <img 
-                    src={formData.facilityImage1} 
+                    src={resolveAssetUrl(formData.facilityImage1)} 
                     alt="Preview Stall 1"
                     className="w-full h-full object-cover" 
                   />
@@ -352,7 +353,7 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
                 
                 <div className="aspect-[16/10] rounded overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
                   <img 
-                    src={formData.facilityImage2} 
+                    src={resolveAssetUrl(formData.facilityImage2)} 
                     alt="Preview Scanner"
                     className="w-full h-full object-cover" 
                   />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldCheck, CheckCircle2, Wrench, Cpu, Gauge, PackageCheck } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUrl';
 
 const FACILITIES = [
   {
@@ -62,7 +63,7 @@ export default function GallerySection() {
                 {/* Photo with clean solid badge */}
                 <div className="relative aspect-[4/3] w-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <img 
-                    src={item.image} 
+                    src={resolveAssetUrl(item.image)} 
                     alt={item.title} 
                     loading="lazy"
                     className="w-full h-full object-cover"

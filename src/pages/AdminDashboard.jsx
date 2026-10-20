@@ -39,6 +39,7 @@ import {
 import DashboardPage from './DashboardPage';
 import DocsPage from './DocsPage';
 import OnboardingModal from '../components/Admin/OnboardingModal';
+import { resolveAssetUrl } from '../utils/assetUrl';
 
 const InventoryPage = lazy(() => import('./InventoryPage'));
 const StockMutationsPage = lazy(() => import('./StockMutationsPage'));
@@ -57,7 +58,7 @@ function TabFallback() {
 }
 
 export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, onNavigateSuperadmin, onNavigateDocs }) {
-  const { user, tenant, loading, mockLogin, logout, updateSettings } = useAuth();
+  const { user, tenant, loading, mockLogin, logout, updateSettings, loginWithGoogle } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -110,9 +111,9 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
         address: tenant.address || '',
         phoneWa: tenant.phone_wa || '',
         businessHours: tenant.business_hours || '',
-        heroImageUrl: tenant.hero_image_url || '/images/mockup/facility_inspection_clean.jpg',
-        facilityImage1: tenant.facility_image_1 || '/images/mockup/facility_lift_bay_clean.jpg',
-        facilityImage2: tenant.facility_image_2 || '/images/mockup/facility_inspection_clean.jpg'
+        heroImageUrl: tenant.hero_image_url || resolveAssetUrl('/images/mockup/facility_inspection_clean.jpg'),
+        facilityImage1: tenant.facility_image_1 || resolveAssetUrl('/images/mockup/facility_lift_bay_clean.jpg'),
+        facilityImage2: tenant.facility_image_2 || resolveAssetUrl('/images/mockup/facility_inspection_clean.jpg')
       }));
 
       // Check first-time login onboarding
@@ -308,14 +309,30 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => mockLogin()}
-                disabled={loading}
-                className="touch-target flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-[#00a86b] hover:bg-emerald-600 text-white text-xs font-bold tracking-wide uppercase transition-colors shadow-xs shrink-0"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>{loading ? 'Masuk...' : 'Demo Login'}</span>
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => loginWithGoogle()}
+                  disabled={loading}
+                  className="touch-target flex items-center space-x-1.5 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold tracking-wide transition-colors shrink-0 shadow-xs"
+                  title="Login dengan Akun Google via Supabase"
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                  <span>Google</span>
+                </button>
+                <button
+                  onClick={() => mockLogin()}
+                  disabled={loading}
+                  className="touch-target flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-[#00a86b] hover:bg-emerald-600 text-white text-xs font-bold tracking-wide uppercase transition-colors shadow-xs shrink-0"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>{loading ? 'Masuk...' : 'Demo Login'}</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -642,7 +659,7 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
                       </span>
                       <div className="aspect-[16/10] rounded-lg overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
                         <img 
-                          src={formData.heroImageUrl || '/images/mockup/facility_inspection_clean.jpg'} 
+                          src={resolveAssetUrl(formData.heroImageUrl || '/images/mockup/facility_inspection_clean.jpg')} 
                           alt="Hero Preview" 
                           className="w-full h-full object-cover" 
                         />
@@ -678,7 +695,7 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
                       </span>
                       <div className="aspect-[16/10] rounded-lg overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
                         <img 
-                          src={formData.facilityImage1 || '/images/mockup/facility_lift_bay_clean.jpg'} 
+                          src={resolveAssetUrl(formData.facilityImage1 || '/images/mockup/facility_lift_bay_clean.jpg')} 
                           alt="Stall Preview" 
                           className="w-full h-full object-cover" 
                         />
@@ -714,7 +731,7 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
                       </span>
                       <div className="aspect-[16/10] rounded-lg overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-700 relative">
                         <img 
-                          src={formData.facilityImage2 || '/images/mockup/facility_inspection_clean.jpg'} 
+                          src={resolveAssetUrl(formData.facilityImage2 || '/images/mockup/facility_inspection_clean.jpg')} 
                           alt="Scanner Preview" 
                           className="w-full h-full object-cover" 
                         />

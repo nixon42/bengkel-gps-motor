@@ -5,6 +5,7 @@ import {
   Search, ShieldCheck, ArrowRight, Phone, CheckCircle2, ChevronDown, Check,
   Sparkles, WrenchIcon, Layers, Clock, MapPin
 } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUrl';
 
 const INTEGRITY_PILLARS = [
   {
@@ -95,9 +96,9 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
   const businessHours = tenant?.business_hours || tenant?.businessHours || 'Senin - Sabtu: 08:00 - 17:00 WIB';
   const phoneWa = tenant?.phone_wa || tenant?.phoneWa || '085603307330';
   const cleanWa = phoneWa.replace(/\D/g, '').replace(/^0/, '62');
-  const heroImage = tenant?.hero_image_url || tenant?.heroImageUrl || '/images/mockup/hero_bay_clean.jpg';
-  const facilityImage1 = tenant?.facility_image_1 || tenant?.facilityImage1 || '/images/mockup/facility_lift_bay_clean.jpg';
-  const facilityImage2 = tenant?.facility_image_2 || tenant?.facilityImage2 || '/images/mockup/facility_inspection_clean.jpg';
+  const heroImage = resolveAssetUrl(tenant?.hero_image_url || tenant?.heroImageUrl || '/images/mockup/hero_bay_clean.jpg');
+  const facilityImage1 = resolveAssetUrl(tenant?.facility_image_1 || tenant?.facilityImage1 || '/images/mockup/facility_lift_bay_clean.jpg');
+  const facilityImage2 = resolveAssetUrl(tenant?.facility_image_2 || tenant?.facilityImage2 || '/images/mockup/facility_inspection_clean.jpg');
 
   const handlePlateSubmit = (e) => {
     e.preventDefault();

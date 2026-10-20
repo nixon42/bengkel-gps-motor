@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Sparkles, Check, ChevronDown, Maximize2, X, ZoomIn, Eye, Info } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUrl';
 
 export default function AnnotatedCard({ 
   title = 'Tangkapan Layar Antarmuka & Panduan Tombol', 
@@ -72,7 +73,7 @@ export default function AnnotatedCard({
           /* High-Resolution Screenshot with Overlaid Numbered Callout Pins (1, 2, 3...) */
           <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md bg-slate-900 group">
             <img 
-              src={image} 
+              src={resolveAssetUrl(image)} 
               alt={title}
               className="w-full h-auto object-cover max-h-[500px] sm:max-h-[600px] select-none block"
             />
@@ -376,7 +377,7 @@ export default function AnnotatedCard({
             <div className="overflow-auto flex-1 p-4 bg-black/60 flex items-center justify-center">
               <div className="relative inline-block max-w-full">
                 <img 
-                  src={image} 
+                  src={resolveAssetUrl(image)} 
                   alt={title}
                   className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl block"
                 />

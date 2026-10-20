@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Image as ImageIcon, X } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUrl';
 
 export default function PhotoGallery({ photos = [] }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -66,7 +67,7 @@ export default function PhotoGallery({ photos = [] }) {
             {/* Image Thumbnail */}
             <div className="relative aspect-video bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
               <img
-                src={item.photo_url || item.photoUrl}
+                src={resolveAssetUrl(item.photo_url || item.photoUrl)}
                 alt={item.caption || 'Foto perbaikan servis'}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 onError={(e) => {
@@ -104,7 +105,7 @@ export default function PhotoGallery({ photos = [] }) {
           >
             <div className="relative bg-black flex items-center justify-center max-h-[70vh]">
               <img
-                src={selectedPhoto.photo_url || selectedPhoto.photoUrl}
+                src={resolveAssetUrl(selectedPhoto.photo_url || selectedPhoto.photoUrl)}
                 alt={selectedPhoto.caption || 'Foto perbaikan'}
                 className="max-h-[70vh] w-auto max-w-full object-contain"
               />

@@ -23,7 +23,10 @@ export const supabase = isSupabaseConfigured
     })
   : null;
 
-export const BUCKET_NAME = 'bengkel-photos';
+export const BUCKET_NAME = 
+  import.meta.env.VITE_SUPABASE_BUCKET || 
+  import.meta.env.NEXT_PUBLIC_SUPABASE_BUCKET || 
+  'bucket3';
 
 /**
  * Upload an image file to Supabase Storage bucket with client-side auto-compression (~100KB).
@@ -44,28 +47,44 @@ export async function uploadImageToSupabase(file, folder = 'ro') {
   const randomSuffix = Math.random().toString(36).substring(2, 10);
   const fileName = `${folder}/${Date.now()}_${randomSuffix}.${cleanExt}`;
 
-  // 3. Upload to Supabase Storage
-  const { data, error } = await supabase.storage
-    .from(BUCKET_NAME)
-    .upload(fileName, compressed, {
-      cacheControl: '31536000',
-      upsert: false,
-      contentType: compressed.type || 'image/jpeg'
-    });
+  // 3. Upload to Supabase Storage - try configured bucket candidates
+  const bucketCandidates = [BUCKET_NAME, 'bucket3', 'bengkel-photos'].filter((v, i, a) => a.indexOf(v) === i);
 
-  if (error) {
-    console.error('Supabase Storage upload error:', error);
-    throw new Error(`Gagal mengunggah foto ke Supabase: ${error.message}`);
+  let uploadResult = null;
+  let usedBucket = BUCKET_NAME;
+  let lastError = null;
+
+  for (const b of bucketCandidates) {
+    const { data, error } = await supabase.storage
+      .from(b)
+      .upload(fileName, compressed, {
+        cacheControl: '31536000',
+        upsert: false,
+        contentType: compressed.type || 'image/jpeg'
+      });
+
+    if (!error && data) {
+      uploadResult = data;
+      usedBucket = b;
+      break;
+    } else {
+      lastError = error;
+    }
+  }
+
+  if (!uploadResult) {
+    console.error('Supabase Storage upload error:', lastError);
+    throw new Error(`Gagal mengunggah foto ke Supabase Storage (Bucket: ${usedBucket}): ${lastError?.message || 'Pastikan bucket berstatus Public dan sudah memiliki Storage Policy'}`);
   }
 
   // 4. Retrieve permanent public CDN URL
   const { data: publicUrlData } = supabase.storage
-    .from(BUCKET_NAME)
-    .getPublicUrl(data.path);
+    .from(usedBucket)
+    .getPublicUrl(uploadResult.path);
 
   return {
     url: publicUrlData.publicUrl,
-    path: data.path
+    path: uploadResult.path
   };
 }
 

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { resolveAssetUrl } from '../utils/assetUrl';
 
 // Synthesize tactile relay / hardware switch click sound via Web Audio API (zero asset latency)
 function playMechanicalClick(enabled) {
@@ -807,14 +808,14 @@ export default function AppPlatformLandingPage({
                   <div className="relative rounded overflow-hidden border border-slate-300 dark:border-slate-800 bg-slate-900 h-64 sm:h-80 select-none">
                     {/* Background: After Photo (Full size) */}
                     <img 
-                      src={activeVehicle.afterPhoto} 
+                      src={resolveAssetUrl(activeVehicle.afterPhoto)} 
                       alt="Kondisi Setelah Servis"
                       className="absolute inset-0 w-full h-full object-cover"
                     />
 
                     {/* Foreground: Before Photo with CSS clipPath (Full size, zero distortion) */}
                     <img 
-                      src={activeVehicle.beforePhoto} 
+                      src={resolveAssetUrl(activeVehicle.beforePhoto)} 
                       alt="Kondisi Sebelum Servis"
                       className="absolute inset-0 w-full h-full object-cover"
                       style={{ clipPath: `inset(0 ${100 - photoSliderPos}% 0 0)` }}

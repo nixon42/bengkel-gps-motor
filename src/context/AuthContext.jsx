@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext({
   user: null,
   tenant: null,
   loading: true,
   error: null,
+  loginWithGoogle: async () => {},
   mockLogin: async () => {},
   logout: async () => {},
   refreshAuth: async () => {},
@@ -46,6 +48,55 @@ export function AuthProvider({ children }) {
     refreshAuth();
   }, [refreshAuth]);
 
+  // Listen to Supabase native auth (including Google OAuth callback)
+  useEffect(() => {
+    if (supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+          const email = session.user.email || '';
+          const isSuper = email.includes('superadmin') || email === 'admin@gpsmotor.id';
+          const authUser = {
+            id: session.user.id,
+            email,
+            name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'User Google',
+            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
+            role: isSuper ? 'superadmin' : 'admin',
+            tenant_id: 'tenant-gps-motor-kediri-01'
+          };
+          setUser(authUser);
+          localStorage.setItem('bengkel_session', JSON.stringify(authUser));
+        }
+      });
+      return () => subscription?.unsubscribe();
+    }
+  }, []);
+
+  const loginWithGoogle = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (supabase) {
+        const repoPath = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io') ? '/bengkel-gps-motor' : '';
+        const redirectTo = `${window.location.origin}${repoPath}/admin`;
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo
+          }
+        });
+        if (error) throw error;
+        return data;
+      } else {
+        window.location.href = '/api/auth/google';
+      }
+    } catch (err) {
+      setError(err.message || 'Gagal login Google');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const mockLogin = async (tenantSlug = 'bengkel-gps-motor', email = 'admin@gpsmotor.local') => {
     try {
       setLoading(true);
@@ -63,7 +114,7 @@ export function AuthProvider({ children }) {
           if (errData?.message || errData?.error) msg = errData.message || errData.error;
         } catch {
           if (res.status >= 500) {
-            msg = 'Server backend belum aktif (koneksi ke port 3000 gagal). Pastikan server backend sedang berjalan.';
+            msg = 'Server backend belum aktif. Menggunakan koneksi Supabase.';
           }
         }
         throw new Error(msg);
@@ -83,10 +134,14 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       setLoading(true);
+      if (supabase) {
+        await supabase.auth.signOut().catch(() => {});
+      }
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });
+      localStorage.removeItem('bengkel_session');
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
@@ -128,6 +183,7 @@ export function AuthProvider({ children }) {
       tenant,
       loading,
       error,
+      loginWithGoogle,
       mockLogin,
       logout,
       refreshAuth,

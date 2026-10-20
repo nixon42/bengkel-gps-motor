@@ -24,6 +24,7 @@ import {
   X
 } from 'lucide-react';
 import { compressImageClient } from '../utils/imageCompressor.js';
+import { resolveAssetUrl } from '../utils/assetUrl';
 
 const STAGE_ORDER = ['MASUK', 'DIAGNOSA', 'PENGERJAAN', 'MENUNGGU_PART', 'SELESAI', 'DIAMBIL'];
 
@@ -770,7 +771,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {photos.map((p) => (
                   <div key={p.id} className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 group shadow-xs">
-                    <img src={p.photo_url} alt={p.caption || 'Foto servis'} className="w-full h-32 object-cover" />
+                    <img src={resolveAssetUrl(p.photo_url)} alt={p.caption || 'Foto servis'} className="w-full h-32 object-cover" />
                     <div className="absolute top-1.5 left-1.5">
                       <span className="px-2 py-0.5 rounded text-xs font-bold bg-slate-900/90 text-emerald-400 border border-slate-700 font-mono">
                         {p.stage}
