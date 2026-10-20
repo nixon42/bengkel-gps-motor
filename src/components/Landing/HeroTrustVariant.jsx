@@ -4,6 +4,7 @@ import {
   Camera, FileText, RotateCcw, Award, Car, Clock, Sparkles,
   ClipboardList, FileCheck, Wrench, Cog, CheckCircle, PackageCheck
 } from 'lucide-react';
+import { resolveAssetUrl } from '../../utils/assetUrl';
 
 /* =========================================================================
    MOCKUP DATA STRUCTURES (EXACT REPLICATION OF VARIANT 2)
@@ -152,13 +153,13 @@ export default function HeroTrustVariant({ onSearchPlate, defaultPlate = '' }) {
             <div className="lg:col-span-5 relative">
               <div className="rounded border-2 border-blue-800/80 overflow-hidden bg-slate-900 shadow-sm aspect-[4/3]">
                 <img 
-                  src="/images/hero/hero-workshop.jpg" 
+                  src={resolveAssetUrl('/images/hero/hero-workshop.jpg')} 
                   alt="Area Workshop Bengkel Mobil GPS Motor Kediri"
                   className="w-full h-full object-cover"
                   loading="eager"
                   onError={(e) => {
                     // Fallback to facility lift if hero-workshop not found
-                    e.currentTarget.src = '/images/gallery/facility-lift.jpg';
+                    e.currentTarget.src = resolveAssetUrl('/images/gallery/facility-lift.jpg');
                   }}
                 />
               </div>
@@ -546,7 +547,7 @@ export default function HeroTrustVariant({ onSearchPlate, defaultPlate = '' }) {
             <div className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
               <div className="aspect-[16/10] bg-slate-200 dark:bg-slate-700 overflow-hidden">
                 <img 
-                  src="/images/gallery/facility-lift.jpg" 
+                  src={resolveAssetUrl('/images/gallery/facility-lift.jpg')} 
                   alt="Inspeksi Kolong Mobil di Lift 4-Ton GPS Motor"
                   className="w-full h-full object-cover"
                   loading="lazy"
@@ -566,7 +567,7 @@ export default function HeroTrustVariant({ onSearchPlate, defaultPlate = '' }) {
             <div className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
               <div className="aspect-[16/10] bg-slate-200 dark:bg-slate-700 overflow-hidden">
                 <img 
-                  src="/images/gallery/facility-scanner.jpg" 
+                  src={resolveAssetUrl('/images/gallery/facility-scanner.jpg')} 
                   alt="Diagnostik Komputer OBD2 Bengkel GPS Motor"
                   className="w-full h-full object-cover"
                   loading="lazy"

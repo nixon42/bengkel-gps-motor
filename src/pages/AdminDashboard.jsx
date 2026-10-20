@@ -38,6 +38,7 @@ import {
 
 import DashboardPage from './DashboardPage';
 import DocsPage from './DocsPage';
+import LoginPage from './LoginPage';
 import OnboardingModal from '../components/Admin/OnboardingModal';
 import { resolveAssetUrl } from '../utils/assetUrl';
 
@@ -58,7 +59,7 @@ function TabFallback() {
 }
 
 export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, onNavigateSuperadmin, onNavigateDocs }) {
-  const { user, tenant, loading, mockLogin, logout, updateSettings, loginWithGoogle } = useAuth();
+  const { user, tenant, loading, logout, updateSettings, loginWithGoogle, refreshAuth } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -84,12 +85,6 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
     window.__setActiveTab = setActiveTab;
     return () => { delete window.__setActiveTab; };
   }, []);
-
-  useEffect(() => {
-    if (!loading && !user) {
-      mockLogin().catch(() => {});
-    }
-  }, [loading, user]);
 
   // Close settings modal on Escape key
   useEffect(() => {
@@ -187,6 +182,19 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
     await updateSettings(onboardingPayload);
     setOnboardingOpen(false);
   };
+
+  if (loading) {
+    return <TabFallback />;
+  }
+
+  if (!user) {
+    return (
+      <LoginPage
+        onNavigateHome={onNavigateLanding}
+        onLoginSuccess={() => refreshAuth()}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans pb-28 md:pb-8">

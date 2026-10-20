@@ -301,7 +301,7 @@ FOR UPDATE USING (bucket_id = 'bengkel-photos');
 -- 18. INITIAL SEED DATA
 -- ====================================================================
 -- 1. Tenant Bengkel GPS Motor Kediri
-INSERT INTO tenants (id, slug, name, address, phone_wa, business_hours, tagline)
+INSERT INTO tenants (id, slug, name, address, phone_wa, business_hours, tagline, hero_image_url, facility_image_1, facility_image_2)
 VALUES (
   'tenant-gps-motor-kediri-01',
   'bengkel-gps-motor',
@@ -309,8 +309,14 @@ VALUES (
   'Jl. Raya Sambiresik No. 45, Kec. Gampengrejo, Kab. Kediri, Jawa Timur',
   '085603307330',
   'Senin - Sabtu: 08:00 - 17:00 WIB',
-  'Tune Up, Injeksi, Kaki-kaki & Perawatan Berkala Terpercaya'
-) ON CONFLICT (id) DO NOTHING;
+  'Tune Up, Injeksi, Kaki-kaki & Perawatan Berkala Terpercaya',
+  '/images/mockup/hero_bay_clean.jpg',
+  '/images/mockup/facility_lift_bay_clean.jpg',
+  '/images/mockup/facility_inspection_clean.jpg'
+) ON CONFLICT (id) DO UPDATE SET
+  hero_image_url = EXCLUDED.hero_image_url,
+  facility_image_1 = EXCLUDED.facility_image_1,
+  facility_image_2 = EXCLUDED.facility_image_2;
 
 -- 2. Tenant Settings
 INSERT INTO tenant_settings (tenant_id, monthly_revenue_target, invoice_footer, auto_print_invoice, notify_wa)
@@ -425,3 +431,12 @@ VALUES
   ('ro-part-01', 'tenant-gps-motor-kediri-01', 'ro-demo-001', 'part-oli-tmo-01', 'Oli Mesin TMO 10W-40 (4L)', 1, 360000, 360000),
   ('ro-part-02', 'tenant-gps-motor-kediri-01', 'ro-demo-001', 'part-filter-avanza', 'Filter Oli Avanza / Xenia Original', 1, 45000, 45000)
 ON CONFLICT (id) DO NOTHING;
+
+-- Photos used in sample RO (Before, Progress, After)
+INSERT INTO ro_photos (id, tenant_id, repair_order_id, photo_url, stage, caption)
+VALUES
+  ('photo-demo-01', 'tenant-gps-motor-kediri-01', 'ro-demo-001', '/images/before-after/spark-plug-worn.jpg', 'BEFORE', 'Kondisi busi lama mengalami kerak karbon hitam & celah elektroda aus di atas batas toleransi.'),
+  ('photo-demo-02', 'tenant-gps-motor-kediri-01', 'ro-demo-001', '/images/gallery/facility-scanner.jpg', 'PROGRESS', 'Pembersihan throttle body dengan injector cleaner dan scan live data sensor menggunakan scanner OBD2.'),
+  ('photo-demo-03', 'tenant-gps-motor-kediri-01', 'ro-demo-001', '/images/before-after/spark-plug-new.jpg', 'AFTER', 'Pemasangan 4x Busi NGK Iridium baru dan penggantian filter oli original selesai.')
+ON CONFLICT (id) DO NOTHING;
+

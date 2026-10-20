@@ -60,11 +60,7 @@ export default function LandingPage({
 
   const handleLoginClick = () => {
     setMobileMenuOpen(false);
-    if (user) {
-      onOpenAdmin();
-    } else {
-      mockLogin().then(() => onOpenAdmin());
-    }
+    onOpenAdmin();
   };
 
   const navLinks = [

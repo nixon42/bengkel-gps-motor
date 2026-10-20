@@ -45,18 +45,31 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         .eq('slug', 'bengkel-gps-motor')
         .single();
 
-      if (!user) {
-        // Fallback demo user
-        user = {
-          id: 'usr-operator-01',
-          name: 'Bambang GPS Motor',
-          email: 'admin@gpsmotor.local',
-          role: 'admin',
-          tenant_id: tenant?.id || DEFAULT_TENANT_ID
-        };
+      if (!user && supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            const email = session.user.email || '';
+            const isSuper = email.includes('superadmin') || email === 'admin@gpsmotor.id';
+            user = {
+              id: session.user.id,
+              email,
+              name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'User Supabase',
+              avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
+              role: isSuper ? 'superadmin' : 'admin',
+              tenant_id: tenant?.id || DEFAULT_TENANT_ID
+            };
+            localStorage.setItem('bengkel_session', JSON.stringify(user));
+          }
+        } catch (e) {
+          console.warn('Gagal membaca sesi auth Supabase:', e);
+        }
       }
 
-      return jsonResponse({ user, tenant: tenant || { id: DEFAULT_TENANT_ID, slug: 'bengkel-gps-motor', name: 'Bengkel Mobil GPS Motor Kediri' } });
+      return jsonResponse({
+        user: user || null,
+        tenant: tenant || { id: DEFAULT_TENANT_ID, slug: 'bengkel-gps-motor', name: 'Bengkel Mobil GPS Motor Kediri' }
+      });
     }
 
     if (path === '/api/auth/mock-login') {
@@ -83,6 +96,9 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
     if (path === '/api/auth/logout') {
       localStorage.removeItem('bengkel_session');
+      if (supabase) {
+        await supabase.auth.signOut().catch(() => {});
+      }
       return jsonResponse({ success: true });
     }
 
@@ -161,7 +177,37 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         supabase.from('ro_spareparts').select('*').eq('repair_order_id', ro.id)
       ]);
 
-      const sanitized = sanitizeTrackingPayload(ro, photos, logs, parts);
+      let safePhotos = photos || [];
+      if (safePhotos.length === 0 && (ro.id === 'ro-demo-001' || ro.ro_number === 'RO-2026-0001')) {
+        safePhotos = [
+          {
+            id: 'photo-demo-01',
+            repair_order_id: ro.id,
+            stage: 'BEFORE',
+            photo_url: '/images/before-after/spark-plug-worn.jpg',
+            caption: 'Kondisi busi lama mengalami kerak karbon hitam & celah elektroda aus di atas batas toleransi.',
+            created_at: ro.created_at || new Date().toISOString()
+          },
+          {
+            id: 'photo-demo-02',
+            repair_order_id: ro.id,
+            stage: 'PROGRESS',
+            photo_url: '/images/gallery/facility-scanner.jpg',
+            caption: 'Pembersihan throttle body dengan injector cleaner dan scan live data sensor menggunakan scanner OBD2.',
+            created_at: ro.created_at || new Date().toISOString()
+          },
+          {
+            id: 'photo-demo-03',
+            repair_order_id: ro.id,
+            stage: 'AFTER',
+            photo_url: '/images/before-after/spark-plug-new.jpg',
+            caption: 'Pemasangan 4x Busi NGK Iridium baru dan penggantian filter oli original selesai.',
+            created_at: ro.created_at || new Date().toISOString()
+          }
+        ];
+      }
+
+      const sanitized = sanitizeTrackingPayload(ro, safePhotos, logs, parts);
       return jsonResponse({
         success: true,
         order: sanitized,
@@ -326,26 +372,87 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         const { data: ro, error } = await supabase.from('repair_orders').select('*').eq('id', roId).single();
         if (error || !ro) return errorResponse('Repair Order tidak ditemukan.', 404);
 
-        const [{ data: photos }, { data: logs }, { data: parts }] = await Promise.all([
+        const [{ data: photos }, { data: logs }, { data: parts }, customerRes] = await Promise.all([
           supabase.from('ro_photos').select('*').eq('repair_order_id', ro.id).order('created_at', { ascending: true }),
           supabase.from('ro_status_logs').select('*').eq('repair_order_id', ro.id).order('created_at', { ascending: true }),
-          supabase.from('ro_spareparts').select('*').eq('repair_order_id', ro.id)
+          supabase.from('ro_spareparts').select('*').eq('repair_order_id', ro.id),
+          ro.customer_id ? supabase.from('customers').select('*').eq('id', ro.customer_id).single() : Promise.resolve({ data: null })
         ]);
+
+        let safePhotos = photos || [];
+        if (safePhotos.length === 0 && (ro.id === 'ro-demo-001' || ro.ro_number === 'RO-2026-0001')) {
+          safePhotos = [
+            {
+              id: 'photo-demo-01',
+              repair_order_id: ro.id,
+              stage: 'BEFORE',
+              photo_url: '/images/before-after/spark-plug-worn.jpg',
+              caption: 'Kondisi busi lama mengalami kerak karbon hitam & celah elektroda aus di atas batas toleransi.',
+              created_at: ro.created_at || new Date().toISOString()
+            },
+            {
+              id: 'photo-demo-02',
+              repair_order_id: ro.id,
+              stage: 'PROGRESS',
+              photo_url: '/images/gallery/facility-scanner.jpg',
+              caption: 'Pembersihan throttle body dengan injector cleaner dan scan live data sensor menggunakan scanner OBD2.',
+              created_at: ro.created_at || new Date().toISOString()
+            },
+            {
+              id: 'photo-demo-03',
+              repair_order_id: ro.id,
+              stage: 'AFTER',
+              photo_url: '/images/before-after/spark-plug-new.jpg',
+              caption: 'Pemasangan 4x Busi NGK Iridium baru dan penggantian filter oli original selesai.',
+              created_at: ro.created_at || new Date().toISOString()
+            }
+          ];
+        }
 
         return jsonResponse({
           success: true,
-          repairOrder: { ...ro, photos: photos || [], logs: logs || [], spareparts: parts || [] }
+          repair_order: ro,
+          repairOrder: ro,
+          photos: safePhotos,
+          logs: logs || [],
+          spareparts: parts || [],
+          customer: customerRes?.data || null
         });
       }
 
       // 5.7 List ROs
       if (path === '/api/repair-orders' && method === 'GET') {
-        const { data, error } = await supabase
-          .from('repair_orders')
-          .select('*')
-          .order('created_at', { ascending: false });
+        let query = supabase.from('repair_orders').select('*');
+        const statusFilter = params.get('status');
+        const searchFilter = params.get('search');
+        if (statusFilter && statusFilter !== 'ALL') {
+          query = query.eq('status', statusFilter);
+        }
+        if (searchFilter) {
+          query = query.or(`plate_number.ilike.%${searchFilter}%,customer_name.ilike.%${searchFilter}%,ro_number.ilike.%${searchFilter}%`);
+        }
+        const { data, error } = await query.order('created_at', { ascending: false });
         if (error) throw error;
-        return jsonResponse({ success: true, repair_orders: data || [], repairOrders: data || [] });
+
+        const allRos = data || [];
+        const stats = {
+          total: allRos.length,
+          masuk: allRos.filter(r => r.status === 'MASUK').length,
+          diagnosa: allRos.filter(r => r.status === 'DIAGNOSA').length,
+          pengerjaan: allRos.filter(r => r.status === 'PENGERJAAN').length,
+          menunggu_part: allRos.filter(r => r.status === 'MENUNGGU_PART').length,
+          selesai: allRos.filter(r => r.status === 'SELESAI').length,
+          diambil: allRos.filter(r => r.status === 'DIAMBIL').length
+        };
+
+        return jsonResponse({
+          success: true,
+          repair_orders: allRos,
+          repairOrders: allRos,
+          items: allRos,
+          stats,
+          pagination: { page: 1, limit: 50, total: allRos.length, totalPages: 1 }
+        });
       }
 
       // 5.8 Create RO

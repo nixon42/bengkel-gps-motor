@@ -304,11 +304,7 @@ export default function AppPlatformLandingPage({
 
   const handleLoginClick = () => {
     playMechanicalClick(audioFeedback);
-    if (user) {
-      onOpenAdmin();
-    } else {
-      mockLogin().then(() => onOpenAdmin());
-    }
+    onOpenAdmin();
   };
 
   const handleTabSwitch = (tab) => {
