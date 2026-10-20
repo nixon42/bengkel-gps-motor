@@ -38,6 +38,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'sb_publishable_a2DtzC-gZLrp5gdSpPbB3A_JrWVTWwU' }}
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://vjcllwgikivvvyxrvylx.supabase.co' }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'sb_publishable_a2DtzC-gZLrp5gdSpPbB3A_JrWVTWwU' }}
+          VITE_SUPERADMIN_EMAILS: ${{ secrets.SUPERADMIN_EMAILS || 'aliepcahyo@gmail.com,allepcahyo@gmail.com' }}
         run: npm run build
 
       - name: Upload artifact

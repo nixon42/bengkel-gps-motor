@@ -1,6 +1,6 @@
 import { supabase, uploadImageToSupabase, deleteImageFromSupabase, getSignedImageUrl } from './supabase';
 import { sanitizeTrackingPayload, normalizePlate } from '../utils/masking';
-import { isSuperadmin } from '../utils/roles';
+import { isSuperadmin, parseConfiguredSuperadmins } from '../utils/roles';
 
 const DEFAULT_TENANT_ID = 'tenant-gps-motor-kediri-01';
 
@@ -953,28 +953,55 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
       if (path === '/api/superadmin/users') {
         if (method === 'GET') {
+          // 1. If Supabase table exists, query users
+          if (supabase) {
+            try {
+              const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .order('created_at', { ascending: false });
+              if (!error && Array.isArray(data) && data.length > 0) {
+                return jsonResponse({ success: true, users: data });
+              }
+            } catch (e) {
+              // fallback below
+            }
+          }
+
+          // 2. Fallback to active session user + environment configured superadmins
+          const configuredAdmins = parseConfiguredSuperadmins();
+          const activeSession = typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('bengkel_session') || 'null') : null;
+          const userList = [];
+
+          if (activeSession?.email) {
+            userList.push({
+              id: activeSession.id || 'usr-active-01',
+              name: activeSession.name || 'Active User',
+              email: activeSession.email,
+              role: activeSession.role || 'superadmin',
+              tenant_id: DEFAULT_TENANT_ID,
+              tenant_name: 'Semua Bengkel (Superadmin)',
+              created_at: new Date().toISOString()
+            });
+          }
+
+          configuredAdmins.forEach((adminEmail, idx) => {
+            if (!userList.some(u => u.email.toLowerCase() === adminEmail.toLowerCase())) {
+              userList.push({
+                id: `usr-env-super-${idx + 1}`,
+                name: adminEmail.split('@')[0],
+                email: adminEmail,
+                role: 'superadmin',
+                tenant_id: DEFAULT_TENANT_ID,
+                tenant_name: 'Semua Bengkel (Superadmin)',
+                created_at: new Date().toISOString()
+              });
+            }
+          });
+
           return jsonResponse({
             success: true,
-            users: [
-              {
-                id: 'usr-super-01',
-                name: 'Aliepcahyo (Superadmin)',
-                email: 'aliepcahyo@gmail.com',
-                role: 'superadmin',
-                tenant_id: DEFAULT_TENANT_ID,
-                tenant_name: 'Semua Bengkel (Superadmin)',
-                created_at: new Date().toISOString()
-              },
-              {
-                id: 'usr-super-02',
-                name: 'Allepcahyo (Superadmin)',
-                email: 'allepcahyo@gmail.com',
-                role: 'superadmin',
-                tenant_id: DEFAULT_TENANT_ID,
-                tenant_name: 'Semua Bengkel (Superadmin)',
-                created_at: new Date().toISOString()
-              }
-            ]
+            users: userList
           });
         }
         if (method === 'POST') {
@@ -988,10 +1015,12 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       }
 
       if (path === '/api/superadmin/system') {
+        const configuredAdmins = parseConfiguredSuperadmins();
+        const activeSession = typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('bengkel_session') || 'null') : null;
         return jsonResponse({
           success: true,
           system: {
-            superadminEmail: 'aliepcahyo@gmail.com',
+            superadminEmail: activeSession?.email || configuredAdmins[0] || 'Dikonfigurasi via Environment/Database',
             dbSize: 'Cloud Managed (Supabase PostgreSQL)',
             sqlitePragmas: { journalMode: 'WAL (PostgreSQL Cloud)', foreignKeys: true },
             nodeVersion: 'Edge Cloud Function',

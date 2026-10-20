@@ -55,7 +55,22 @@ export function AuthProvider({ children }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
           const email = session.user.email || '';
-          const isSuper = isSuperadmin(email);
+          let isSuper = isSuperadmin(email, session.user);
+
+          if (!isSuper && supabase) {
+            try {
+              const { data: dbUser } = await supabase
+                .from('users')
+                .select('role')
+                .eq('email', email)
+                .maybeSingle();
+              if (dbUser?.role === 'superadmin') {
+                isSuper = true;
+              }
+            } catch (e) {
+              // Ignore table error
+            }
+          }
           const authUser = {
             id: session.user.id,
             email,
