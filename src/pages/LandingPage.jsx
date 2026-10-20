@@ -20,7 +20,7 @@ export default function LandingPage({
   onNavigatePlatform
 }) {
   const { theme, toggleTheme } = useTheme();
-  const { user, tenant, mockLogin, loading } = useAuth();
+  const { user, tenant, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobilePlateInput, setMobilePlateInput] = useState('');
   const [tenantInfo, setTenantInfo] = useState(null);

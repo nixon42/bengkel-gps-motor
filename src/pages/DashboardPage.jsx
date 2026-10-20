@@ -35,7 +35,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 
 export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigateLanding, onNavigateTracking, onNavigateDocs }) {
-  const { tenant, user, mockLogin } = useAuth();
+  const { tenant, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState(null);

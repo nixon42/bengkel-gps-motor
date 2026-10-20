@@ -35,10 +35,18 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 1. AUTH ROUTES
     // ----------------------------------------------------
     if (path === '/api/auth/me') {
+      const isProd = typeof window !== 'undefined' && (
+        window.location.hostname.endsWith('github.io') ||
+        (window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1'))
+      );
+
       // Invalidate any legacy auto-login sessions from earlier dev builds
-      if (typeof localStorage !== 'undefined' && localStorage.getItem('bengkel_auth_v3') !== 'active') {
+      if (typeof localStorage !== 'undefined' && localStorage.getItem('bengkel_auth_v4') !== 'active') {
         localStorage.removeItem('bengkel_session');
-        localStorage.setItem('bengkel_auth_v3', 'active');
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem('bengkel_demo_session');
+        }
+        localStorage.setItem('bengkel_auth_v4', 'active');
       }
 
       let user = null;
@@ -65,8 +73,13 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         }
       }
 
-      // 2. Check explicit demo session in this browser tab
-      if (!user && typeof sessionStorage !== 'undefined') {
+      // 2. In production, remove any demo session so user always passes through real login gate
+      if (isProd && typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem('bengkel_demo_session');
+      }
+
+      // 3. Check explicit demo session in this browser tab (ONLY for local development)
+      if (!isProd && !user && typeof sessionStorage !== 'undefined') {
         const demoStr = sessionStorage.getItem('bengkel_demo_session');
         if (demoStr) {
           try {
@@ -89,6 +102,14 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     }
 
     if (path === '/api/auth/mock-login') {
+      const isProd = typeof window !== 'undefined' && (
+        window.location.hostname.endsWith('github.io') ||
+        (window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1'))
+      );
+      if (isProd) {
+        return errorResponse('Demo login dinonaktifkan di lingkungan produksi. Silakan gunakan Google atau Email.', 403);
+      }
+
       const body = options.body ? JSON.parse(options.body) : {};
       const email = body.email || 'admin@gpsmotor.local';
 

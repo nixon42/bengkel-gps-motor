@@ -182,7 +182,7 @@ export default function AppPlatformLandingPage({
   onNavigateDocs 
 }) {
   const { theme, toggleTheme } = useTheme();
-  const { user, mockLogin, loading } = useAuth();
+  const { user, loading } = useAuth();
   const [tenants, setTenants] = useState([]);
   const [loadingTenants, setLoadingTenants] = useState(true);
 

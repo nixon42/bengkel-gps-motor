@@ -55,7 +55,7 @@ function formatDateTime(dateStr) {
 }
 
 export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding }) {
-  const { user, logout, mockLogin } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const [activeTab, setActiveTab] = useState('overview');
@@ -309,16 +309,6 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
     }
   };
 
-  // Quick Superadmin Mock Login for testing
-  const handleSuperadminQuickLogin = async () => {
-    try {
-      await mockLogin('bengkel-gps-motor', 'superadmin@gpsmotor.id', 'Superadmin GPS Motor');
-      fetchData();
-    } catch (err) {
-      alert('Login gagal: ' + err.message);
-    }
-  };
-
   const filteredTenants = tenants.filter(t => 
     t.name?.toLowerCase().includes(searchTenant.toLowerCase()) ||
     t.slug?.toLowerCase().includes(searchTenant.toLowerCase())
@@ -407,16 +397,10 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
           <p className="text-sm text-slate-600 dark:text-slate-300 mb-6">{error}</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
-              onClick={handleSuperadminQuickLogin}
-              className="touch-target px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs"
-            >
-              🔑 1-Click Login sebagai Superadmin
-            </button>
-            <button
               onClick={onNavigateAdmin}
               className="touch-target px-4 py-2 rounded bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs"
             >
-              Kembali ke Workspace Biasa
+              Kembali ke Portal Staf
             </button>
           </div>
         </div>

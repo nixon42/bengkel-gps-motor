@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { 
   Wrench, Shield, Lock, Mail, Key, ArrowRight, ArrowLeft, 
-  CheckCircle2, AlertCircle, Sparkles, User, ShieldCheck
+  CheckCircle2, AlertCircle, ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 
 export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
-  const { loginWithGoogle, mockLogin, loading } = useAuth();
+  const { loginWithGoogle, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('google'); // 'google' | 'password' | 'demo'
+  const [activeTab, setActiveTab] = useState('google'); // 'google' | 'password'
 
   const handleGoogleLogin = async () => {
     try {
@@ -22,7 +22,7 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
     } catch (err) {
       const msg = err.message || '';
       if (msg.toLowerCase().includes('not enabled') || msg.toLowerCase().includes('provider') || msg.toLowerCase().includes('unsupported')) {
-        setErrorMessage('Google OAuth belum diaktifkan di Supabase Dashboard (Authentication > Providers > Google). Silakan gunakan tab "Email / Sandi" atau tab "Uji Coba" untuk masuk sekarang.');
+        setErrorMessage('Google OAuth belum diaktifkan di Supabase Dashboard (Authentication > Providers > Google). Silakan gunakan tab "Email / Sandi" untuk masuk sekarang.');
       } else {
         setErrorMessage(msg || 'Gagal memulai login dengan Google.');
       }
@@ -40,51 +40,35 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
       setSubmitting(true);
       setErrorMessage('');
 
-      if (supabase) {
-        // Attempt Supabase email & password authentication
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password: password
-        });
-
-        if (error) {
-          // If Supabase user not found or auth fails, provide clear feedback
-          throw new Error(error.message || 'Email atau password salah.');
-        }
-
-        if (data?.user) {
-          const isSuper = data.user.email?.includes('superadmin') || data.user.email === 'admin@gpsmotor.id';
-          const authUser = {
-            id: data.user.id,
-            email: data.user.email,
-            name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Staf Bengkel',
-            role: isSuper ? 'superadmin' : 'admin',
-            tenant_id: 'tenant-gps-motor-kediri-01'
-          };
-          localStorage.setItem('bengkel_session', JSON.stringify(authUser));
-          if (onLoginSuccess) onLoginSuccess();
-          return;
-        }
+      if (!supabase) {
+        throw new Error('Koneksi Supabase belum aktif. Periksa konfigurasi sistem.');
       }
 
-      // Fallback
-      await mockLogin('bengkel-gps-motor', email.trim());
-      if (onLoginSuccess) onLoginSuccess();
+      // Supabase email & password authentication
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Email atau kata sandi tidak valid.');
+      }
+
+      if (data?.user) {
+        const isSuper = data.user.email?.includes('superadmin') || data.user.email === 'admin@gpsmotor.id';
+        const authUser = {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Staf Bengkel',
+          role: isSuper ? 'superadmin' : 'admin',
+          tenant_id: 'tenant-gps-motor-kediri-01'
+        };
+        localStorage.setItem('bengkel_session', JSON.stringify(authUser));
+        if (onLoginSuccess) onLoginSuccess();
+        return;
+      }
     } catch (err) {
       setErrorMessage(err.message || 'Login gagal. Periksa kembali email dan password.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleQuickDemoLogin = async (roleName, demoEmail) => {
-    try {
-      setSubmitting(true);
-      setErrorMessage('');
-      await mockLogin('bengkel-gps-motor', demoEmail);
-      if (onLoginSuccess) onLoginSuccess();
-    } catch (err) {
-      setErrorMessage(err.message || 'Gagal login demo.');
     } finally {
       setSubmitting(false);
     }
@@ -134,7 +118,7 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
           )}
 
           {/* Tab Selector */}
-          <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-slate-950 border border-slate-800 mb-6">
+          <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-950 border border-slate-800 mb-6">
             <button
               type="button"
               onClick={() => { setActiveTab('google'); setErrorMessage(''); }}
@@ -156,17 +140,6 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
               }`}
             >
               Email / Sandi
-            </button>
-            <button
-              type="button"
-              onClick={() => { setActiveTab('demo'); setErrorMessage(''); }}
-              className={`py-2 text-xs font-bold rounded-lg transition-all ${
-                activeTab === 'demo' 
-                  ? 'bg-emerald-600 text-white shadow-sm' 
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Uji Coba
             </button>
           </div>
 
@@ -247,51 +220,6 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
-          )}
-
-          {/* TAB 3: DEMO ROLE SWITCHER (KHUSUS EVALUASI) */}
-          {activeTab === 'demo' && (
-            <div className="space-y-3">
-              <p className="text-xs text-slate-400 mb-3">
-                Pilih profil peran operasional bengkel untuk evaluasi cepat:
-              </p>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('Owner / Admin', 'admin@gpsmotor.local')}
-                disabled={submitting}
-                className="w-full p-3 rounded-xl border border-blue-900/40 bg-blue-950/30 hover:bg-blue-900/40 text-left flex items-center justify-between transition-colors group"
-              >
-                <div>
-                  <div className="text-xs font-bold text-blue-300 font-mono flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5" />
-                    Bambang GPS Motor (Owner / Admin)
-                  </div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">
-                    Akses penuh: RO, Kasir, Laporan Laba Rugi, &amp; Inventaris
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('Superadmin', 'superadmin@gpsmotor.id')}
-                disabled={submitting}
-                className="w-full p-3 rounded-xl border border-purple-900/40 bg-purple-950/30 hover:bg-purple-900/40 text-left flex items-center justify-between transition-colors group"
-              >
-                <div>
-                  <div className="text-xs font-bold text-purple-300 font-mono flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5" />
-                    Superadmin Platform Multi-Tenant
-                  </div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">
-                    Kelola multi-bengkel, integrasi sistem &amp; pengguna
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
           )}
 
         </div>
