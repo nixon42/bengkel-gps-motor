@@ -187,10 +187,6 @@ export default function LocationSection({ tenant }) {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
-                <div className="absolute top-3 right-3 z-10 hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-sm">
-                  <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                  <span>Titik: {tenantName}</span>
-                </div>
                 <div className="bg-white dark:bg-slate-900 px-4 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
                   <span className="flex items-center space-x-1.5 font-medium truncate max-w-[280px] sm:max-w-none">
                     <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />

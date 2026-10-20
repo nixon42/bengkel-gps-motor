@@ -60,7 +60,7 @@ const SERVICE_TYPES = [
 
 const SYMPTOM_OPTIONS = [
   'Mesin Brebet & Boros Bensin',
-  'Bunyi Glodakan di Jalan Kediri',
+  'Bunyi Glodakan / Jalan Bergelombang',
   'Tarikan Mesin Lemah / Berat',
   'Starter Cetek / Aki Drop',
   'AC Kurang Dingin / Bau Apek',
@@ -80,7 +80,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
     if (
       selectedService === 'Servis Kaki-Kaki & Kemudi' || 
       selectedService === 'Overhaul / Turun Mesin Parsial' ||
-      selectedSymptom === 'Bunyi Glodakan di Jalan Kediri' ||
+      selectedSymptom === 'Bunyi Glodakan / Jalan Bergelombang' ||
       selectedSymptom === 'Starter Cetek / Aki Drop'
     ) {
       return 'Servis Lengkap';
@@ -192,10 +192,6 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                     fetchPriority="high"
                     decoding="async"
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-[#0c2b5e]/90 border border-emerald-400/40 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider flex items-center space-x-1.5 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Stall Lift Aktif</span>
-                  </div>
                 </div>
 
                 <div className="p-3 rounded-lg bg-blue-950/70 border border-blue-800/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-blue-200 font-mono">
@@ -386,7 +382,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
         <section id="fasilitas" aria-labelledby="fasilitas-heading" className="w-full space-y-6">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <h2 id="fasilitas-heading" className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-              FASILITAS WORKSHOP &amp; PIT LIFT KEDIRI
+              FASILITAS WORKSHOP &amp; PIT LIFT BERSTANDAR RESMI
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Peralatan modern dan stall servis bersih berstandar bengkel resmi untuk akurasi dan keselamatan pengerjaan.

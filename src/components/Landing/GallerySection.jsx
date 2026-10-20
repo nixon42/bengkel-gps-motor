@@ -60,7 +60,7 @@ export default function GallerySection() {
                 key={idx}
                 className="rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 overflow-hidden flex flex-col hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
               >
-                {/* Photo with clean solid badge */}
+                {/* Photo */}
                 <div className="relative aspect-[4/3] w-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                   <img 
                     src={resolveAssetUrl(item.image)} 
@@ -68,9 +68,6 @@ export default function GallerySection() {
                     loading="lazy"
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded bg-slate-900/90 text-white border border-slate-700">
-                    {item.category}
-                  </span>
                 </div>
 
                 {/* Text Body */}
@@ -79,7 +76,7 @@ export default function GallerySection() {
                     <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 mb-1.5">
                       <Icon className="w-4 h-4" />
                       <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Standar Pro
+                        {item.category}
                       </span>
                     </div>
                     <h3 className="font-bold text-sm text-slate-900 dark:text-white leading-snug">
