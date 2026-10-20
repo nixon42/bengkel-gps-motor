@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { compressImageClient } from '../utils/imageCompressor.js';
 import { resolveAssetUrl } from '../utils/assetUrl';
+import { useAuth } from '../context/AuthContext';
 
 const STAGE_ORDER = ['MASUK', 'DIAGNOSA', 'PENGERJAAN', 'MENUNGGU_PART', 'SELESAI', 'DIAMBIL'];
 
@@ -63,6 +64,7 @@ function formatEstimatedDate(val) {
 }
 
 export default function RepairOrderDetailPage({ roId, onBack }) {
+  const { tenant } = useAuth();
   const [ro, setRo] = useState(null);
   const [spareparts, setSpareparts] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -345,8 +347,14 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
   };
 
   const handleShareWhatsApp = () => {
-    const trackingUrl = `${window.location.origin}/bengkel-gps-motor/cek-status?plate=${encodeURIComponent(ro.plate_number)}`;
-    const msg = `Halo Bapak/Ibu *${ro.customer_name}*,\n\nBerikut informasi pengerjaan servis mobil *${ro.plate_number}* (${ro.car_brand} ${ro.car_model}) di *Bengkel Mobil GPS Motor Kediri*:\n\n• No. Order: *${ro.ro_number}*\n• Status: *${ro.status}*\n• Total Biaya: *Rp ${ro.total_cost?.toLocaleString('id-ID')}*\n\nPantau perkembangan servis & foto dokumentasi secara langsung melalui link:\n${trackingUrl}\n\nTerima kasih atas kepercayaannya.`;
+    const isRepoSubpath = typeof window !== 'undefined' && 
+      window.location.hostname.endsWith('github.io') && 
+      window.location.pathname.startsWith('/bengkel-gps-motor');
+    const basePath = isRepoSubpath ? '/bengkel-gps-motor' : '';
+    const tenantSlug = tenant?.slug || 'bengkel-gps-motor';
+    const trackingUrl = `${window.location.origin}${basePath}/${tenantSlug}/cek-status?plate=${encodeURIComponent(ro.plate_number)}`;
+    const workshopName = tenant?.name || 'Bengkel Kami';
+    const msg = `Halo Bapak/Ibu *${ro.customer_name}*,\n\nBerikut informasi pengerjaan servis mobil *${ro.plate_number}* (${ro.car_brand} ${ro.car_model}) di *${workshopName}*:\n\n• No. Order: *${ro.ro_number}*\n• Status: *${ro.status}*\n• Total Biaya: *Rp ${ro.total_cost?.toLocaleString('id-ID')}*\n\nPantau perkembangan servis & foto dokumentasi secara langsung melalui link:\n${trackingUrl}\n\nTerima kasih atas kepercayaannya.`;
     const cleanPhone = (ro.customer_phone || '').replace(/[^0-9]/g, '');
     const waPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
     window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -771,7 +779,7 @@ export default function RepairOrderDetailPage({ roId, onBack }) {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {photos.map((p) => (
                   <div key={p.id} className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 group shadow-xs">
-                    <img src={resolveAssetUrl(p.photo_url)} alt={p.caption || 'Foto servis'} className="w-full h-32 object-cover" />
+                    <img src={resolveAssetUrl(p.photo_url)} alt={p.caption || 'Foto servis'} loading="lazy" decoding="async" className="w-full h-32 object-cover" />
                     <div className="absolute top-1.5 left-1.5">
                       <span className="px-2 py-0.5 rounded text-xs font-bold bg-slate-900/90 text-emerald-400 border border-slate-700 font-mono">
                         {p.stage}

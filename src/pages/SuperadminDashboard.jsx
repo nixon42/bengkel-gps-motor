@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { isSuperadmin } from '../utils/roles';
 
 function formatRupiah(val) {
   const num = Math.round(Number(val) || 0);
@@ -153,7 +154,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
   }, []);
 
   useEffect(() => {
-    if (user && (user.isSuperAdmin || user.role === 'superadmin')) {
+    if (user && (user.isSuperAdmin || user.role === 'superadmin' || isSuperadmin(user.email))) {
       fetchData();
     } else {
       setLoading(false);
@@ -934,7 +935,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: Bengkel GPS Motor Cabang Pare"
+                    placeholder="Contoh: Bengkel Maju Lancar Motor"
                     value={createForm.name}
                     onChange={(e) => {
                       const name = e.target.value;

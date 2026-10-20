@@ -34,10 +34,10 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
   }, [onClose]);
 
   const [formData, setFormData] = useState({
-    name: tenant?.name || 'Bengkel Mobil GPS Motor Kediri',
-    tagline: tenant?.tagline || 'BENGKEL TERPERCAYA KEDIRI: TRANSPARAN, JUJUR, BERGARANSI.',
-    address: tenant?.address || 'Jl. Raya Sambiresik No. 45, Kec. Gampengrejo, Kab. Kediri, Jawa Timur',
-    phoneWa: tenant?.phone_wa || tenant?.phoneWa || '085603307330',
+    name: tenant?.name || '',
+    tagline: tenant?.tagline || 'Layanan Servis & Perawatan Berkala Mobil Terpercaya',
+    address: tenant?.address || '',
+    phoneWa: tenant?.phone_wa || tenant?.phoneWa || '',
     businessHours: tenant?.business_hours || tenant?.businessHours || 'Senin - Sabtu: 08:00 - 17:00 WIB',
     heroImageUrl: tenant?.hero_image_url || '/images/mockup/facility_inspection_clean.jpg',
     facilityImage1: tenant?.facility_image_1 || '/images/mockup/facility_lift_bay_clean.jpg',
@@ -172,7 +172,7 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Contoh: Bengkel Mobil GPS Motor Kediri"
+                  placeholder="Contoh: Bengkel Maju Lancar Motor"
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:border-blue-500"
                 />
               </div>

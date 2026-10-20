@@ -1,12 +1,11 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext';
-import LandingPage from './pages/LandingPage';
-import AppPlatformLandingPage from './pages/AppPlatformLandingPage';
-
-import PublicTrackingPage from './pages/PublicTrackingPage';
-import AdminDashboard from './pages/AdminDashboard';
-import SuperadminDashboard from './pages/SuperadminDashboard';
-import DocsPage from './pages/DocsPage';
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const AppPlatformLandingPage = lazy(() => import('./pages/AppPlatformLandingPage'));
+const PublicTrackingPage = lazy(() => import('./pages/PublicTrackingPage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'));
+const DocsPage = lazy(() => import('./pages/DocsPage'));
 
 function PageFallback() {
   return (
@@ -91,6 +90,36 @@ export default function App() {
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [tenant]);
+
+  // Dynamic document.title per active route & tenant
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const workshopName = tenant?.name || 'Bengkel Mobil Mitra';
+    switch (currentRoute.view) {
+      case 'platform':
+        document.title = 'BengkelOS - Platform Cloud Manajemen & Tracking Servis Bengkel Mobil';
+        break;
+      case 'tenant':
+      case 'landing':
+        document.title = `${workshopName} - Layanan Servis & Tracking Online`;
+        break;
+      case 'tracking':
+        document.title = `Tracking Servis Mobil - ${workshopName}`;
+        break;
+      case 'admin':
+        document.title = `Portal Bengkel - ${workshopName}`;
+        break;
+      case 'superadmin':
+        document.title = 'Superadmin Control Center - BengkelOS';
+        break;
+      case 'docs':
+      case 'panduan':
+        document.title = 'Panduan & Dokumentasi - BengkelOS';
+        break;
+      default:
+        document.title = 'BengkelOS - Platform Cloud Manajemen Bengkel Mobil';
+    }
+  }, [currentRoute.view, tenant]);
 
   const navigateTo = (view, extra = {}) => {
     const slug = extra.slug || tenant?.slug || 'bengkel-gps-motor';
@@ -196,13 +225,15 @@ export default function App() {
   }
 
   return (
-    <LandingPage
-      tenantSlug={currentRoute.slug || 'bengkel-gps-motor'}
-      onNavigateTracking={(plate) => navigateTo('tracking', { plate, slug: currentRoute.slug })}
-      onOpenAdmin={() => navigateTo('admin')}
-      onOpenSuperadmin={() => navigateTo('superadmin')}
-      onNavigateDocs={(section) => navigateTo('docs', { section })}
-      onNavigatePlatform={() => navigateTo('platform')}
-    />
+    <Suspense fallback={<PageFallback />}>
+      <LandingPage
+        tenantSlug={currentRoute.slug || 'bengkel-gps-motor'}
+        onNavigateTracking={(plate) => navigateTo('tracking', { plate, slug: currentRoute.slug })}
+        onOpenAdmin={() => navigateTo('admin')}
+        onOpenSuperadmin={() => navigateTo('superadmin')}
+        onNavigateDocs={(section) => navigateTo('docs', { section })}
+        onNavigatePlatform={() => navigateTo('platform')}
+      />
+    </Suspense>
   );
 }

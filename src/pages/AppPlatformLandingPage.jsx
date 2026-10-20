@@ -1052,9 +1052,9 @@ export default function AppPlatformLandingPage({
                   
                   {/* Workshop Slip Header */}
                   <div className="text-center space-y-0.5 border-b border-dashed border-slate-400 pb-3">
-                    <p className="text-sm font-black uppercase tracking-tight">BENGKEL MOBIL GPS MOTOR</p>
-                    <p className="text-xs text-slate-600">Jl. Raya Sambiresik, Gampengrejo - Kediri</p>
-                    <p className="text-xs text-slate-600">WhatsApp Booking: 0856-0330-7330</p>
+                    <p className="text-sm font-black uppercase tracking-tight">BENGKEL MOBIL MITRA INDONESIA</p>
+                    <p className="text-xs text-slate-600">Jl. Otomotif Raya No. 88, Bengkel Cloud</p>
+                    <p className="text-xs text-slate-600">WhatsApp Booking: 0812-3456-7890</p>
                   </div>
 
                   {/* Order Details */}

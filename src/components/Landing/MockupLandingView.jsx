@@ -189,7 +189,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                     src={heroImage} 
                     alt={`Workshop ${tenantName} melayani servis mobil`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                   />
                   <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-[#0c2b5e]/90 border border-emerald-400/40 text-emerald-300 text-xs font-mono font-bold uppercase tracking-wider flex items-center space-x-1.5 shadow-sm">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -401,7 +402,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   src={facilityImage1} 
                   alt={`Pit lift hidrolik 4-ton ${tenantName}`}
                   className="w-full h-full object-cover"
-                  loading="eager"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
@@ -432,7 +434,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   src={facilityImage2} 
                   alt={`Diagnosa OBD2 scanner dan inspeksi mesin ${tenantName}`}
                   className="w-full h-full object-cover"
-                  loading="eager"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">

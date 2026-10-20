@@ -40,8 +40,8 @@ export default function ActionButtons({ trackingData }) {
   };
 
   const maskedPlate = trackingData?.plate_masked || trackingData?.repairOrder?.maskedPlate || 'Kendaraan';
-  const workshopName = trackingData?.tenant?.name || 'Bengkel Mobil GPS Motor Kediri';
-  const workshopPhone = trackingData?.tenant?.phone_wa || '0856-0330-7330';
+  const workshopName = trackingData?.tenant?.name || 'Bengkel Mobil Mitra';
+  const workshopPhone = trackingData?.tenant?.phone_wa || trackingData?.tenant?.phone || '081234567890';
 
   const shareText = `Halo, pantau proses servis kendaraan *${maskedPlate}* di *${workshopName}* secara live di link berikut:\n\n${secureTrackingUrl}`;
   const waShareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;

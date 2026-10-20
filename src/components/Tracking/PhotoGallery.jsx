@@ -69,6 +69,8 @@ export default function PhotoGallery({ photos = [] }) {
               <img
                 src={resolveAssetUrl(item.photo_url || item.photoUrl)}
                 alt={item.caption || 'Foto perbaikan servis'}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';

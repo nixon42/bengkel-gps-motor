@@ -25,12 +25,12 @@ const FAQS = [
   {
     id: 5,
     question: 'Bagaimana ketentuan garansi jika keluhan kembali muncul setelah servis?',
-    answer: 'Semua pengerjaan servis dan penggantian suku cadang di Bengkel GPS Motor bergaransi. Jika timbul kendala serupa dalam masa garansi, bawa kembali mobil ke workshop Sambiresik untuk pemeriksaan ulang tanpa dikenakan biaya jasa.'
+    answer: 'Semua pengerjaan servis dan penggantian suku cadang di bengkel kami bergaransi resmi. Jika timbul kendala serupa dalam masa garansi, bawa kembali mobil ke bengkel kami untuk pemeriksaan ulang tanpa dikenakan biaya jasa tambahan.'
   },
   {
     id: 6,
-    question: 'Apakah melayani panggilan darurat mesin mogok di area Kediri?',
-    answer: 'Ya. Untuk wilayah Sambiresik, Gampengrejo, Ngasem, dan Kediri Kota, kami melayani penanganan darurat mobil mogok, jumper aki, atau pemeriksaan awal di lokasi. Hubungi WhatsApp darurat kami di 0856-0330-7330.'
+    question: 'Apakah melayani panggilan darurat penanganan mesin mogok?',
+    answer: 'Ya. Untuk wilayah operasional di sekitar area bengkel kami, kami melayani penanganan darurat mobil mogok, jumper aki, atau pemeriksaan awal di lokasi. Hubungi WhatsApp workshop kami untuk respon cepat.'
   }
 ];
 

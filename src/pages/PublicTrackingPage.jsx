@@ -148,7 +148,7 @@ export default function PublicTrackingPage({
               </div>
               <div>
                 <h1 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-tight">
-                  {data?.tenant?.name || 'Bengkel Mobil GPS Motor Kediri'}
+                  {data?.tenant?.name || 'Bengkel Mobil Mitra'}
                 </h1>
                 <span className="text-xs text-blue-700 dark:text-blue-400 block font-mono font-semibold">
                   Portal Pelacakan Publik (Zero-Login)
@@ -320,7 +320,7 @@ export default function PublicTrackingPage({
             <div className="p-4 rounded border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
               <div>
                 <span className="font-bold text-slate-800 dark:text-slate-200">Ada pertanyaan seputar pengerjaan servis?</span>
-                <p className="text-slate-500 dark:text-slate-400">Hubungi langsung Service Advisor Bengkel GPS Motor Kediri via WhatsApp.</p>
+                <p className="text-slate-500 dark:text-slate-400">Hubungi langsung Service Advisor {data?.tenant?.name || 'Bengkel'} via WhatsApp.</p>
               </div>
               <a
                 href={data.waContactUrl}
@@ -329,7 +329,7 @@ export default function PublicTrackingPage({
                 className="touch-target inline-flex items-center space-x-1.5 px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold shrink-0 transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                <span>0856-0330-7330</span>
+                <span>{data?.tenant?.phone_wa || data?.tenant?.phone || 'Hubungi WhatsApp'}</span>
               </a>
             </div>
 
@@ -340,7 +340,7 @@ export default function PublicTrackingPage({
 
       {/* Footer */}
       <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
-        <p>© {new Date().getFullYear()} Bengkel Mobil GPS Motor Kediri • Sambiresik Gampengrejo Kediri</p>
+        <p>© {new Date().getFullYear()} {data?.tenant?.name || 'Bengkel Mobil Mitra'} {data?.tenant?.address ? `• ${data.tenant.address}` : ''}</p>
         <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
           Semua data pribadi pelanggan disamarkan otomatis untuk melindungi privasi.
         </p>

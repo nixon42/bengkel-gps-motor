@@ -127,7 +127,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
       const user = {
         id: 'usr-admin-01',
-        name: email.includes('superadmin') ? 'Super Admin' : 'Bambang GPS Motor',
+        name: email.includes('superadmin') ? 'Super Admin' : 'Admin Bengkel',
         email,
         role: email.includes('superadmin') ? 'superadmin' : (email.includes('admin') ? 'admin' : 'operator'),
         tenant_id: tenant?.id || DEFAULT_TENANT_ID,
@@ -166,7 +166,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           .select('*')
           .eq('tenant_id', DEFAULT_TENANT_ID)
           .single();
-        return jsonResponse(data || { monthly_revenue_target: 15000000, invoice_footer: 'Terima kasih telah mempercayakan kendaraan Anda pada Bengkel GPS Motor Kediri.' });
+        return jsonResponse(data || { monthly_revenue_target: 15000000, invoice_footer: 'Terima kasih telah mempercayakan kendaraan Anda pada bengkel kami.' });
       }
 
       if (method === 'PUT') {

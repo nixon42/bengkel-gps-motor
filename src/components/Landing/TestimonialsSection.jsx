@@ -9,38 +9,39 @@ const TESTIMONIALS = [
     car: 'Toyota Avanza Veloz (AG 1822 AB)',
     job: 'Tune Up EFI & Carbon Clean',
     date: 'September 2026',
-    comment: 'Sangat puas servis di Bengkel GPS Motor. Fitur cek status online via WhatsApp sangat transparan, ada foto sebelum dan sesudah busi & injektor dibersihkan. Tarikan mesin langsung enteng untuk tanjakan Pare-Papar.'
+    comment: 'Sangat puas servis di sini. Fitur cek status online via WhatsApp sangat transparan, ada foto sebelum dan sesudah pengerjaan. Tarikan mesin langsung enteng.'
   },
   {
     id: 2,
     name: 'Rudi Hartono',
-    location: 'Plemahan, Kediri',
+    location: 'Area Jawa Timur',
     car: 'Toyota Kijang Innova Reborn (AG 1044 RK)',
     job: 'Perbaikan Kaki-kaki & Tierod',
     date: 'Agustus 2026',
-    comment: 'Bunyi glodakan di roda depan Innova tuntas di sini. Mekanik Mas Agus tidak asal vonis ganti semua part, hanya tierod dan bushing arm yang benar-benar aus yang diganti. Mobil kembali stabil di jalan tol Kediri-Kertosono.'
+    comment: 'Bunyi glodakan di roda depan Innova tuntas di sini. Mekanik tidak asal vonis ganti semua part, hanya tierod dan bushing arm yang benar-benar aus yang diganti. Mobil kembali stabil dan nyaman.'
   },
   {
     id: 3,
     name: 'Hj. Siti Mahmudah',
-    location: 'Sambiresik, Gampengrejo',
+    location: 'Pelanggan Setia',
     car: 'Honda Brio Satya E (AG 1530 EF)',
     job: 'Diagnosa Scanner & Servis AC/Injeksi',
     date: 'September 2026',
-    comment: 'Mobil sempat brebet dan lampu check engine menyala. Di-scan komputer OBD2 langsung ketemu sensor O2 yang kotor. Pengerjaan cepat, nota rinciannya jelas, dan mekaniknya sangat komunikatif.'
+    comment: 'Mobil sempat brebet dan lampu check engine menyala. Di-scan komputer OBD2 langsung ketemu masalahnya. Pengerjaan cepat, nota rinciannya jelas, dan mekaniknya sangat komunikatif.'
   },
   {
     id: 4,
     name: 'Agus Purnomo',
-    location: 'Ngasem, Kediri',
+    location: 'Pemilik Usaha Ekspedisi',
     car: 'Daihatsu Gran Max Pick Up (AG 8912 V)',
     job: 'Kuras Minyak Rem & Ganti Oli Rutin',
     date: 'Agustus 2026',
-    comment: 'Armada mobil operasional usaha selalu servis rutin di GPS Motor. Suku cadang bekas selalu dibungkus rapi dan ditunjukkan saat mobil diambil. Transparan dan tidak pernah ada biaya siluman.'
+    comment: 'Armada mobil operasional usaha selalu servis rutin di sini. Suku cadang bekas selalu dibungkus rapi dan ditunjukkan saat mobil diambil. Transparan dan tidak pernah ada biaya siluman.'
   }
 ];
 
-export default function TestimonialsSection() {
+export default function TestimonialsSection({ tenant }) {
+  const workshopName = tenant?.name || 'Bengkel Mobil Mitra';
   return (
     <section id="testimoni" className="bg-slate-50 dark:bg-slate-950/50 py-12 md:py-20 border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,7 +52,7 @@ export default function TestimonialsSection() {
             Catatan Servis &amp; Ulasan Pemilik Mobil
           </h2>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
-            Pengalaman nyata pelanggan yang mempercayakan perawatan berkala dan perbaikan kendaraannya di Bengkel GPS Motor Kediri.
+            Pengalaman nyata pelanggan yang mempercayakan perawatan berkala dan perbaikan kendaraannya di {workshopName}.
           </p>
         </div>
 

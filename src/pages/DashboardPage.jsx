@@ -313,8 +313,8 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
   const targetDeficit = Math.max(0, summary.monthly_target - summary.monthly_revenue);
 
   // Fallback workshop name and address
-  const workshopName = tenant?.name || 'Bengkel Mobil GPS Motor Kediri';
-  const workshopAddress = tenant?.address || 'Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur';
+  const workshopName = tenant?.name || 'Bengkel Mobil Mitra';
+  const workshopAddress = tenant?.address || 'Layanan Servis & Perawatan Berkala Mobil';
 
   return (
     <div className="space-y-6">

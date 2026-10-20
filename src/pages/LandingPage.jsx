@@ -227,7 +227,7 @@ export default function LandingPage({
                   <span>{user ? 'Buka Workspace Admin' : 'Login Staf / Operator'}</span>
                 </button>
                 <span className="text-xs font-mono text-slate-400">
-                  v2.0 · Sambiresik
+                  v2.0 · Cloud
                 </span>
               </div>
 
@@ -240,7 +240,7 @@ export default function LandingPage({
       {/* Main Landing Sections: Mockup 2 Experience (No redundant stacking) */}
       <main className="flex-1 w-full">
         <MockupLandingView tenant={activeTenant} onSearchPlate={handlePlateSearch} />
-        <TestimonialsSection />
+        <TestimonialsSection tenant={activeTenant} />
         <FaqSection />
         <LocationSection tenant={activeTenant} />
       </main>

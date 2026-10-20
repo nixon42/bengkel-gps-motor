@@ -29,6 +29,8 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom'],
           // Icon library — large, shared across all pages
           'vendor-icons': ['lucide-react'],
+          // Supabase client SDK
+          'vendor-supabase': ['@supabase/supabase-js']
         }
       }
     }

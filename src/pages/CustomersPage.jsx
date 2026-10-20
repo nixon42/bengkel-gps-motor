@@ -21,8 +21,10 @@ import {
   Send,
   ExternalLink
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function CustomersPage() {
+  const { tenant } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -282,20 +284,23 @@ export default function CustomersPage() {
       ? `${customer.vehicles[0].brand} ${customer.vehicles[0].model} (${customer.vehicles[0].plate_number})`
       : 'kendaraan Anda';
     const lastVisit = customer.last_visit || 'beberapa waktu lalu';
+    const workshopName = tenant?.name || 'Bengkel Mobil';
+    const workshopAddress = tenant?.address || tenant?.city || 'Workshop Kami';
+    const workshopPhone = tenant?.phone_wa || tenant?.phone || '0812-3456-7890';
 
     if (templateType === 'PROMO') {
-      return `Halo Bapak/Ibu *${name}*,\n\nAda kabar gembira dari *Bengkel Mobil GPS Motor Kediri*! 🚗✨\n\nKami sedang ada *Promo Spesial Servis & Tune-Up*: Dapatkan diskon jasa servis 15% serta gratis pengecekan 25 titik komponen (rem, kelistrikan, oli, pendingin) untuk mobil kesayangan Anda *${primaryVehicle}*.\n\n📍 Lokasi: Sambiresik, Kec. Gampengrejo, Kab. Kediri\n📞 Booking & Konsultasi: 0856-0330-7330\n\nPromo berlaku terbatas. Balas pesan ini untuk booking antrian servis Anda sekarang ya!`;
+      return `Halo Bapak/Ibu *${name}*,\n\nAda kabar gembira dari *${workshopName}*! 🚗✨\n\nKami sedang ada *Promo Spesial Servis & Tune-Up*: Dapatkan diskon jasa servis 15% serta gratis pengecekan 25 titik komponen (rem, kelistrikan, oli, pendingin) untuk mobil kesayangan Anda *${primaryVehicle}*.\n\n📍 Lokasi: ${workshopAddress}\n📞 Booking & Konsultasi: ${workshopPhone}\n\nPromo berlaku terbatas. Balas pesan ini untuk booking antrian servis Anda sekarang ya!`;
     }
 
     if (templateType === 'REMINDER') {
-      return `Halo Bapak/Ibu *${name}*,\n\nSemoga selalu sehat dan lancar beraktivitas. Mengingat kunjungan servis terakhir untuk mobil *${primaryVehicle}* tercatat pada *${lastVisit}*, kini saatnya untuk jadwal perawatan berkala & ganti oli rutin agar tarikan mesin tetap enteng, hemat BBM, dan prima di jalan.\n\nKami siap melayani Anda di *Bengkel Mobil GPS Motor Kediri*:\n📍 Sambiresik, Kec. Gampengrejo, Kab. Kediri\n📞 Booking Antrian: 0856-0330-7330\n\nTerima kasih telah setia mempercayakan mobil Anda pada kami! 🙏`;
+      return `Halo Bapak/Ibu *${name}*,\n\nSemoga selalu sehat dan lancar beraktivitas. Mengingat kunjungan servis terakhir untuk mobil *${primaryVehicle}* tercatat pada *${lastVisit}*, kini saatnya untuk jadwal perawatan berkala & ganti oli rutin agar tarikan mesin tetap enteng, hemat BBM, dan prima di jalan.\n\nKami siap melayani Anda di *${workshopName}*:\n📍 Lokasi: ${workshopAddress}\n📞 Booking Antrian: ${workshopPhone}\n\nTerima kasih telah setia mempercayakan mobil Anda pada kami! 🙏`;
     }
 
     if (templateType === 'FOLLOWUP') {
-      return `Halo Bapak/Ibu *${name}*,\n\nSalam dari *Bengkel Mobil GPS Motor Kediri*! 🙏\n\nKami ingin menanyakan bagaimana performa dan kenyamanan mobil *${primaryVehicle}* setelah dilakukan servis di bengkel kami? Semoga tarikannya makin nyaman dan tidak ada kendala ya.\n\nKenyamanan dan kepuasan berkendara Anda adalah prioritas utama kami. Jika ada hal yang ingin ditanyakan atau butuh pengecekan ulang, jangan ragu untuk menghubungi kami kapan saja.\n\nTerima kasih banyak atas kepercayaannya!`;
+      return `Halo Bapak/Ibu *${name}*,\n\nSalam dari *${workshopName}*! 🙏\n\nKami ingin menanyakan bagaimana performa dan kenyamanan mobil *${primaryVehicle}* setelah dilakukan servis di bengkel kami? Semoga tarikannya makin nyaman dan tidak ada kendala ya.\n\nKenyamanan dan kepuasan berkendara Anda adalah prioritas utama kami. Jika ada hal yang ingin ditanyakan atau butuh pengecekan ulang, jangan ragu untuk menghubungi kami kapan saja.\n\nTerima kasih banyak atas kepercayaannya!`;
     }
 
-    return `Halo Bapak/Ibu *${name}*,\n\nSalam hangat dari *Bengkel Mobil GPS Motor Kediri* terkait kendaraan Anda *${primaryVehicle}*.\n\n`;
+    return `Halo Bapak/Ibu *${name}*,\n\nSalam hangat dari *${workshopName}* terkait kendaraan Anda *${primaryVehicle}*.\n\n`;
   };
 
   const handleOpenWhatsAppPromo = (customer) => {
