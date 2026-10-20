@@ -153,18 +153,13 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
   }, []);
 
   useEffect(() => {
-    const init = async () => {
-      if (!user || (!user.isSuperAdmin && user.role !== 'superadmin')) {
-        try {
-          await mockLogin('bengkel-gps-motor', 'superadmin@gpsmotor.id', 'Superadmin GPS Motor');
-        } catch {
-          // ignore
-        }
-      }
+    if (user && (user.isSuperAdmin || user.role === 'superadmin')) {
       fetchData();
-    };
-    init();
-  }, [user, fetchData, mockLogin]);
+    } else {
+      setLoading(false);
+      setError('Akses khusus Superadmin. Silakan masuk terlebih dahulu dengan akun Superadmin.');
+    }
+  }, [user, fetchData]);
 
   // Handle Create Tenant
   const handleCreateTenant = async (e) => {

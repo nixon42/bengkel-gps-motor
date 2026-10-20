@@ -74,18 +74,88 @@ export async function uploadImageToSupabase(file, folder = 'ro') {
 
   if (!uploadResult) {
     console.error('Supabase Storage upload error:', lastError);
-    throw new Error(`Gagal mengunggah foto ke Supabase Storage (Bucket: ${usedBucket}): ${lastError?.message || 'Pastikan bucket berstatus Public dan sudah memiliki Storage Policy'}`);
+    throw new Error(`Gagal mengunggah foto ke Supabase Storage (Bucket: ${usedBucket}): ${lastError?.message || 'Periksa Storage Policies di Supabase Dashboard'}`);
   }
 
-  // 4. Retrieve permanent public CDN URL
-  const { data: publicUrlData } = supabase.storage
-    .from(usedBucket)
-    .getPublicUrl(uploadResult.path);
+  // 4. Retrieve signed URL (valid for 1 hour) for private buckets, or fallback to public URL
+  let photoUrl = '';
+  try {
+    const { data: signedData, error: signErr } = await supabase.storage
+      .from(usedBucket)
+      .createSignedUrl(uploadResult.path, 3600);
+    if (!signErr && signedData?.signedUrl) {
+      photoUrl = signedData.signedUrl;
+    }
+  } catch (e) {
+    console.warn('Could not generate initial signed URL:', e);
+  }
+
+  if (!photoUrl) {
+    const { data: publicUrlData } = supabase.storage
+      .from(usedBucket)
+      .getPublicUrl(uploadResult.path);
+    photoUrl = publicUrlData?.publicUrl || uploadResult.path;
+  }
 
   return {
-    url: publicUrlData.publicUrl,
-    path: uploadResult.path
+    url: photoUrl,
+    path: uploadResult.path,
+    bucket: usedBucket
   };
+}
+
+/**
+ * Resolves an image path or Supabase Storage URL into a secure, temporary Signed URL (default: 1 hour).
+ * Handles Private Buckets seamlessly without exposing files publicly.
+ *
+ * @param {string} pathOrUrl - Storage path ('ro/123.jpg') or full Supabase URL
+ * @param {number} [expiresIn=3600] - Token validity in seconds (default: 3600s / 1 hour)
+ * @returns {Promise<string>} Secure signed URL or original path
+ */
+export async function getSignedImageUrl(pathOrUrl, expiresIn = 3600) {
+  if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
+
+  // Local static assets (/images/...) or data/blob URIs do not need signing
+  if (pathOrUrl.startsWith('/') || pathOrUrl.startsWith('data:') || pathOrUrl.startsWith('blob:')) {
+    return pathOrUrl;
+  }
+
+  if (!supabase) return pathOrUrl;
+
+  // External images not hosted in this Supabase project
+  if (pathOrUrl.startsWith('http') && !pathOrUrl.includes(supabaseUrl)) {
+    return pathOrUrl;
+  }
+
+  // Parse bucket and object path from Supabase storage URL
+  let bucketName = BUCKET_NAME;
+  let objectPath = pathOrUrl;
+
+  const storageMatch = pathOrUrl.match(/\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/(.+?)(?:\?.*)?$/);
+  if (storageMatch) {
+    bucketName = storageMatch[1];
+    objectPath = storageMatch[2];
+  }
+
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .createSignedUrl(objectPath, expiresIn);
+
+    if (!error && data?.signedUrl) {
+      return data.signedUrl;
+    }
+  } catch (err) {
+    console.warn(`Gagal membuat Signed URL untuk ${objectPath}:`, err);
+  }
+
+  // Fallback: try public URL if signed URL creation fails
+  try {
+    const { data } = supabase.storage.from(bucketName).getPublicUrl(objectPath);
+    return data?.publicUrl || pathOrUrl;
+  } catch {
+    return pathOrUrl;
+  }
 }
 
 /**
@@ -97,12 +167,16 @@ export async function deleteImageFromSupabase(fileUrlOrPath) {
 
   try {
     let storagePath = fileUrlOrPath;
-    if (fileUrlOrPath.includes(`/storage/v1/object/public/${BUCKET_NAME}/`)) {
-      storagePath = fileUrlOrPath.split(`/storage/v1/object/public/${BUCKET_NAME}/`)[1];
+    let bucket = BUCKET_NAME;
+
+    const match = fileUrlOrPath.match(/\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/(.+?)(?:\?.*)?$/);
+    if (match) {
+      bucket = match[1];
+      storagePath = match[2];
     }
 
     if (storagePath) {
-      await supabase.storage.from(BUCKET_NAME).remove([storagePath]);
+      await supabase.storage.from(bucket).remove([storagePath]);
     }
   } catch (err) {
     console.warn('Gagal menghapus foto dari Supabase storage:', err);

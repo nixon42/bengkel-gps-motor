@@ -1,4 +1,4 @@
-import { supabase, uploadImageToSupabase, deleteImageFromSupabase } from './supabase';
+import { supabase, uploadImageToSupabase, deleteImageFromSupabase, getSignedImageUrl } from './supabase';
 import { sanitizeTrackingPayload, normalizePlate } from '../utils/masking';
 
 const DEFAULT_TENANT_ID = 'tenant-gps-motor-kediri-01';
@@ -35,17 +35,16 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 1. AUTH ROUTES
     // ----------------------------------------------------
     if (path === '/api/auth/me') {
-      const stored = localStorage.getItem('bengkel_session');
-      let user = stored ? JSON.parse(stored) : null;
+      // Invalidate any legacy auto-login sessions from earlier dev builds
+      if (typeof localStorage !== 'undefined' && localStorage.getItem('bengkel_auth_v3') !== 'active') {
+        localStorage.removeItem('bengkel_session');
+        localStorage.setItem('bengkel_auth_v3', 'active');
+      }
 
-      // Fetch active tenant
-      const { data: tenant } = await supabase
-        .from('tenants')
-        .select('*')
-        .eq('slug', 'bengkel-gps-motor')
-        .single();
+      let user = null;
 
-      if (!user && supabase) {
+      // 1. Check native Supabase Auth session first (for Google OAuth & Email/Password)
+      if (supabase) {
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.user) {
@@ -57,14 +56,31 @@ export async function handleSupabaseApi(urlStr, options = {}) {
               name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'User Supabase',
               avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
               role: isSuper ? 'superadmin' : 'admin',
-              tenant_id: tenant?.id || DEFAULT_TENANT_ID
+              tenant_id: DEFAULT_TENANT_ID,
+              auth_provider: 'supabase'
             };
-            localStorage.setItem('bengkel_session', JSON.stringify(user));
           }
         } catch (e) {
           console.warn('Gagal membaca sesi auth Supabase:', e);
         }
       }
+
+      // 2. Check explicit demo session in this browser tab
+      if (!user && typeof sessionStorage !== 'undefined') {
+        const demoStr = sessionStorage.getItem('bengkel_demo_session');
+        if (demoStr) {
+          try {
+            user = JSON.parse(demoStr);
+          } catch (e) {}
+        }
+      }
+
+      // Fetch active tenant
+      const { data: tenant } = await supabase
+        .from('tenants')
+        .select('*')
+        .eq('slug', 'bengkel-gps-motor')
+        .single();
 
       return jsonResponse({
         user: user || null,
@@ -87,15 +103,26 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         name: email.includes('superadmin') ? 'Super Admin' : 'Bambang GPS Motor',
         email,
         role: email.includes('superadmin') ? 'superadmin' : (email.includes('admin') ? 'admin' : 'operator'),
-        tenant_id: tenant?.id || DEFAULT_TENANT_ID
+        tenant_id: tenant?.id || DEFAULT_TENANT_ID,
+        is_demo: true
       };
 
-      localStorage.setItem('bengkel_session', JSON.stringify(user));
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('bengkel_demo_session', JSON.stringify(user));
+      }
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('bengkel_session');
+      }
       return jsonResponse({ success: true, user, tenant });
     }
 
     if (path === '/api/auth/logout') {
-      localStorage.removeItem('bengkel_session');
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('bengkel_session');
+      }
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem('bengkel_demo_session');
+      }
       if (supabase) {
         await supabase.auth.signOut().catch(() => {});
       }
@@ -207,7 +234,15 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         ];
       }
 
-      const sanitized = sanitizeTrackingPayload(ro, safePhotos, logs, parts);
+      // Convert private bucket photo paths into temporary secure Signed URLs (1 hour)
+      const signedPhotos = await Promise.all(
+        safePhotos.map(async (p) => ({
+          ...p,
+          photo_url: await getSignedImageUrl(p.photo_url || p.url)
+        }))
+      );
+
+      const sanitized = sanitizeTrackingPayload(ro, signedPhotos, logs, parts);
       return jsonResponse({
         success: true,
         order: sanitized,
@@ -409,11 +444,19 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           ];
         }
 
+        // Convert private bucket photo paths into temporary secure Signed URLs (1 hour)
+        const signedPhotos = await Promise.all(
+          safePhotos.map(async (p) => ({
+            ...p,
+            photo_url: await getSignedImageUrl(p.photo_url || p.url)
+          }))
+        );
+
         return jsonResponse({
           success: true,
           repair_order: ro,
           repairOrder: ro,
-          photos: safePhotos,
+          photos: signedPhotos,
           logs: logs || [],
           spareparts: parts || [],
           customer: customerRes?.data || null
@@ -535,7 +578,15 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       if (path === '/api/inventory' && method === 'GET') {
         const { data, error } = await supabase.from('spareparts').select('*').order('name');
         if (error) throw error;
-        return jsonResponse({ spareparts: data || [], items: data || [] });
+        const signedItems = await Promise.all(
+          (data || []).map(async (item) => {
+            if (item.photo_url) {
+              return { ...item, photo_url: await getSignedImageUrl(item.photo_url) };
+            }
+            return item;
+          })
+        );
+        return jsonResponse({ spareparts: signedItems, items: signedItems });
       }
 
       if (path === '/api/inventory' && method === 'POST') {

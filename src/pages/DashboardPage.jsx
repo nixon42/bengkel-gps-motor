@@ -72,21 +72,10 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
   const fetchDashboardData = async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
-      let res = await fetch('/api/dashboard/summary', {
+      const res = await fetch('/api/dashboard/summary', {
         headers: { 'Accept': 'application/json' },
         credentials: 'include'
       });
-      if (res.status === 401 && mockLogin) {
-        try {
-          await mockLogin();
-          res = await fetch('/api/dashboard/summary', {
-            headers: { 'Accept': 'application/json' },
-            credentials: 'include'
-          });
-        } catch {
-          // ignore
-        }
-      }
       if (!res.ok) {
         throw new Error(`Gagal memuat analitik: HTTP ${res.status}`);
       }
