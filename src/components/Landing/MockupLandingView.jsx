@@ -182,26 +182,58 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                 </div>
               </div>
 
-              {/* Right Column: High-Res Real Workshop Photo */}
-              <div className="lg:col-span-5 space-y-3">
-                <div className="rounded-xl border border-blue-400/30 overflow-hidden bg-slate-950 aspect-[4/3] shadow-md relative group">
-                  <img 
-                    src={heroImage} 
-                    alt={`Workshop ${tenantName} melayani servis mobil`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    fetchPriority="high"
-                    decoding="async"
-                  />
-                </div>
-
-                <div className="p-3 rounded-lg bg-blue-950/70 border border-blue-800/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-blue-200 font-mono">
-                  <div className="flex items-center gap-1.5 truncate">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span className="truncate">{address}</span>
+              {/* Right Column: High-Res Real Workshop Showcase Card */}
+              <div className="lg:col-span-5">
+                <div className="rounded-2xl border border-blue-400/30 overflow-hidden bg-slate-950 shadow-xl flex flex-col">
+                  {/* Photo Container */}
+                  <div className="aspect-[16/10] sm:aspect-[4/3] overflow-hidden bg-slate-950 relative group">
+                    <img 
+                      src={heroImage} 
+                      alt={`Workshop ${tenantName} melayani servis mobil`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fetchPriority="high"
+                      decoding="async"
+                    />
                   </div>
-                  <div className="flex items-center sm:justify-end gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-blue-300 shrink-0" />
-                    <span>{businessHours}</span>
+
+                  {/* Workshop Location & Hours Bar */}
+                  <div className="p-4 sm:p-5 bg-blue-950/80 border-t border-blue-900/70 space-y-3 font-sans">
+                    <a
+                      href="#lokasi"
+                      className="flex items-start gap-3 group/loc transition-colors"
+                      title="Lihat peta dan rute workshop"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center shrink-0 mt-0.5 group-hover/loc:bg-emerald-500/25 transition-colors">
+                        <MapPin className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-bold text-blue-300 uppercase tracking-wider">
+                            Lokasi Workshop
+                          </span>
+                          <span className="text-[10px] text-blue-400/80 group-hover/loc:text-blue-200 group-hover/loc:underline">
+                            Lihat Peta ↓
+                          </span>
+                        </div>
+                        <span className="text-xs text-slate-100 font-medium leading-relaxed block mt-0.5 group-hover/loc:text-white transition-colors">
+                          {address}
+                        </span>
+                      </div>
+                    </a>
+
+                    <div className="flex items-start gap-3 pt-3 border-t border-blue-900/60">
+                      <div className="w-7 h-7 rounded-lg bg-blue-500/15 border border-blue-400/30 flex items-center justify-center shrink-0 mt-0.5">
+                        <Clock className="w-4 h-4 text-blue-300" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="text-[11px] font-bold text-blue-300 uppercase tracking-wider block">
+                          Jam Operasional
+                        </span>
+                        <span className="text-xs text-slate-100 font-medium leading-relaxed block mt-0.5">
+                          {businessHours}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
