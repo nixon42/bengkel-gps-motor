@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Wrench, Shield, Lock, Mail, Key, ArrowRight, ArrowLeft, 
   CheckCircle2, AlertCircle, ShieldCheck
@@ -13,6 +13,24 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [activeTab, setActiveTab] = useState('google'); // 'google' | 'password'
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
+      const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+      const errorMsg = searchParams.get('error') || hashParams.get('error');
+
+      if (errorDesc || errorCode || errorMsg) {
+        if (errorCode === 'signup_disabled' || (errorDesc && errorDesc.toLowerCase().includes('signup'))) {
+          setErrorMessage('Pendaftaran akun via Google belum diaktifkan di Supabase. Aktifkan opsi "Allow new users to sign up" di Supabase Dashboard (Authentication > Sign In / Up).');
+        } else {
+          setErrorMessage(decodeURIComponent(errorDesc || errorCode || errorMsg).replace(/\+/g, ' '));
+        }
+      }
+    }
+  }, []);
 
   const handleGoogleLogin = async () => {
     try {
