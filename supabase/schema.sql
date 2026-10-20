@@ -274,8 +274,30 @@ BEGIN
 END $$;
 
 -- ====================================================================
--- 17. Supabase Storage Bucket Initialization ('bengkel-photos')
+-- 17. Supabase Storage Bucket Initialization ('bucket3' & 'bengkel-photos')
 -- ====================================================================
+-- 17a. Private Bucket 'bucket3' (Direct Signed URL Access)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('bucket3', 'bucket3', false)
+ON CONFLICT (id) DO UPDATE SET public = false;
+
+DROP POLICY IF EXISTS "Storage Read bucket3" ON storage.objects;
+CREATE POLICY "Storage Read bucket3" ON storage.objects
+FOR SELECT USING (bucket_id = 'bucket3');
+
+DROP POLICY IF EXISTS "Storage Upload bucket3" ON storage.objects;
+CREATE POLICY "Storage Upload bucket3" ON storage.objects
+FOR INSERT WITH CHECK (bucket_id = 'bucket3');
+
+DROP POLICY IF EXISTS "Storage Delete bucket3" ON storage.objects;
+CREATE POLICY "Storage Delete bucket3" ON storage.objects
+FOR DELETE USING (bucket_id = 'bucket3');
+
+DROP POLICY IF EXISTS "Storage Update bucket3" ON storage.objects;
+CREATE POLICY "Storage Update bucket3" ON storage.objects
+FOR UPDATE USING (bucket_id = 'bucket3');
+
+-- 17b. Fallback Bucket 'bengkel-photos'
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('bengkel-photos', 'bengkel-photos', true)
 ON CONFLICT (id) DO UPDATE SET public = true;
