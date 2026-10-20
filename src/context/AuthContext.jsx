@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { isSuperadmin } from '../utils/roles';
+import { DEFAULT_TENANT_ID } from '../utils/config';
 
 const AuthContext = createContext({
   user: null,
@@ -78,7 +79,7 @@ export function AuthProvider({ children }) {
             avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
             role: isSuper ? 'superadmin' : 'admin',
             isSuperAdmin: isSuper,
-            tenant_id: 'tenant-gps-motor-kediri-01'
+            tenant_id: DEFAULT_TENANT_ID
           };
           setUser(authUser);
           localStorage.setItem('bengkel_session', JSON.stringify(authUser));

@@ -224,7 +224,7 @@ export default function DocsPage({
                 <div className="min-w-0">
                   <div className="flex items-center space-x-2">
                     <h1 className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight truncate">
-                      Bengkel Mobil GPS Motor Kediri
+                      BengkelOS Platform Cloud
                     </h1>
                     <span className="hidden sm:inline-flex items-center space-x-1 px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -877,9 +877,9 @@ export default function DocsPage({
         <footer className="mt-12 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 py-6 text-xs text-slate-500 dark:text-slate-400 transition-colors">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-slate-800 dark:text-slate-200">Bengkel Mobil GPS Motor</span>
+              <span className="font-bold text-slate-800 dark:text-slate-200">BengkelOS Platform Cloud</span>
               <span>•</span>
-              <span>Sambiresik, Gampengrejo, Kab. Kediri</span>
+              <span>Buku Panduan &amp; Dokumentasi Operasional</span>
             </div>
             <div className="flex items-center space-x-4">
               <button 

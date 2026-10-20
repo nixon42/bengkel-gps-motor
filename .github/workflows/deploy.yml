@@ -34,11 +34,16 @@ jobs:
 
       - name: Build with Vite
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://vjcllwgikivvvyxrvylx.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'sb_publishable_a2DtzC-gZLrp5gdSpPbB3A_JrWVTWwU' }}
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://vjcllwgikivvvyxrvylx.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'sb_publishable_a2DtzC-gZLrp5gdSpPbB3A_JrWVTWwU' }}
-          VITE_SUPERADMIN_EMAILS: ${{ secrets.SUPERADMIN_EMAILS || 'aliepcahyo@gmail.com,allepcahyo@gmail.com' }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_BUCKET: ${{ secrets.SUPABASE_BUCKET || 'bucket3' }}
+          VITE_SUPERADMIN_EMAILS: ${{ secrets.SUPERADMIN_EMAILS }}
+          VITE_DEFAULT_TENANT_ID: ${{ secrets.DEFAULT_TENANT_ID || 'tenant-gps-motor-kediri-01' }}
+          VITE_DEFAULT_WORKSHOP_NAME: ${{ secrets.DEFAULT_WORKSHOP_NAME || 'Bengkel Mobil Mitra' }}
+          VITE_DEFAULT_WORKSHOP_PHONE: ${{ secrets.DEFAULT_WORKSHOP_PHONE || '085603307330' }}
+          VITE_DEFAULT_WORKSHOP_ADDRESS: ${{ secrets.DEFAULT_WORKSHOP_ADDRESS || 'Jl. Raya Sambiresik No. 45, Gampengrejo, Kediri, Jawa Timur' }}
         run: npm run build
 
       - name: Upload artifact

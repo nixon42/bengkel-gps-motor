@@ -11,6 +11,7 @@ import {
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { resolveAssetUrl } from '../utils/assetUrl';
+import { DEFAULT_WORKSHOP_PHONE, DEFAULT_WORKSHOP_ADDRESS, DEFAULT_BUSINESS_HOURS } from '../utils/config';
 
 // Synthesize tactile relay / hardware switch click sound via Web Audio API (zero asset latency)
 function playMechanicalClick(enabled) {
@@ -1567,15 +1568,15 @@ export default function AppPlatformLandingPage({
                     <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-800">
                       <div className="flex items-start gap-2">
                         <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                        <span className="leading-snug">{t.address || 'Kediri, Jawa Timur'}</span>
+                        <span className="leading-snug">{t.address || DEFAULT_WORKSHOP_ADDRESS}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>{t.business_hours || 'Senin - Sabtu: 08:00 - 17:00'}</span>
+                        <span>{t.business_hours || DEFAULT_BUSINESS_HOURS}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Phone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        <span className="font-mono">{t.phone_wa || '085603307330'}</span>
+                        <span className="font-mono">{t.phone_wa || DEFAULT_WORKSHOP_PHONE}</span>
                       </div>
                     </div>
                   </div>

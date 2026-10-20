@@ -1,8 +1,18 @@
 import React from 'react';
 import { Wrench, MapPin, Phone, Clock, ShieldCheck, Heart } from 'lucide-react';
 
+import { 
+  DEFAULT_WORKSHOP_NAME, 
+  DEFAULT_WORKSHOP_ADDRESS, 
+  DEFAULT_WORKSHOP_PHONE, 
+  formatWhatsAppNumber 
+} from '../../utils/config';
+
 export default function Footer({ tenant, onNavigateTracking, onOpenLogin, onOpenSuperadmin, onNavigateDocs }) {
-  const tenantName = tenant?.name || 'Bengkel Mobil Mitra';
+  const tenantName = tenant?.name || DEFAULT_WORKSHOP_NAME;
+  const tenantAddress = tenant?.address || DEFAULT_WORKSHOP_ADDRESS;
+  const tenantPhone = tenant?.phone_wa || tenant?.phone || DEFAULT_WORKSHOP_PHONE;
+  const waNumber = formatWhatsAppNumber(tenantPhone);
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -105,12 +115,12 @@ export default function Footer({ tenant, onNavigateTracking, onOpenLogin, onOpen
             <div className="space-y-2.5 text-xs text-slate-400">
               <div className="flex items-start space-x-2">
                 <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                <span>Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur</span>
+                <span>{tenantAddress}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="https://wa.me/6285603307330" target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-400 hover:underline">
-                  0856-0330-7330
+                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-400 hover:underline">
+                  {tenantPhone}
                 </a>
               </div>
               <div className="flex items-start space-x-2">

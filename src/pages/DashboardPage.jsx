@@ -744,7 +744,7 @@ export default function DashboardPage({ onNavigateTab, onOpenSettings, onNavigat
           <div>
             <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
               <Gauge className="w-4 h-4 text-emerald-500" />
-              <span>Radar Bay &amp; Lantai Kerja Bengkel (Sambiresik)</span>
+              <span>Radar Bay &amp; Lantai Kerja Workshop</span>
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Visualisasi kapasitas stall servis dan teknisi yang sedang aktif mengerjakan mobil.

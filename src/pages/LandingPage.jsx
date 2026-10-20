@@ -10,6 +10,14 @@ import TestimonialsSection from '../components/Landing/TestimonialsSection';
 import FaqSection from '../components/Landing/FaqSection';
 import LocationSection from '../components/Landing/LocationSection';
 import Footer from '../components/Landing/Footer';
+import { 
+  DEFAULT_WORKSHOP_NAME, 
+  DEFAULT_WORKSHOP_TAGLINE, 
+  DEFAULT_WORKSHOP_ADDRESS, 
+  DEFAULT_WORKSHOP_PHONE, 
+  DEFAULT_BUSINESS_HOURS, 
+  formatWhatsAppNumber 
+} from '../utils/config';
 
 export default function LandingPage({ 
   tenantSlug = 'bengkel-gps-motor',
@@ -40,11 +48,11 @@ export default function LandingPage({
   }, [tenantSlug, tenant]);
 
   const activeTenant = tenantInfo || (tenant?.slug === tenantSlug ? tenant : null) || {
-    name: 'Bengkel Mobil Mitra',
-    tagline: 'Layanan Servis Mobil Modern, Transparan & Bergaransi',
-    address: 'Jaringan Bengkel Resmi Mitra BengkelOS',
-    phone_wa: '081234567890',
-    business_hours: 'Senin - Sabtu: 08:00 - 17:00 WIB'
+    name: DEFAULT_WORKSHOP_NAME,
+    tagline: DEFAULT_WORKSHOP_TAGLINE,
+    address: DEFAULT_WORKSHOP_ADDRESS,
+    phone_wa: DEFAULT_WORKSHOP_PHONE,
+    business_hours: DEFAULT_BUSINESS_HOURS
   };
 
   const handlePlateSearch = (plate) => {
@@ -73,7 +81,7 @@ export default function LandingPage({
     { label: 'Lokasi', href: '#lokasi' }
   ];
 
-  const cleanWa = (activeTenant.phone_wa || activeTenant.phoneWa || '085603307330').replace(/\D/g, '').replace(/^0/, '62');
+  const cleanWa = formatWhatsAppNumber(activeTenant.phone_wa || activeTenant.phoneWa || DEFAULT_WORKSHOP_PHONE);
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans">

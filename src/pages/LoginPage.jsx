@@ -6,6 +6,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { isSuperadmin } from '../utils/roles';
+import { DEFAULT_TENANT_ID } from '../utils/config';
 
 export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
   const { loginWithGoogle, loading } = useAuth();
@@ -81,7 +82,7 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
           name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Staf Bengkel',
           role: isSuper ? 'superadmin' : 'admin',
           isSuperAdmin: isSuper,
-          tenant_id: 'tenant-gps-motor-kediri-01'
+          tenant_id: DEFAULT_TENANT_ID
         };
         localStorage.setItem('bengkel_session', JSON.stringify(authUser));
         if (onLoginSuccess) onLoginSuccess();

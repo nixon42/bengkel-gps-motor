@@ -11,7 +11,7 @@ async function runMigration() {
 
   if (!connectionString) {
     console.error('❌ Harap berikan database connection string atau password.');
-    console.log('Penggunaan: node scripts/migrate-supabase.js "postgresql://postgres:[PASSWORD]@db.vjcllwgikivvvyxrvylx.supabase.co:5432/postgres"');
+    console.log('Penggunaan: node scripts/migrate-supabase.js "postgresql://postgres:[PASSWORD]@db.<PROJECT-REF>.supabase.co:5432/postgres"');
     process.exit(1);
   }
 

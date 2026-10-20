@@ -2,7 +2,7 @@ import { supabase, uploadImageToSupabase, deleteImageFromSupabase, getSignedImag
 import { sanitizeTrackingPayload, normalizePlate } from '../utils/masking';
 import { isSuperadmin, parseConfiguredSuperadmins } from '../utils/roles';
 
-const DEFAULT_TENANT_ID = 'tenant-gps-motor-kediri-01';
+import { DEFAULT_TENANT_ID } from '../utils/config';
 
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
