@@ -26,7 +26,12 @@ export default function App() {
     if (typeof window === 'undefined') {
       return { view: 'platform', slug: 'bengkel-gps-motor', plate: '', section: '' };
     }
-    const path = window.location.pathname;
+    const rawPath = window.location.pathname;
+    // Strip repository name if hosted on username.github.io/bengkel-gps-motor
+    const isRepoSubpath = typeof window !== 'undefined' && 
+      window.location.hostname.endsWith('github.io') && 
+      rawPath.startsWith('/bengkel-gps-motor');
+    const path = isRepoSubpath ? (rawPath.replace(/^\/bengkel-gps-motor/, '') || '/') : rawPath;
     const params = new URLSearchParams(window.location.search);
     const plate = params.get('plate') || '';
 
@@ -108,8 +113,13 @@ export default function App() {
       newPath = '/';
     }
 
+    const isRepoSubpath = typeof window !== 'undefined' && 
+      window.location.hostname.endsWith('github.io') && 
+      window.location.pathname.startsWith('/bengkel-gps-motor');
+    const fullPath = isRepoSubpath ? `/bengkel-gps-motor${newPath}` : newPath;
+
     if (window.history && window.history.pushState) {
-      window.history.pushState(null, '', newPath);
+      window.history.pushState(null, '', fullPath);
     }
 
     setCurrentRoute({

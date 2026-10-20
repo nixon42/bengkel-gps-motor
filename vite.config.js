@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: process.env.BASE_PATH || '/',
+  base: process.env.BASE_PATH || '/bengkel-gps-motor/',
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   server: {
     port: 5173,
