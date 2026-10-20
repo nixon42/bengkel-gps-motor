@@ -1,7 +1,8 @@
 import React from 'react';
 import { Wrench, MapPin, Phone, Clock, ShieldCheck, Heart } from 'lucide-react';
 
-export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadmin, onNavigateDocs }) {
+export default function Footer({ tenant, onNavigateTracking, onOpenLogin, onOpenSuperadmin, onNavigateDocs }) {
+  const tenantName = tenant?.name || 'Bengkel Mobil Mitra';
   return (
     <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -15,16 +16,16 @@ export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadm
               </div>
               <div>
                 <span className="text-base font-bold text-white tracking-tight">
-                  Bengkel Mobil GPS Motor Kediri
+                  {tenantName}
                 </span>
                 <span className="block text-[11px] text-slate-400">
-                  Sistem Pengelolaan & Pelacakan Servis Mobil Modern (SPP Bengkel)
+                  Sistem Pengelolaan &amp; Pelacakan Servis Mobil Modern (BengkelOS Platform)
                 </span>
               </div>
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-md">
-              Solusi perawatan dan perbaikan mobil terpercaya di Kediri. Transparansi biaya, teknisi profesional, dokumentasi foto real-time, dan pelacakan status online dengan proteksi privasi pelanggan.
+              Solusi perawatan dan perbaikan mobil terpercaya. Transparansi biaya, teknisi profesional, dokumentasi foto real-time, dan pelacakan status online dengan proteksi privasi pelanggan.
             </p>
 
             <div className="flex items-center space-x-2 pt-1 text-slate-400">
@@ -123,11 +124,9 @@ export default function Footer({ onNavigateTracking, onOpenLogin, onOpenSuperadm
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-slate-500 gap-4">
-          <p>© {new Date().getFullYear()} Bengkel Mobil GPS Motor Kediri. Hak Cipta Dilindungi.</p>
+          <p>© {new Date().getFullYear()} {tenantName}. Hak Cipta Dilindungi &bull; Powered by BengkelOS.</p>
           <p className="flex items-center space-x-1">
-            <span>Dibuat dengan</span>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-            <span>untuk pemilik mobil Kediri & sekitarnya</span>
+            <span>Platform Operasional Bengkel Mobil Terpadu</span>
           </p>
         </div>
       </div>

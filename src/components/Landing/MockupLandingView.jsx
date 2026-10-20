@@ -90,11 +90,11 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
 
   const recommendedPackage = getRecommendedPackage();
 
-  const tenantName = tenant?.name || 'Bengkel Mobil GPS Motor Kediri';
-  const tagline = tenant?.tagline || 'BENGKEL TERPERCAYA KEDIRI: TRANSPARAN, JUJUR, BERGARANSI.';
-  const address = tenant?.address || 'Jl. Raya Sambiresik, Gampengrejo, Kediri';
+  const tenantName = tenant?.name || 'Bengkel Mobil Mitra';
+  const tagline = tenant?.tagline || 'BENGKEL TERPERCAYA: TRANSPARAN, JUJUR, BERGARANSI.';
+  const address = tenant?.address || 'Jaringan Resmi Bengkel Mitra BengkelOS';
   const businessHours = tenant?.business_hours || tenant?.businessHours || 'Senin - Sabtu: 08:00 - 17:00 WIB';
-  const phoneWa = tenant?.phone_wa || tenant?.phoneWa || '085603307330';
+  const phoneWa = tenant?.phone_wa || tenant?.phoneWa || '081234567890';
   const cleanWa = phoneWa.replace(/\D/g, '').replace(/^0/, '62');
   const heroImage = resolveAssetUrl(tenant?.hero_image_url || tenant?.heroImageUrl || '/images/mockup/hero_bay_clean.jpg');
   const facilityImage1 = resolveAssetUrl(tenant?.facility_image_1 || tenant?.facilityImage1 || '/images/mockup/facility_lift_bay_clean.jpg');

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { isSuperadmin } from '../utils/roles';
 
 const AuthContext = createContext({
   user: null,
@@ -54,13 +55,14 @@ export function AuthProvider({ children }) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
           const email = session.user.email || '';
-          const isSuper = email.includes('superadmin') || email === 'admin@gpsmotor.id';
+          const isSuper = isSuperadmin(email);
           const authUser = {
             id: session.user.id,
             email,
             name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'User Google',
             avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
             role: isSuper ? 'superadmin' : 'admin',
+            isSuperAdmin: isSuper,
             tenant_id: 'tenant-gps-motor-kediri-01'
           };
           setUser(authUser);

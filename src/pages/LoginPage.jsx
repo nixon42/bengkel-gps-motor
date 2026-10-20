@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Wrench, Shield, Lock, Mail, Key, ArrowRight, ArrowLeft, 
-  CheckCircle2, AlertCircle, ShieldCheck
+  CheckCircle2, AlertCircle, ShieldCheck, Layers
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { isSuperadmin } from '../utils/roles';
 
 export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
   const { loginWithGoogle, loading } = useAuth();
@@ -73,12 +74,13 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
       }
 
       if (data?.user) {
-        const isSuper = data.user.email?.includes('superadmin') || data.user.email === 'admin@gpsmotor.id';
+        const isSuper = isSuperadmin(data.user.email);
         const authUser = {
           id: data.user.id,
           email: data.user.email,
           name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Staf Bengkel',
           role: isSuper ? 'superadmin' : 'admin',
+          isSuperAdmin: isSuper,
           tenant_id: 'tenant-gps-motor-kediri-01'
         };
         localStorage.setItem('bengkel_session', JSON.stringify(authUser));
@@ -113,14 +115,17 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
         
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#0c2b5e] border border-blue-500/30 text-emerald-400 mb-4 shadow-xl shadow-blue-950/50">
-            <Wrench className="w-7 h-7" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 border border-blue-400/30 text-white mb-4 shadow-xl shadow-blue-950/60 ring-1 ring-white/10">
+            <Layers className="w-7 h-7 text-emerald-400" />
+          </div>
+          <div className="inline-block px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800 text-blue-300 text-[11px] font-mono font-bold uppercase tracking-wider mb-2">
+            BengkelOS Platform Cloud
           </div>
           <h1 className="text-2xl font-black text-white tracking-tight uppercase">
-            Portal Staf &amp; Manajemen
+            Portal Workspace &amp; Superadmin
           </h1>
-          <p className="text-xs font-mono text-slate-400 mt-1.5">
-            BENGKEL MOBIL GPS MOTOR KEDIRI
+          <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+            Sistem Operasi Manajemen Bengkel Terpadu &amp; Akses Pengawasan Multi-Tenant
           </p>
         </div>
 
@@ -165,7 +170,7 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
           {activeTab === 'google' && (
             <div className="space-y-4 text-center">
               <p className="text-xs text-slate-400 leading-relaxed">
-                Gunakan akun Google yang terdaftar untuk mengakses seluruh fitur bengkel secara aman dan tersinkronisasi.
+                Gunakan akun Google staf, pemilik bengkel, atau superadmin untuk masuk ke workspace secara aman.
               </p>
               
               <button
@@ -205,7 +210,7 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@gpsmotor.id"
+                    placeholder="nama@bengkel.com atau admin@domain.com"
                     required
                     className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs placeholder:text-slate-600 focus:outline-none focus:border-blue-500 font-mono"
                   />
@@ -243,8 +248,8 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
         </div>
 
         {/* Security Badge Footer */}
-        <div className="text-center mt-6 text-xs text-slate-600 font-mono">
-          Bengkel Mobil GPS Motor Kediri &bull; Sambiresik, Gampengrejo
+        <div className="text-center mt-6 text-xs text-slate-500 font-mono">
+          BengkelOS Cloud Network &bull; Multi-Tenant Automotive ERP System
         </div>
 
       </div>

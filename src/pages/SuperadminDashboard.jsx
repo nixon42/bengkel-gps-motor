@@ -341,7 +341,7 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                 </span>
               </div>
               <span className="text-xs text-slate-300">
-                Pusat Pengawasan Bengkel Mobil GPS Motor
+                Pusat Pengawasan &amp; Tata Kelola Multi-Tenant BengkelOS
               </span>
             </div>
           </div>

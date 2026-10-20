@@ -210,12 +210,12 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
             <div className="min-w-0">
               <div className="flex items-center space-x-2">
                 <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight truncate max-w-[170px] sm:max-w-none">
-                  {tenant?.name || 'Bengkel Mobil GPS Motor Kediri'}
+                  {tenant?.name || 'Workspace Bengkel'}
                 </h1>
               </div>
               <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 <span className="hidden sm:inline-block font-mono text-xs font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
-                  {tenant?.slug || 'bengkel-gps-motor'}
+                  {tenant?.slug || 'mitra'}
                 </span>
                 <span className="inline-flex items-center space-x-1 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

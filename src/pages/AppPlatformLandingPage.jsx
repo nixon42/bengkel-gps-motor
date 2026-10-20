@@ -443,7 +443,7 @@ export default function AppPlatformLandingPage({
               className="touch-target hidden 2xl:inline-flex items-center space-x-1.5 px-3 py-2 rounded border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100 transition-colors"
             >
               <Wrench className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Demo Bengkel GPS Motor</span>
+              <span>Portal Bengkel Mitra</span>
             </button>
 
             {/* Login / Portal Button */}
@@ -506,7 +506,7 @@ export default function AppPlatformLandingPage({
               }}
               className="inline-flex items-center space-x-1.5 text-xs text-blue-200 hover:text-white underline underline-offset-4 font-mono font-medium"
             >
-              <span>Lihat Website Publik Mitra Bengkel: GPS Motor Kediri</span>
+              <span>Lihat Contoh Website Publik Bengkel Mitra</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -876,7 +876,7 @@ export default function AppPlatformLandingPage({
                         </div>
                         <div>
                           <div className="flex items-center space-x-1">
-                            <span className="text-xs font-bold text-white">Bengkel GPS Motor Kediri</span>
+                            <span className="text-xs font-bold text-white">Bengkel Mobil Mitra (Official)</span>
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                           </div>
                           <span className="text-xs text-slate-400 font-mono">Resmi Terverifikasi</span>
@@ -1749,7 +1749,7 @@ export default function AppPlatformLandingPage({
                 onClick={() => onNavigateTenant('bengkel-gps-motor')}
                 className="hover:text-emerald-400 transition-colors"
               >
-                Demo Bengkel GPS Motor
+                Website Bengkel Mitra
               </button>
               <button 
                 type="button" 

@@ -2,10 +2,10 @@ import React from 'react';
 import { MapPin, Clock, Phone, Navigation, MessageCircle } from 'lucide-react';
 
 export default function LocationSection({ tenant }) {
-  const address = tenant?.address || 'Sambiresik, Kec. Gampengrejo, Kab. Kediri, Jawa Timur 64182';
+  const address = tenant?.address || 'Jaringan Resmi Bengkel Mitra BengkelOS Indonesia';
   const businessHours = tenant?.business_hours || tenant?.businessHours || 'Senin - Sabtu: 08:00 - 17:00 WIB';
-  const phoneWa = tenant?.phone_wa || tenant?.phoneWa || '0856-0330-7330';
-  const tenantName = tenant?.name || 'Bengkel GPS Motor Kediri';
+  const phoneWa = tenant?.phone_wa || tenant?.phoneWa || '0812-3456-7890';
+  const tenantName = tenant?.name || 'Bengkel Mobil Mitra';
   const cleanWa = phoneWa.replace(/\D/g, '').replace(/^0/, '62');
 
   return (
@@ -103,7 +103,7 @@ export default function LocationSection({ tenant }) {
           {/* Right Map Container with Authentic Pin Marker */}
           <div className="lg:col-span-7 rounded border border-slate-200 dark:border-slate-800 overflow-hidden bg-slate-100 dark:bg-slate-800 min-h-[380px] flex flex-col relative">
             <iframe
-              title="Google Maps Lokasi Bengkel Mobil GPS Motor Kediri"
+              title={`Google Maps Lokasi ${tenantName}`}
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.08!2d112.0205!3d-7.7812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwNDYnNTIuMyJTIDExMsKwMDEnMTMuOCJF!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
               className="w-full h-full flex-1 border-0 min-h-[380px]"
               loading="lazy"
@@ -112,18 +112,18 @@ export default function LocationSection({ tenant }) {
             {/* Overlay Pin Indicator (Pure CSS/SVG, no pulse or emoji) */}
             <div className="absolute top-3 right-3 z-10 hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-100 shadow-sm">
               <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              <span>Titik: Bengkel Mobil GPS Motor Kediri</span>
+              <span>Titik: {tenantName}</span>
             </div>
             <div className="bg-white dark:bg-slate-900 px-4 py-2.5 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
-              <span className="flex items-center space-x-1.5 font-medium">
+              <span className="flex items-center space-x-1.5 font-medium truncate max-w-[280px] sm:max-w-none">
                 <MapPin className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                <span>Sambiresik, Kec. Gampengrejo, Kab. Kediri</span>
+                <span>{address}</span>
               </span>
               <a
-                href="https://maps.google.com/?q=-7.7812,112.0205+(Bengkel+Mobil+GPS+Motor+Kediri)"
+                href={`https://maps.google.com/?q=${encodeURIComponent(tenantName + ' ' + address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-bold"
+                className="text-blue-600 dark:text-blue-400 hover:underline font-bold shrink-0 ml-2"
               >
                 Buka di Google Maps ↗
               </a>

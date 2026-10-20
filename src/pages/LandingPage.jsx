@@ -40,9 +40,10 @@ export default function LandingPage({
   }, [tenantSlug, tenant]);
 
   const activeTenant = tenantInfo || (tenant?.slug === tenantSlug ? tenant : null) || {
-    name: 'Bengkel GPS Motor',
-    address: 'Sambiresik, Kec. Gampengrejo, Kab. Kediri',
-    phone_wa: '085603307330',
+    name: 'Bengkel Mobil Mitra',
+    tagline: 'Layanan Servis Mobil Modern, Transparan & Bergaransi',
+    address: 'Jaringan Bengkel Resmi Mitra BengkelOS',
+    phone_wa: '081234567890',
     business_hours: 'Senin - Sabtu: 08:00 - 17:00 WIB'
   };
 
@@ -94,10 +95,10 @@ export default function LandingPage({
             </div>
             <div className="flex flex-col">
               <span className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase font-sans">
-                {activeTenant.name || 'Bengkel GPS Motor'}
+                {activeTenant.name || 'Bengkel Mobil Mitra'}
               </span>
               <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-wider uppercase truncate max-w-[180px] sm:max-w-[220px]">
-                {activeTenant.address ? activeTenant.address.split(',')[0] : 'Kediri · Sambiresik'}
+                {activeTenant.address ? activeTenant.address.split(',')[0] : 'Mitra BengkelOS'}
               </span>
             </div>
           </div>
@@ -246,6 +247,7 @@ export default function LandingPage({
 
       {/* Footer */}
       <Footer 
+        tenant={activeTenant}
         onNavigateTracking={() => onNavigateTracking()} 
         onOpenLogin={handleLoginClick} 
         onOpenSuperadmin={onOpenSuperadmin}
