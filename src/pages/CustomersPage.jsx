@@ -286,14 +286,15 @@ export default function CustomersPage() {
     const lastVisit = customer.last_visit || 'beberapa waktu lalu';
     const workshopName = tenant?.name || 'Bengkel Mobil';
     const workshopAddress = tenant?.address || tenant?.city || 'Workshop Kami';
-    const workshopPhone = tenant?.phone_wa || tenant?.phone || '0812-3456-7890';
+    const workshopPhone = tenant?.phone_wa || tenant?.phone || '';
+    const phoneLine = workshopPhone ? `\n📞 Booking & Konsultasi: ${workshopPhone}` : '';
 
     if (templateType === 'PROMO') {
-      return `Halo Bapak/Ibu *${name}*,\n\nAda kabar gembira dari *${workshopName}*! 🚗✨\n\nKami sedang ada *Promo Spesial Servis & Tune-Up*: Dapatkan diskon jasa servis 15% serta gratis pengecekan 25 titik komponen (rem, kelistrikan, oli, pendingin) untuk mobil kesayangan Anda *${primaryVehicle}*.\n\n📍 Lokasi: ${workshopAddress}\n📞 Booking & Konsultasi: ${workshopPhone}\n\nPromo berlaku terbatas. Balas pesan ini untuk booking antrian servis Anda sekarang ya!`;
+      return `Halo Bapak/Ibu *${name}*,\n\nAda kabar gembira dari *${workshopName}*! 🚗✨\n\nKami sedang ada *Promo Spesial Servis & Tune-Up*: Dapatkan diskon jasa servis 15% serta gratis pengecekan 25 titik komponen (rem, kelistrikan, oli, pendingin) untuk mobil kesayangan Anda *${primaryVehicle}*.\n\n📍 Lokasi: ${workshopAddress}${phoneLine}\n\nPromo berlaku terbatas. Balas pesan ini untuk booking antrian servis Anda sekarang ya!`;
     }
 
     if (templateType === 'REMINDER') {
-      return `Halo Bapak/Ibu *${name}*,\n\nSemoga selalu sehat dan lancar beraktivitas. Mengingat kunjungan servis terakhir untuk mobil *${primaryVehicle}* tercatat pada *${lastVisit}*, kini saatnya untuk jadwal perawatan berkala & ganti oli rutin agar tarikan mesin tetap enteng, hemat BBM, dan prima di jalan.\n\nKami siap melayani Anda di *${workshopName}*:\n📍 Lokasi: ${workshopAddress}\n📞 Booking Antrian: ${workshopPhone}\n\nTerima kasih telah setia mempercayakan mobil Anda pada kami! 🙏`;
+      return `Halo Bapak/Ibu *${name}*,\n\nSemoga selalu sehat dan lancar beraktivitas. Mengingat kunjungan servis terakhir untuk mobil *${primaryVehicle}* tercatat pada *${lastVisit}*, kini saatnya untuk jadwal perawatan berkala & ganti oli rutin agar tarikan mesin tetap enteng, hemat BBM, dan prima di jalan.\n\nKami siap melayani Anda di *${workshopName}*:\n📍 Lokasi: ${workshopAddress}${phoneLine}\n\nTerima kasih telah setia mempercayakan mobil Anda pada kami! 🙏`;
     }
 
     if (templateType === 'FOLLOWUP') {

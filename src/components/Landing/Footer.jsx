@@ -117,12 +117,19 @@ export default function Footer({ tenant, onNavigateTracking, onOpenLogin, onOpen
                 <MapPin className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                 <span>{tenantAddress}</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-400 hover:underline">
-                  {tenantPhone}
-                </a>
-              </div>
+              {tenantPhone ? (
+                <div className="flex items-center space-x-2">
+                  <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer" className="font-mono text-emerald-400 hover:underline">
+                    {tenantPhone}
+                  </a>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2 text-slate-500">
+                  <Phone className="w-4 h-4 text-slate-600 shrink-0" />
+                  <span>WhatsApp: Belum Diatur</span>
+                </div>
+              )}
               <div className="flex items-start space-x-2">
                 <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <span>Senin - Sabtu: 08:00 - 17:00 WIB</span>

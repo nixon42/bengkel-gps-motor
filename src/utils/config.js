@@ -18,11 +18,11 @@ export const DEFAULT_WORKSHOP_TAGLINE =
 
 export const DEFAULT_WORKSHOP_PHONE = 
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_DEFAULT_WORKSHOP_PHONE) || 
-  '085603307330';
+  '';
 
 export const DEFAULT_WORKSHOP_ADDRESS = 
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_DEFAULT_WORKSHOP_ADDRESS) || 
-  'Jl. Raya Sambiresik No. 45, Gampengrejo, Kediri, Jawa Timur';
+  'Jaringan Resmi Bengkel Mitra BengkelOS Indonesia';
 
 export const DEFAULT_BUSINESS_HOURS = 
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_DEFAULT_BUSINESS_HOURS) || 
@@ -34,7 +34,10 @@ export const DEFAULT_BUSINESS_HOURS =
  * @returns {string}
  */
 export function formatWhatsAppNumber(phone = '') {
-  const digits = String(phone || DEFAULT_WORKSHOP_PHONE).replace(/\D/g, '');
+  const target = phone || DEFAULT_WORKSHOP_PHONE;
+  if (!target) return '';
+  const digits = String(target).replace(/\D/g, '');
+  if (!digits) return '';
   if (digits.startsWith('0')) {
     return '62' + digits.slice(1);
   }

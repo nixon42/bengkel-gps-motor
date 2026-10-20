@@ -16,11 +16,19 @@ CREATE TABLE IF NOT EXISTS tenants (
   facility_image_1 TEXT,
   facility_image_2 TEXT,
   tagline TEXT,
+  maps_url TEXT,
+  maps_embed_url TEXT,
+  latitude NUMERIC,
+  longitude NUMERIC,
   profile_completed INTEGER DEFAULT 1,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_tenants_slug ON tenants(slug);
+ALTER TABLE tenants ADD COLUMN IF NOT EXISTS maps_url TEXT;
+ALTER TABLE tenants ADD COLUMN IF NOT EXISTS maps_embed_url TEXT;
+ALTER TABLE tenants ADD COLUMN IF NOT EXISTS latitude NUMERIC;
+ALTER TABLE tenants ADD COLUMN IF NOT EXISTS longitude NUMERIC;
 
 -- 2. Users (Operators linked to Tenant)
 CREATE TABLE IF NOT EXISTS users (

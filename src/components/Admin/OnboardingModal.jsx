@@ -39,6 +39,7 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
     address: tenant?.address || '',
     phoneWa: tenant?.phone_wa || tenant?.phoneWa || '',
     businessHours: tenant?.business_hours || tenant?.businessHours || 'Senin - Sabtu: 08:00 - 17:00 WIB',
+    mapsUrl: tenant?.maps_url || tenant?.mapsUrl || '',
     heroImageUrl: tenant?.hero_image_url || '/images/mockup/facility_inspection_clean.jpg',
     facilityImage1: tenant?.facility_image_1 || '/images/mockup/facility_lift_bay_clean.jpg',
     facilityImage2: tenant?.facility_image_2 || '/images/mockup/facility_inspection_clean.jpg'
@@ -213,7 +214,7 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
                   required
                   value={formData.phoneWa}
                   onChange={(e) => setFormData({ ...formData, phoneWa: e.target.value })}
-                  placeholder="085603307330"
+                  placeholder="Contoh: 081234567890"
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono font-bold focus:outline-none focus:border-blue-500"
                 />
               </div>
@@ -228,6 +229,19 @@ export default function OnboardingModal({ tenant, onComplete, onClose }) {
                   onChange={(e) => setFormData({ ...formData, businessHours: e.target.value })}
                   placeholder="Senin - Sabtu: 08:00 - 17:00 WIB"
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Link Google Maps / Sematkan Peta Workshop (Opsional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.mapsUrl}
+                  onChange={(e) => setFormData({ ...formData, mapsUrl: e.target.value })}
+                  placeholder="Contoh: https://maps.app.goo.gl/... atau sematkan iframe"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-blue-500"
                 />
               </div>
             </div>

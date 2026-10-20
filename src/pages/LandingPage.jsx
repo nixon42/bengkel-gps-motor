@@ -150,9 +150,9 @@ export default function LandingPage({
 
             {/* Primary Action Button: Pesan Sekarang (WhatsApp Booking) */}
             <a
-              href={`https://wa.me/${cleanWa}?text=${encodeURIComponent(`Halo ${activeTenant.name}, saya ingin pesan jadwal servis mobil.`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={cleanWa ? `https://wa.me/${cleanWa}?text=${encodeURIComponent(`Halo ${activeTenant.name}, saya ingin pesan jadwal servis mobil.`)}` : '#lokasi'}
+              target={cleanWa ? '_blank' : '_self'}
+              rel={cleanWa ? 'noopener noreferrer' : undefined}
               className="touch-target inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#00a86b] hover:bg-[#00925d] active:bg-emerald-800 text-white text-xs sm:text-sm font-bold tracking-wide uppercase transition-colors shadow-sm whitespace-nowrap shrink-0"
             >
               <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />

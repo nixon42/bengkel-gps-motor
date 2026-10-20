@@ -41,14 +41,10 @@ export default function ActionButtons({ trackingData }) {
 
   const maskedPlate = trackingData?.plate_masked || trackingData?.repairOrder?.maskedPlate || 'Kendaraan';
   const workshopName = trackingData?.tenant?.name || 'Bengkel Mobil Mitra';
-  const workshopPhone = trackingData?.tenant?.phone_wa || trackingData?.tenant?.phone || '081234567890';
-
-  const shareText = `Halo, pantau proses servis kendaraan *${maskedPlate}* di *${workshopName}* secara live di link berikut:\n\n${secureTrackingUrl}`;
-  const waShareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-
-  const cleanPhone = workshopPhone.replace(/[^0-9]/g, '');
-  const waNumber = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
-  const waChatUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Halo ${workshopName}, saya ingin menanyakan status servis kendaraan saya dengan plat ${maskedPlate}.`)}`;
+  const rawPhone = trackingData?.tenant?.phone_wa || trackingData?.tenant?.phone || '';
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+  const waNumber = cleanPhone ? (cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone) : '';
+  const waChatUrl = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`Halo ${workshopName}, saya ingin menanyakan status servis kendaraan saya dengan plat ${maskedPlate}.`)}` : '';
 
   return (
     <div className="space-y-3">
@@ -83,15 +79,22 @@ export default function ActionButtons({ trackingData }) {
         </a>
 
         {/* Hubungi Bengkel WA */}
-        <a
-          href={waChatUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="touch-target flex items-center justify-center space-x-2 px-4 py-3 rounded border border-emerald-600 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors"
-        >
-          <MessageCircle className="w-4 h-4 text-emerald-600" />
-          <span>Tanya Bengkel WA</span>
-        </a>
+        {waChatUrl ? (
+          <a
+            href={waChatUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="touch-target flex items-center justify-center space-x-2 px-4 py-3 rounded border border-emerald-600 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-bold text-xs sm:text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors"
+          >
+            <MessageCircle className="w-4 h-4 text-emerald-600" />
+            <span>Tanya Bengkel WA</span>
+          </a>
+        ) : (
+          <div className="flex items-center justify-center space-x-2 px-4 py-3 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 font-bold text-xs sm:text-sm select-none">
+            <MessageCircle className="w-4 h-4 text-slate-400" />
+            <span>WA Belum Diatur</span>
+          </div>
+        )}
       </div>
     </div>
   );

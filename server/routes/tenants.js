@@ -26,6 +26,12 @@ export function tenantRoutes(db) {
     facilityImage2: z.string().nullable().optional(),
     facility_image_2: z.string().nullable().optional(),
     tagline: z.string().max(150).nullable().optional(),
+    mapsUrl: z.string().nullable().optional(),
+    maps_url: z.string().nullable().optional(),
+    mapsEmbedUrl: z.string().nullable().optional(),
+    maps_embed_url: z.string().nullable().optional(),
+    latitude: z.union([z.number(), z.string()]).nullable().optional(),
+    longitude: z.union([z.number(), z.string()]).nullable().optional(),
     profileCompleted: z.union([z.boolean(), z.number()]).optional(),
     profile_completed: z.union([z.boolean(), z.number()]).optional(),
     monthlyRevenueTarget: z.number().nonnegative().optional(),
@@ -75,6 +81,12 @@ export function tenantRoutes(db) {
           facility_image_2: tenant.facility_image_2 || null,
           facilityImage2: tenant.facility_image_2 || null,
           tagline: tenant.tagline || '',
+          maps_url: tenant.maps_url || null,
+          mapsUrl: tenant.maps_url || null,
+          maps_embed_url: tenant.maps_embed_url || null,
+          mapsEmbedUrl: tenant.maps_embed_url || null,
+          latitude: tenant.latitude || null,
+          longitude: tenant.longitude || null,
           profile_completed: Boolean(tenant.profile_completed),
           profileCompleted: Boolean(tenant.profile_completed),
           created_at: tenant.created_at,
@@ -133,6 +145,10 @@ export function tenantRoutes(db) {
         facility_image_1: parsed.facilityImage1 !== undefined ? parsed.facilityImage1 : (parsed.facility_image_1 !== undefined ? parsed.facility_image_1 : currentTenant.facility_image_1),
         facility_image_2: parsed.facilityImage2 !== undefined ? parsed.facilityImage2 : (parsed.facility_image_2 !== undefined ? parsed.facility_image_2 : currentTenant.facility_image_2),
         tagline: parsed.tagline !== undefined ? parsed.tagline : currentTenant.tagline,
+        maps_url: parsed.mapsUrl !== undefined ? parsed.mapsUrl : (parsed.maps_url !== undefined ? parsed.maps_url : currentTenant.maps_url),
+        maps_embed_url: parsed.mapsEmbedUrl !== undefined ? parsed.mapsEmbedUrl : (parsed.maps_embed_url !== undefined ? parsed.maps_embed_url : currentTenant.maps_embed_url),
+        latitude: parsed.latitude !== undefined ? (parsed.latitude ? Number(parsed.latitude) : null) : currentTenant.latitude,
+        longitude: parsed.longitude !== undefined ? (parsed.longitude ? Number(parsed.longitude) : null) : currentTenant.longitude,
         profile_completed: parsed.profileCompleted !== undefined ? (parsed.profileCompleted ? 1 : 0) : (parsed.profile_completed !== undefined ? (parsed.profile_completed ? 1 : 0) : currentTenant.profile_completed ?? 1)
       };
 
@@ -140,7 +156,8 @@ export function tenantRoutes(db) {
         UPDATE tenants
         SET name = ?, slug = ?, address = ?, phone_wa = ?, business_hours = ?, 
             logo_url = ?, hero_image_url = ?, facility_image_1 = ?, facility_image_2 = ?, 
-            tagline = ?, profile_completed = ?, updated_at = CURRENT_TIMESTAMP
+            tagline = ?, maps_url = ?, maps_embed_url = ?, latitude = ?, longitude = ?, 
+            profile_completed = ?, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `).run(
         updateData.name,
@@ -153,6 +170,10 @@ export function tenantRoutes(db) {
         updateData.facility_image_1,
         updateData.facility_image_2,
         updateData.tagline,
+        updateData.maps_url,
+        updateData.maps_embed_url,
+        updateData.latitude,
+        updateData.longitude,
         updateData.profile_completed,
         tenantId
       );

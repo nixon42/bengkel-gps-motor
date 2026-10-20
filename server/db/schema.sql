@@ -14,6 +14,10 @@ CREATE TABLE IF NOT EXISTS tenants (
   facility_image_1 TEXT,
   facility_image_2 TEXT,
   tagline TEXT,
+  maps_url TEXT,
+  maps_embed_url TEXT,
+  latitude NUMERIC,
+  longitude NUMERIC,
   profile_completed INTEGER DEFAULT 1,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

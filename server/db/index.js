@@ -50,7 +50,11 @@ export function initDatabase(dbPath = DEFAULT_DB_PATH) {
     'facility_image_1 TEXT',
     'facility_image_2 TEXT',
     'tagline TEXT',
-    'profile_completed INTEGER DEFAULT 1'
+    'profile_completed INTEGER DEFAULT 1',
+    'maps_url TEXT',
+    'maps_embed_url TEXT',
+    'latitude NUMERIC',
+    'longitude NUMERIC'
   ];
   for (const col of tenantCols) {
     try {

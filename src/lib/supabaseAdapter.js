@@ -161,23 +161,92 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // ----------------------------------------------------
     if (path === '/api/tenant/settings') {
       if (method === 'GET') {
-        const { data, error } = await supabase
-          .from('tenant_settings')
-          .select('*')
-          .eq('tenant_id', DEFAULT_TENANT_ID)
-          .single();
-        return jsonResponse(data || { monthly_revenue_target: 15000000, invoice_footer: 'Terima kasih telah mempercayakan kendaraan Anda pada bengkel kami.' });
+        const [{ data: sData }, { data: tData }] = await Promise.all([
+          supabase.from('tenant_settings').select('*').eq('tenant_id', DEFAULT_TENANT_ID).maybeSingle(),
+          supabase.from('tenants').select('*').eq('id', DEFAULT_TENANT_ID).maybeSingle()
+        ]);
+        return jsonResponse({
+          success: true,
+          tenant: tData || null,
+          settings: sData || { monthly_revenue_target: 15000000, invoice_footer: 'Terima kasih telah mempercayakan kendaraan Anda pada bengkel kami.' }
+        });
       }
 
       if (method === 'PUT') {
         const body = JSON.parse(options.body || '{}');
-        const { data, error } = await supabase
+
+        const tenantUpdates = {};
+        if (body.name !== undefined) tenantUpdates.name = body.name;
+        if (body.slug !== undefined) tenantUpdates.slug = body.slug;
+        if (body.address !== undefined) tenantUpdates.address = body.address;
+        if (body.phoneWa !== undefined || body.phone_wa !== undefined) {
+          tenantUpdates.phone_wa = body.phoneWa ?? body.phone_wa;
+        }
+        if (body.businessHours !== undefined || body.business_hours !== undefined) {
+          tenantUpdates.business_hours = body.businessHours ?? body.business_hours;
+        }
+        if (body.tagline !== undefined) tenantUpdates.tagline = body.tagline;
+        if (body.heroImageUrl !== undefined || body.hero_image_url !== undefined) {
+          tenantUpdates.hero_image_url = body.heroImageUrl ?? body.hero_image_url;
+        }
+        if (body.facilityImage1 !== undefined || body.facility_image_1 !== undefined) {
+          tenantUpdates.facility_image_1 = body.facilityImage1 ?? body.facility_image_1;
+        }
+        if (body.facilityImage2 !== undefined || body.facility_image_2 !== undefined) {
+          tenantUpdates.facility_image_2 = body.facilityImage2 ?? body.facility_image_2;
+        }
+        if (body.mapsUrl !== undefined || body.maps_url !== undefined) {
+          tenantUpdates.maps_url = body.mapsUrl ?? body.maps_url;
+        }
+        if (body.mapsEmbedUrl !== undefined || body.maps_embed_url !== undefined) {
+          tenantUpdates.maps_embed_url = body.mapsEmbedUrl ?? body.maps_embed_url;
+        }
+        if (body.latitude !== undefined) {
+          tenantUpdates.latitude = body.latitude ? Number(body.latitude) : null;
+        }
+        if (body.longitude !== undefined) {
+          tenantUpdates.longitude = body.longitude ? Number(body.longitude) : null;
+        }
+        if (body.profileCompleted !== undefined || body.profile_completed !== undefined) {
+          tenantUpdates.profile_completed = (body.profileCompleted ?? body.profile_completed) ? 1 : 0;
+        }
+        tenantUpdates.updated_at = new Date().toISOString();
+
+        let updatedTenant = null;
+        if (Object.keys(tenantUpdates).length > 0) {
+          const { data: tData } = await supabase
+            .from('tenants')
+            .update(tenantUpdates)
+            .eq('id', DEFAULT_TENANT_ID)
+            .select()
+            .maybeSingle();
+          updatedTenant = tData;
+        }
+
+        const settingsUpdates = {
+          tenant_id: DEFAULT_TENANT_ID,
+          updated_at: new Date().toISOString()
+        };
+        if (body.monthlyRevenueTarget !== undefined || body.monthly_revenue_target !== undefined) {
+          settingsUpdates.monthly_revenue_target = Number(body.monthlyRevenueTarget ?? body.monthly_revenue_target);
+        }
+        if (body.invoiceFooter !== undefined || body.invoice_footer !== undefined) {
+          settingsUpdates.invoice_footer = body.invoiceFooter ?? body.invoice_footer;
+        }
+        if (body.autoPrintInvoice !== undefined || body.auto_print_invoice !== undefined) {
+          settingsUpdates.auto_print_invoice = (body.autoPrintInvoice ?? body.auto_print_invoice) ? 1 : 0;
+        }
+        if (body.notifyWa !== undefined || body.notify_wa !== undefined) {
+          settingsUpdates.notify_wa = (body.notifyWa ?? body.notify_wa) ? 1 : 0;
+        }
+
+        const { data: sData } = await supabase
           .from('tenant_settings')
-          .upsert({ tenant_id: DEFAULT_TENANT_ID, ...body, updated_at: new Date().toISOString() })
+          .upsert(settingsUpdates)
           .select()
-          .single();
-        if (error) throw error;
-        return jsonResponse({ success: true, settings: data });
+          .maybeSingle();
+
+        return jsonResponse({ success: true, tenant: updatedTenant, settings: sData });
       }
     }
 
