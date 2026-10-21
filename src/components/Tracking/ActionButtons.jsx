@@ -45,6 +45,7 @@ export default function ActionButtons({ trackingData }) {
   const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
   const waNumber = cleanPhone ? (cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone) : '';
   const waChatUrl = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`Halo ${workshopName}, saya ingin menanyakan status servis kendaraan saya dengan plat ${maskedPlate}.`)}` : '';
+  const waShareUrl = trackingData?.waShareUrl || trackingData?.whatsappUrl || (secureTrackingUrl ? `https://wa.me/?text=${encodeURIComponent(`Halo, pantau proses servis kendaraan *${maskedPlate}* di *${workshopName}* secara live di link berikut:\n\n${secureTrackingUrl}`)}` : '');
 
   return (
     <div className="space-y-3">

@@ -141,41 +141,45 @@ export default function PublicTrackingPage({
       
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           
           {/* Back to Home & Workshop Title */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
             <button
               type="button"
               onClick={onNavigateHome}
-              className="touch-target p-2 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center space-x-1"
+              className="touch-target p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center space-x-1.5 transition-colors shrink-0"
               title="Kembali ke Beranda"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-300" />
+              <span className="hidden sm:inline text-xs font-bold">Beranda</span>
             </button>
 
-            <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded bg-[#0c2b5e] flex items-center justify-center text-white shrink-0 font-bold">
+            <div className="flex items-center space-x-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-[#0c2b5e] border border-blue-900/60 flex items-center justify-center text-white shrink-0 shadow-xs">
                 <Wrench className="w-4 h-4 text-emerald-400" />
               </div>
-              <div>
-                <h1 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-tight">
-                  {data?.tenant?.name || 'Bengkel Mobil Mitra'}
+              <div className="min-w-0">
+                <h1 className="text-xs sm:text-sm font-black tracking-tight text-slate-900 dark:text-white uppercase truncate font-sans">
+                  {data?.tenant?.name || 'Bengkel GPS Motor'}
                 </h1>
-                <span className="text-xs text-blue-700 dark:text-blue-400 block font-mono font-semibold">
-                  Portal Pelacakan Publik (Zero-Login)
-                </span>
+                <div className="flex items-center space-x-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-wide uppercase">
+                    Lacak Servis Live
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Right Controls */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 shrink-0">
             <button
               type="button"
               onClick={toggleTheme}
               aria-label="Toggle tema gelap/terang"
-              className="touch-target w-10 h-10 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 transition-colors"
+              className="touch-target w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-500 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>
@@ -185,37 +189,39 @@ export default function PublicTrackingPage({
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-5 sm:py-8 flex-1 w-full space-y-6">
         
-        {/* Search Header Banner */}
-        <div className="rounded-xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 sm:p-8 shadow-none">
-          <div className="max-w-2xl mx-auto text-center space-y-2 mb-6">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs font-mono font-bold uppercase tracking-wide">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Transparansi 100% • Real-Time Tracking</span>
+        {/* Search Header Card */}
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/90 p-5 sm:p-7 shadow-sm">
+          <div className="max-w-xl mx-auto text-center space-y-2 mb-5 sm:mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-[11px] sm:text-xs font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span>Sistem Pelacakan Transparan &amp; Terverifikasi</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
-              Cek Status Servis Mobil Anda
+            
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Cek Status Servis Kendaraan
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              Ketik plat nomor kendaraan Anda untuk memantau proses pengerjaan, dokumentasi foto, dan estimasi selesai secara real-time.
+            
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Ketik nomor plat mobil Anda untuk memantau progres perbaikan mekanik, foto pengerjaan, dan estimasi waktu selesai.
             </p>
           </div>
 
-          <form onSubmit={handleSearchSubmit} className="max-w-xl mx-auto flex flex-col sm:flex-row gap-2">
+          <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <input
                 type="text"
                 value={plateQuery}
                 onChange={(e) => setPlateQuery(e.target.value)}
                 placeholder="Contoh: AG 1822 AB"
-                className="touch-target w-full uppercase px-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white font-mono text-base font-bold tracking-widest text-center placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:border-blue-600 dark:focus:border-blue-400"
+                className="touch-target w-full uppercase px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50 text-slate-900 dark:text-white font-mono text-base font-bold tracking-wider text-center placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:border-blue-600 dark:focus:border-blue-400"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="touch-target sm:w-auto px-6 py-3 rounded bg-[#0c2b5e] hover:bg-blue-900 active:bg-blue-950 text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors shrink-0 disabled:opacity-50 shadow-none"
+              className="touch-target sm:w-auto px-6 py-3 rounded-lg bg-[#0c2b5e] hover:bg-blue-900 active:bg-blue-950 text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors shrink-0 disabled:opacity-50 shadow-sm"
             >
               {loading ? (
                 <>
@@ -231,26 +237,26 @@ export default function PublicTrackingPage({
             </button>
           </form>
 
-          {/* Quick Demo Plate Helper */}
-          <div className="max-w-xl mx-auto mt-3.5 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <div className="flex items-center gap-2">
-              <span>Uji coba plat:</span>
+          {/* Quick Demo Plate Chips */}
+          <div className="max-w-md mx-auto mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <span className="text-[11px] text-slate-400">Uji plat:</span>
               <button
                 type="button"
                 onClick={() => handleDemoClick('AG 1822 AB')}
-                className="touch-target px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-[#0c2b5e] dark:text-blue-300 font-mono font-bold hover:underline"
+                className="touch-target px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-700/70 text-blue-700 dark:text-blue-300 font-mono font-bold hover:underline text-[11px]"
               >
                 AG 1822 AB (Avanza)
               </button>
               <button
                 type="button"
                 onClick={() => handleDemoClick('AG 1044 RK')}
-                className="touch-target px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono font-bold hover:underline"
+                className="touch-target px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 font-mono font-bold hover:underline text-[11px]"
               >
                 AG 1044 RK (Innova)
               </button>
             </div>
-            <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
+            <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold text-[11px]">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Nama &amp; HP Disensor</span>
             </span>
@@ -259,14 +265,27 @@ export default function PublicTrackingPage({
 
         {/* Error / Not Found Box */}
         {error && (
-          <div className="rounded border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 p-5 text-rose-900 dark:text-rose-200 flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-            <div className="space-y-1 text-xs sm:text-sm">
-              <p className="font-bold">Data Kendaraan Tidak Ditemukan</p>
-              <p>{error}</p>
-              <p className="text-[11px] text-rose-700 dark:text-rose-300 pt-1">
-                Tips: Pastikan penulisan plat nomor sesuai (contoh: <span className="font-mono font-bold">AG 1822 AB</span> atau <span className="font-mono font-bold">AG1822AB</span>). Jika kendaraan baru masuk hari ini, tunggu beberapa saat hingga data dicatat oleh teknisi.
-              </p>
+          <div className="rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/30 p-5 sm:p-6 text-slate-800 dark:text-slate-200 space-y-3">
+            <div className="flex items-start space-x-3">
+              <div className="w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <div className="space-y-1 flex-1">
+                <h3 className="font-bold text-sm text-rose-900 dark:text-rose-200">
+                  Data Kendaraan Belum Ditemukan
+                </h3>
+                <p className="text-xs text-rose-800/90 dark:text-rose-300 leading-relaxed">
+                  {error}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-rose-200/60 dark:border-rose-900/40 text-xs space-y-1.5 text-slate-600 dark:text-slate-300">
+              <p className="font-bold text-slate-900 dark:text-white">Panduan Pengecekan:</p>
+              <ul className="list-disc list-inside space-y-1 pl-1 text-[11px] sm:text-xs">
+                <li>Pastikan format nomor plat sudah benar (contoh: <strong className="font-mono text-slate-900 dark:text-white">AG 1822 AB</strong>).</li>
+                <li>Jika mobil baru saja diserahkan ke bengkel hari ini, mohon tunggu beberapa saat selagi mekanik menginspeksi dan mencatat SPK.</li>
+              </ul>
             </div>
           </div>
         )}

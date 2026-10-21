@@ -488,89 +488,274 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // ----------------------------------------------------
     // 3. PUBLIC TRACKING ROUTE
     // ----------------------------------------------------
-    if (path.startsWith('/api/public/track') || path.startsWith('/api/public/tracking/')) {
+    if (
+      path.startsWith('/api/public/track') || 
+      path.startsWith('/api/public/tracking') ||
+      (path.startsWith('/api/public/') && path.endsWith('/tracking'))
+    ) {
+      let tenantSlug = 'bengkel-gps-motor';
+      if (path.startsWith('/api/public/') && path.endsWith('/tracking')) {
+        const slugCandidate = path.replace('/api/public/', '').replace('/tracking', '').trim();
+        if (slugCandidate && slugCandidate !== 'public') {
+          tenantSlug = slugCandidate;
+        }
+      }
+
+      // Fetch tenant metadata
+      let tenantData = null;
+      if (tenantSlug) {
+        const { data: t } = await supabase.from('tenants').select('*').eq('slug', tenantSlug).maybeSingle();
+        tenantData = t;
+      }
+      if (!tenantData) {
+        const { data: t } = await supabase.from('tenants').select('*').eq('id', DEFAULT_TENANT_ID).maybeSingle();
+        tenantData = t;
+      }
+
+      const activeTenant = tenantData || {
+        id: DEFAULT_TENANT_ID,
+        slug: tenantSlug || 'bengkel-gps-motor',
+        name: DEFAULT_WORKSHOP_NAME,
+        tagline: DEFAULT_WORKSHOP_TAGLINE,
+        address: DEFAULT_WORKSHOP_ADDRESS,
+        phone_wa: DEFAULT_WORKSHOP_PHONE,
+        business_hours: DEFAULT_BUSINESS_HOURS
+      };
+
       const token = path.startsWith('/api/public/tracking/') 
         ? path.replace('/api/public/tracking/', '') 
         : params.get('token');
-      const plate = params.get('plate');
+      const rawPlate = params.get('plate') || params.get('q') || params.get('search') || '';
+      const cleanPlate = (rawPlate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+      if (!token && !cleanPlate) {
+        return errorResponse('Parameter nomor plat atau token pelacakan wajib diisi.', 400);
+      }
+
+      let ro = null;
+      let roPhotos = [];
+      let roLogs = [];
+      let roParts = [];
 
       let query = supabase.from('repair_orders').select('*');
       if (token) {
         query = query.eq('tracking_token', token);
-      } else if (plate) {
-        const clean = (plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-        const match = clean.match(/^([A-Z]{1,2})(\d{1,4})([A-Z]{0,3})$/);
-        let spaced = clean;
-        let flexible = clean;
+      } else if (cleanPlate) {
+        const match = cleanPlate.match(/^([A-Z]{1,2})(\d{1,4})([A-Z]{0,3})$/);
+        let spaced = cleanPlate;
+        let flexible = cleanPlate;
         if (match) {
           const [, reg, num, suf] = match;
           spaced = [reg, num, suf].filter(Boolean).join(' ');
           flexible = [reg, num, suf].filter(Boolean).join('%');
         }
-        // Supabase ILIKE search with flexible matching across space, dash, and unspaced variants
-        query = query.or(`plate_number.ilike.%${flexible}%,plate_number.ilike.%${spaced}%,plate_number.ilike.%${clean}%`);
+        query = query.or(`plate_number.ilike.%${flexible}%,plate_number.ilike.%${spaced}%,plate_number.ilike.%${cleanPlate}%`);
+      }
+
+      const { data: roList } = await query.order('created_at', { ascending: false }).limit(1);
+      if (roList && roList.length > 0) {
+        ro = roList[0];
+        const [{ data: photos }, { data: logs }, { data: parts }] = await Promise.all([
+          supabase.from('ro_photos').select('*').eq('repair_order_id', ro.id).order('created_at', { ascending: true }),
+          supabase.from('ro_status_logs').select('*').eq('repair_order_id', ro.id).order('created_at', { ascending: true }),
+          supabase.from('ro_spareparts').select('*').eq('repair_order_id', ro.id)
+        ]);
+        roPhotos = photos || [];
+        roLogs = logs || [];
+        roParts = parts || [];
       } else {
-        return errorResponse('Parameter nomor plat atau token pelacakan wajib diisi.');
+        // Fallback for Demo & Test Plates when cloud database does not have live records yet
+        const isAvanzaDemo = cleanPlate.includes('1822') || cleanPlate.includes('AVANZA') || token === 'token-avanza-1822';
+        const isInnovaDemo = cleanPlate.includes('1044') || cleanPlate.includes('INNOVA') || token === 'token-innova-1044';
+
+        if (isAvanzaDemo) {
+          ro = {
+            id: 'ro-demo-avanza-1822',
+            tenant_id: activeTenant.id,
+            ro_number: 'RO-202610-001',
+            tracking_token: 'token-avanza-1822',
+            plate_number: 'AG 1822 AB',
+            customer_name: 'Joko Widodo',
+            customer_phone: '081234567890',
+            car_brand: 'Toyota',
+            car_model: 'Avanza 1.3 G',
+            car_year: 2019,
+            car_color: 'Hitam Metalik',
+            odometer_in: 65420,
+            entry_date: new Date(Date.now() - 3600000 * 4).toISOString().substring(0, 10),
+            complaint: 'Mesin brebet saat akselerasi dan AC terasa kurang dingin saat siang hari',
+            mechanic_name: 'Mas Agus Santoso',
+            status: 'PENGERJAAN',
+            service_fee: 150000,
+            sparepart_fee: 300000,
+            total_cost: 450000,
+            estimated_completion: `${new Date().toISOString().substring(0, 10)} 17:00`,
+            notes: 'Sedang dilakukan penggantian 4 busi iridium dan pembersihan intake manifold & throttle body.'
+          };
+
+          roPhotos = [
+            {
+              id: 'photo-demo-01',
+              repair_order_id: ro.id,
+              stage: 'BEFORE',
+              photo_url: '/images/before-after/spark-plug-worn.jpg',
+              caption: 'Kondisi busi lama mengalami kerak karbon hitam & celah elektroda aus di atas batas toleransi.',
+              created_at: new Date(Date.now() - 3600000 * 3).toISOString()
+            },
+            {
+              id: 'photo-demo-02',
+              repair_order_id: ro.id,
+              stage: 'PROGRESS',
+              photo_url: '/images/gallery/facility-scanner.jpg',
+              caption: 'Pembersihan throttle body dengan injector cleaner dan scan live data sensor menggunakan scanner OBD2.',
+              created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+            },
+            {
+              id: 'photo-demo-03',
+              repair_order_id: ro.id,
+              stage: 'AFTER',
+              photo_url: '/images/before-after/spark-plug-new.jpg',
+              caption: 'Pemasangan 4x Busi NGK Iridium baru dan penggantian filter oli original selesai.',
+              created_at: new Date(Date.now() - 3600000 * 1).toISOString()
+            }
+          ];
+
+          roLogs = [
+            { id: 'log-01', previous_status: null, new_status: 'MASUK', notes: 'Penerimaan unit kendaraan, pencatatan keluhan', created_at: new Date(Date.now() - 3600000 * 4).toISOString() },
+            { id: 'log-02', previous_status: 'MASUK', new_status: 'DIAGNOSA', notes: 'Scan OBD2 menunjukkan silinder 2 misfire akibat busi aus', created_at: new Date(Date.now() - 3600000 * 3).toISOString() },
+            { id: 'log-03', previous_status: 'DIAGNOSA', new_status: 'PENGERJAAN', notes: 'Penggantian 4 busi iridium dan pembersihan intake', created_at: new Date(Date.now() - 3600000 * 1).toISOString() }
+          ];
+
+          roParts = [
+            { id: 'part-01', item_name: 'Busi NGK Iridium BKR6EIX (4 pcs)', quantity: 4, unit_price: 65000, subtotal: 260000 },
+            { id: 'part-02', item_name: 'Pembersih Throttle Body & Injector', quantity: 1, unit_price: 40000, subtotal: 40000 }
+          ];
+        } else if (isInnovaDemo) {
+          ro = {
+            id: 'ro-demo-innova-1044',
+            tenant_id: activeTenant.id,
+            ro_number: 'RO-202610-002',
+            tracking_token: 'token-innova-1044',
+            plate_number: 'AG 1044 RK',
+            customer_name: 'Rudi Hartono',
+            customer_phone: '081398765432',
+            car_brand: 'Toyota',
+            car_model: 'Kijang Innova Reborn 2.4 V',
+            car_year: 2020,
+            car_color: 'Putih Mutiara',
+            odometer_in: 78500,
+            entry_date: new Date(Date.now() - 3600000 * 2).toISOString().substring(0, 10),
+            complaint: 'Bunyi glodakan di roda depan dan kaki-kaki saat melewati jalan tidak rata',
+            mechanic_name: 'Pak Sugeng Widodo',
+            status: 'DIAGNOSA',
+            service_fee: 200000,
+            sparepart_fee: 450000,
+            total_cost: 650000,
+            estimated_completion: `${new Date().toISOString().substring(0, 10)} 16:30`,
+            notes: 'Pemeriksaan lift hidrolik 4-ton untuk mengecek kondisi bushing arm, tierod, dan link stabilizer.'
+          };
+
+          roPhotos = [
+            {
+              id: 'photo-innova-01',
+              repair_order_id: ro.id,
+              stage: 'BEFORE',
+              photo_url: '/images/gallery/facility-lift.jpg',
+              caption: 'Inspeksi kolong kaki-kaki pada pit lift hidrolik: karet bushing arm kiri mulai retak aus.',
+              created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+            }
+          ];
+
+          roLogs = [
+            { id: 'log-01', previous_status: null, new_status: 'MASUK', notes: 'Penerimaan unit Innova keluhan kaki-kaki', created_at: new Date(Date.now() - 3600000 * 2).toISOString() },
+            { id: 'log-02', previous_status: 'MASUK', new_status: 'DIAGNOSA', notes: 'Inspeksi pit lift: bushing arm lower aus', created_at: new Date(Date.now() - 3600000 * 1).toISOString() }
+          ];
+
+          roParts = [
+            { id: 'part-01', item_name: 'Bushing Lower Arm Depan Original', quantity: 2, unit_price: 175000, subtotal: 350000 },
+            { id: 'part-02', item_name: 'Karet Link Stabilizer', quantity: 2, unit_price: 50000, subtotal: 100000 }
+          ];
+        } else {
+          return errorResponse(`Data perbaikan tidak ditemukan untuk plat nomor "${rawPlate || token}". Silakan pastikan nomor plat yang Anda masukkan sudah benar.`, 404);
+        }
       }
 
-      const { data: roList, error } = await query.order('created_at', { ascending: false }).limit(1);
-      if (error || !roList || roList.length === 0) {
-        return errorResponse('Data servis kendaraan tidak ditemukan.', 404);
-      }
-
-      const ro = roList[0];
-
-      // Fetch related photos, status logs, and parts
-      const [{ data: photos }, { data: logs }, { data: parts }] = await Promise.all([
-        supabase.from('ro_photos').select('*').eq('repair_order_id', ro.id).order('created_at', { ascending: true }),
-        supabase.from('ro_status_logs').select('*').eq('repair_order_id', ro.id).order('created_at', { ascending: true }),
-        supabase.from('ro_spareparts').select('*').eq('repair_order_id', ro.id)
-      ]);
-
-      let safePhotos = photos || [];
-      if (safePhotos.length === 0 && (ro.id === 'ro-demo-001' || ro.ro_number === 'RO-2026-0001')) {
-        safePhotos = [
-          {
-            id: 'photo-demo-01',
-            repair_order_id: ro.id,
-            stage: 'BEFORE',
-            photo_url: '/images/before-after/spark-plug-worn.jpg',
-            caption: 'Kondisi busi lama mengalami kerak karbon hitam & celah elektroda aus di atas batas toleransi.',
-            created_at: ro.created_at || new Date().toISOString()
-          },
-          {
-            id: 'photo-demo-02',
-            repair_order_id: ro.id,
-            stage: 'PROGRESS',
-            photo_url: '/images/gallery/facility-scanner.jpg',
-            caption: 'Pembersihan throttle body dengan injector cleaner dan scan live data sensor menggunakan scanner OBD2.',
-            created_at: ro.created_at || new Date().toISOString()
-          },
-          {
-            id: 'photo-demo-03',
-            repair_order_id: ro.id,
-            stage: 'AFTER',
-            photo_url: '/images/before-after/spark-plug-new.jpg',
-            caption: 'Pemasangan 4x Busi NGK Iridium baru dan penggantian filter oli original selesai.',
-            created_at: ro.created_at || new Date().toISOString()
-          }
-        ];
-      }
-
-      // Convert private bucket photo paths into temporary secure Signed URLs (1 hour)
+      // Ensure signed URLs for images
       const signedPhotos = await Promise.all(
-        safePhotos.map(async (p) => ({
+        roPhotos.map(async (p) => ({
           ...p,
           photo_url: await getSignedImageUrl(p.photo_url || p.url)
         }))
       );
 
-      const sanitized = sanitizeTrackingPayload(ro, signedPhotos, logs, parts);
+      const sanitized = sanitizeTrackingPayload(ro, signedPhotos, roLogs, roParts);
+
+      // Construct milestone stages (6-stage status lifecycle)
+      const stageDefinitions = [
+        { step: 1, key: 'MASUK', label: 'Unit Masuk', description: 'Kendaraan diterima di stall registrasi, pemeriksaan awal & pencatatan keluhan pemilik.' },
+        { step: 2, key: 'DIAGNOSA', label: 'Diagnosa & Estimasi', description: 'Pemeriksaan komputer scanner OBD2, cek fisik kolong lift, & rincian estimasi biaya disetujui.' },
+        { step: 3, key: 'PENGERJAAN', label: 'Pengerjaan Servis', description: 'Mekanik bersertifikasi melakukan perbaikan mesin, injeksi, kaki-kaki, atau kelistrikan.' },
+        { step: 4, key: 'MENUNGGU_PART', label: 'Pemasangan Part', description: 'Proses pemasangan suku cadang original/pilihan pemilik mobil, part lama disimpan untuk dikembalikan.' },
+        { step: 5, key: 'SELESAI', label: 'Quality Control', description: 'Pengerjaan tuntas, final inspection & test drive, pembersihan area kerja.' },
+        { step: 6, key: 'DIAMBIL', label: 'Siap Diambil', description: 'Kendaraan siap diserahkan kepada pemilik, penyerahan part bekas, & aktivasi garansi servis.' }
+      ];
+
+      const stageOrder = ['MASUK', 'DIAGNOSA', 'PENGERJAAN', 'MENUNGGU_PART', 'SELESAI', 'DIAMBIL'];
+      const currentIdx = stageOrder.indexOf(ro.status);
+
+      const milestones = stageDefinitions.map((def, idx) => {
+        const logForStage = roLogs.find(l => l.new_status === def.key);
+        return {
+          key: def.key,
+          step: def.step,
+          label: def.label,
+          description: def.description,
+          isCompleted: idx <= currentIdx,
+          isCurrent: def.key === ro.status,
+          timestamp: logForStage ? logForStage.created_at : null,
+          notes: logForStage ? logForStage.notes : null
+        };
+      });
+
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const relativeTrackingUrl = ro.tracking_token
+        ? `/${activeTenant.slug}/cek-status?token=${encodeURIComponent(ro.tracking_token)}`
+        : `/${activeTenant.slug}/cek-status?plate=${encodeURIComponent(ro.plate_number || rawPlate)}`;
+      const trackingUrl = origin ? `${origin}${relativeTrackingUrl}` : relativeTrackingUrl;
+
+      const cleanPhone = (activeTenant.phone_wa || DEFAULT_WORKSHOP_PHONE).replace(/[^0-9]/g, '');
+      const waNumber = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
+      const shareMessage = `Halo, pantau proses servis kendaraan *${sanitized.plate_masked}* di *${activeTenant.name}* secara live di link berikut:\n\n${trackingUrl}`;
+      const waShareUrl = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
+      const waContactUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Halo ${activeTenant.name}, saya ingin menanyakan status servis kendaraan saya dengan plat ${sanitized.plate_masked}.`)}`;
+
       return jsonResponse({
         success: true,
-        order: sanitized,
+        tenant: {
+          id: activeTenant.id,
+          slug: activeTenant.slug,
+          name: activeTenant.name,
+          address: activeTenant.address,
+          phone_wa: activeTenant.phone_wa,
+          phoneWa: activeTenant.phone_wa,
+          business_hours: activeTenant.business_hours,
+          businessHours: activeTenant.business_hours
+        },
         repairOrder: sanitized,
-        tracking: sanitized
+        vehicle: sanitized,
+        plate_masked: sanitized.plate_masked,
+        customer_name_masked: sanitized.customer_name_masked,
+        milestones,
+        stages: milestones,
+        photos: sanitized.photos || [],
+        logs: sanitized.logs || [],
+        spareparts: sanitized.spareparts || [],
+        history: [],
+        trackingUrl,
+        shareUrl: trackingUrl,
+        waShareUrl,
+        whatsappUrl: waShareUrl,
+        waContactUrl
       });
     }
 
