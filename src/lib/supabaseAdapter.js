@@ -498,9 +498,17 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       if (token) {
         query = query.eq('tracking_token', token);
       } else if (plate) {
-        const norm = normalizePlate(plate);
-        // Supabase ILIKE search
-        query = query.or(`plate_number.ilike.%${norm}%,plate_number.ilike.%${plate}%`);
+        const clean = (plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const match = clean.match(/^([A-Z]{1,2})(\d{1,4})([A-Z]{0,3})$/);
+        let spaced = clean;
+        let flexible = clean;
+        if (match) {
+          const [, reg, num, suf] = match;
+          spaced = [reg, num, suf].filter(Boolean).join(' ');
+          flexible = [reg, num, suf].filter(Boolean).join('%');
+        }
+        // Supabase ILIKE search with flexible matching across space, dash, and unspaced variants
+        query = query.or(`plate_number.ilike.%${flexible}%,plate_number.ilike.%${spaced}%,plate_number.ilike.%${clean}%`);
       } else {
         return errorResponse('Parameter nomor plat atau token pelacakan wajib diisi.');
       }
@@ -886,7 +894,16 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           query = query.eq('status', statusFilter);
         }
         if (searchFilter) {
-          query = query.or(`plate_number.ilike.%${searchFilter}%,customer_name.ilike.%${searchFilter}%,ro_number.ilike.%${searchFilter}%`);
+          const clean = searchFilter.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          const match = clean.match(/^([A-Z]{1,2})(\d{1,4})([A-Z]{0,3})$/);
+          let extraPlateFilter = '';
+          if (match) {
+            const [, reg, num, suf] = match;
+            const flexible = [reg, num, suf].filter(Boolean).join('%');
+            const spaced = [reg, num, suf].filter(Boolean).join(' ');
+            extraPlateFilter = `,plate_number.ilike.%${flexible}%,plate_number.ilike.%${spaced}%`;
+          }
+          query = query.or(`plate_number.ilike.%${searchFilter}%,customer_name.ilike.%${searchFilter}%,ro_number.ilike.%${searchFilter}%${extraPlateFilter}`);
         }
         const { data, error } = await query.order('created_at', { ascending: false });
         if (error) throw error;
