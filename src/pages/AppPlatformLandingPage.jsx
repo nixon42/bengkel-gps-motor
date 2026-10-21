@@ -4,7 +4,7 @@ import {
   Smartphone, Database, Layers, CheckCircle2, DollarSign, 
   Car, Users, Sparkles, Building2, Phone, MapPin, 
   ChevronRight, ExternalLink, Activity, BookOpen, Clock,
-  Sliders, Gauge, Volume2, VolumeX, FileText, Check,
+  Sliders, Gauge, FileText, Check,
   RotateCcw, Camera, Printer, QrCode, AlertTriangle,
   Cpu, Zap, TrendingUp, Percent, Shield, Award, Info
 } from 'lucide-react';
@@ -12,29 +12,6 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { resolveAssetUrl } from '../utils/assetUrl';
 import { DEFAULT_WORKSHOP_PHONE, DEFAULT_WORKSHOP_ADDRESS, DEFAULT_BUSINESS_HOURS } from '../utils/config';
-
-// Synthesize tactile relay / hardware switch click sound via Web Audio API (zero asset latency)
-function playMechanicalClick(enabled) {
-  if (!enabled || typeof window === 'undefined') return;
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(680, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.03);
-    gain.gain.setValueAtTime(0.06, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.035);
-  } catch (err) {
-    // AudioContext might be blocked until user gesture, safely ignore
-  }
-}
 
 // 4 Grounded Indonesian Garage Testbed Datasets
 const VEHICLE_DATASETS = [
@@ -187,9 +164,6 @@ export default function AppPlatformLandingPage({
   const [tenants, setTenants] = useState([]);
   const [loadingTenants, setLoadingTenants] = useState(true);
 
-  // Sound Feedback Toggle
-  const [audioFeedback, setAudioFeedback] = useState(false);
-
   // Active Vehicle in Command Console
   const [selectedVehicleId, setSelectedVehicleId] = useState('avanza');
 
@@ -233,23 +207,19 @@ export default function AppPlatformLandingPage({
       if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
       if (e.key === '1') {
         setSelectedVehicleId('avanza');
-        playMechanicalClick(audioFeedback);
       } else if (e.key === '2') {
         setSelectedVehicleId('xpander');
-        playMechanicalClick(audioFeedback);
       } else if (e.key === '3') {
         setSelectedVehicleId('civic');
-        playMechanicalClick(audioFeedback);
       } else if (e.key === '4') {
         setSelectedVehicleId('fortuner');
-        playMechanicalClick(audioFeedback);
       } else if (e.key.toLowerCase() === 'd') {
         onNavigateTenant('bengkel-gps-motor');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [audioFeedback, onNavigateTenant]);
+  }, [onNavigateTenant]);
 
   const activeVehicle = useMemo(() => {
     return VEHICLE_DATASETS.find(v => v.id === selectedVehicleId) || VEHICLE_DATASETS[0];
@@ -304,17 +274,14 @@ export default function AppPlatformLandingPage({
   }, [calcCarsPerDay, calcAvgTicket]);
 
   const handleLoginClick = () => {
-    playMechanicalClick(audioFeedback);
     onOpenAdmin();
   };
 
   const handleTabSwitch = (tab) => {
-    playMechanicalClick(audioFeedback);
     setActiveConsoleTab(tab);
   };
 
   const handleVehicleSelect = (id) => {
-    playMechanicalClick(audioFeedback);
     setSelectedVehicleId(id);
   };
 
@@ -323,32 +290,31 @@ export default function AppPlatformLandingPage({
       
       {/* 1. Header Precision Navbar */}
       <header className="sticky top-0 z-50 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-3">
           
           {/* Platform Identity */}
           <div 
-            className="flex items-center space-x-2.5 sm:space-x-3 cursor-pointer select-none shrink-0"
+            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer select-none shrink min-w-0"
             onClick={() => {
-              playMechanicalClick(audioFeedback);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           >
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded bg-[#0c2b5e] flex items-center justify-center text-emerald-400 border border-blue-900/40 shrink-0">
               <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <div className="flex items-center space-x-1.5">
-                <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white uppercase font-sans leading-none">
+                <span className="text-sm sm:text-lg font-black tracking-tight text-slate-900 dark:text-white uppercase font-sans leading-none truncate">
                   BengkelOS
                 </span>
-                <span className="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 uppercase">
+                <span className="text-[10px] sm:text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 uppercase shrink-0">
                   Platform
                 </span>
               </div>
-              <div className="flex items-center space-x-1.5 mt-0.5">
+              <div className="hidden sm:flex items-center space-x-1.5 mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                  SYS: NOMINAL · OBD-II SYNCED
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 truncate">
+                  Sistem Manajemen Bengkel
                 </span>
               </div>
             </div>
@@ -358,42 +324,36 @@ export default function AppPlatformLandingPage({
           <nav className="hidden xl:flex items-center space-x-5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
             <a 
               href="#konsol-bengkel" 
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               Telemetri
             </a>
             <a 
               href="#integritas" 
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               4 Pilar
             </a>
             <a 
               href="#alur-kerja" 
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               Alur Servis
             </a>
             <a 
               href="#kalkulator-laba" 
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               Kalkulator
             </a>
             <a 
               href="#mitra-bengkel" 
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               Mitra
             </a>
             <a 
               href="#harga" 
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors whitespace-nowrap"
             >
               Harga
@@ -402,32 +362,10 @@ export default function AppPlatformLandingPage({
 
           {/* Right Controls */}
           <div className="flex items-center space-x-2 shrink-0">
-            {/* Audio Feedback Button */}
-            <button
-              type="button"
-              onClick={() => {
-                const next = !audioFeedback;
-                setAudioFeedback(next);
-                if (next) playMechanicalClick(true);
-              }}
-              aria-label="Toggle Efek Suara Relai Mekanikal"
-              title={audioFeedback ? "Suara Relai: AKTIF" : "Suara Relai: SENYAP"}
-              className={`touch-target w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded border transition-colors ${
-                audioFeedback 
-                  ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300' 
-                  : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 hover:border-slate-400'
-              }`}
-            >
-              {audioFeedback ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            </button>
-
             {/* Dark/Light Toggle */}
             <button
               type="button"
-              onClick={() => {
-                playMechanicalClick(audioFeedback);
-                toggleTheme();
-              }}
+              onClick={toggleTheme}
               aria-label="Ganti Mode Gelap / Terang"
               className="touch-target w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-blue-500 transition-colors"
             >
@@ -437,10 +375,7 @@ export default function AppPlatformLandingPage({
             {/* Demo Link */}
             <button
               type="button"
-              onClick={() => {
-                playMechanicalClick(audioFeedback);
-                onNavigateTenant('bengkel-gps-motor');
-              }}
+              onClick={() => onNavigateTenant('bengkel-gps-motor')}
               className="touch-target hidden 2xl:inline-flex items-center space-x-1.5 px-3 py-2 rounded border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100 transition-colors"
             >
               <Wrench className="w-3.5 h-3.5 text-emerald-600" />
@@ -452,9 +387,9 @@ export default function AppPlatformLandingPage({
               type="button"
               onClick={handleLoginClick}
               disabled={loading}
-              className="touch-target inline-flex items-center space-x-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded bg-[#0c2b5e] hover:bg-blue-900 text-white text-xs sm:text-sm font-bold shadow-sm transition-colors whitespace-nowrap"
+              className="touch-target inline-flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded bg-[#0c2b5e] hover:bg-blue-900 text-white text-xs sm:text-sm font-bold shadow-sm transition-colors whitespace-nowrap shrink-0"
             >
-              <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+              <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
               <span>{user ? 'Dashboard' : 'Portal Bengkel'}</span>
             </button>
           </div>
@@ -480,7 +415,6 @@ export default function AppPlatformLandingPage({
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <a
               href="#konsol-bengkel"
-              onClick={() => playMechanicalClick(audioFeedback)}
               className="touch-target inline-flex items-center justify-center px-6 py-3.5 rounded bg-[#00a86b] hover:bg-[#00925d] text-white font-black text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md"
             >
               <Gauge className="w-4 h-4 mr-2" />
@@ -501,10 +435,7 @@ export default function AppPlatformLandingPage({
           <div className="pt-1">
             <button
               type="button"
-              onClick={() => {
-                playMechanicalClick(audioFeedback);
-                onNavigateTenant('bengkel-gps-motor');
-              }}
+              onClick={() => onNavigateTenant('bengkel-gps-motor')}
               className="inline-flex items-center space-x-1.5 text-xs text-blue-200 hover:text-white underline underline-offset-4 font-mono font-medium"
             >
               <span>Lihat Contoh Website Publik Bengkel Mitra</span>
@@ -636,10 +567,7 @@ export default function AppPlatformLandingPage({
               <div className="grid grid-cols-3 gap-2 sm:gap-3 text-left">
                 <button
                   type="button"
-                  onClick={() => {
-                    playMechanicalClick(audioFeedback);
-                    setActiveSensorKey('fuel');
-                  }}
+                  onClick={() => setActiveSensorKey('fuel')}
                   className={`touch-target p-2 sm:p-2.5 rounded border text-left transition-colors ${
                     activeSensorKey === 'fuel' 
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/60' 
@@ -653,10 +581,7 @@ export default function AppPlatformLandingPage({
 
                 <button
                   type="button"
-                  onClick={() => {
-                    playMechanicalClick(audioFeedback);
-                    setActiveSensorKey('brake');
-                  }}
+                  onClick={() => setActiveSensorKey('brake')}
                   className={`touch-target p-2 sm:p-2.5 rounded border text-left transition-colors ${
                     activeSensorKey === 'brake' 
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/60' 
@@ -670,10 +595,7 @@ export default function AppPlatformLandingPage({
 
                 <button
                   type="button"
-                  onClick={() => {
-                    playMechanicalClick(audioFeedback);
-                    setActiveSensorKey('oil');
-                  }}
+                  onClick={() => setActiveSensorKey('oil')}
                   className={`touch-target p-2 sm:p-2.5 rounded border text-left transition-colors ${
                     activeSensorKey === 'oil' 
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/60' 
@@ -764,10 +686,7 @@ export default function AppPlatformLandingPage({
                     <div className="flex items-center space-x-1">
                       <button
                         type="button"
-                        onClick={() => {
-                          playMechanicalClick(audioFeedback);
-                          setPhotoSliderPos(0);
-                        }}
+                        onClick={() => setPhotoSliderPos(0)}
                         className={`touch-target px-2 py-1 rounded text-xs font-mono font-bold ${
                           photoSliderPos === 0 ? 'bg-rose-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
@@ -776,10 +695,7 @@ export default function AppPlatformLandingPage({
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          playMechanicalClick(audioFeedback);
-                          setPhotoSliderPos(50);
-                        }}
+                        onClick={() => setPhotoSliderPos(50)}
                         className={`touch-target px-2 py-1 rounded text-xs font-mono font-bold ${
                           photoSliderPos === 50 ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
@@ -788,10 +704,7 @@ export default function AppPlatformLandingPage({
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          playMechanicalClick(audioFeedback);
-                          setPhotoSliderPos(100);
-                        }}
+                        onClick={() => setPhotoSliderPos(100)}
                         className={`touch-target px-2 py-1 rounded text-xs font-mono font-bold ${
                           photoSliderPos === 100 ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                         }`}
@@ -929,7 +842,6 @@ export default function AppPlatformLandingPage({
                     {/* Customer WhatsApp Action Button */}
                     <button
                       type="button"
-                      onClick={() => playMechanicalClick(audioFeedback)}
                       className="touch-target w-full py-2.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center space-x-1.5"
                     >
                       <Check className="w-4 h-4" />
@@ -1361,10 +1273,7 @@ export default function AppPlatformLandingPage({
                 <button
                   key={stg.num}
                   type="button"
-                  onClick={() => {
-                    playMechanicalClick(audioFeedback);
-                    setActiveWorkflowStage(stg.num);
-                  }}
+                  onClick={() => setActiveWorkflowStage(stg.num)}
                   className={`touch-target p-4 rounded border text-left transition-all flex flex-col justify-between ${
                     isActive
                       ? 'border-blue-600 dark:border-blue-500 bg-white dark:bg-slate-800 shadow-md ring-1 ring-blue-500'
