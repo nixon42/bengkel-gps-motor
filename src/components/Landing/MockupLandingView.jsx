@@ -436,10 +436,10 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 no-scrollbar md:grid md:grid-cols-2 md:gap-6 md:overflow-visible">
             
             {/* Feature Card 1: Hydraulic Lift Bay */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
+            <div className="w-[85vw] max-w-[340px] shrink-0 snap-center md:w-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
               <div className="aspect-[16/9] overflow-hidden bg-slate-900">
                 <img 
                   src={facilityImage1} 
@@ -471,7 +471,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </div>
 
             {/* Feature Card 2: Diagnostic & ECU Scanner */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
+            <div className="w-[85vw] max-w-[340px] shrink-0 snap-center md:w-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
               <div className="aspect-[16/9] overflow-hidden bg-slate-900">
                 <img 
                   src={facilityImage2} 
@@ -502,6 +502,11 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
               </div>
             </div>
 
+          </div>
+
+          {/* Mobile Swipe Hint */}
+          <div className="md:hidden flex items-center justify-center space-x-1.5 pt-1">
+            <span className="text-[10px] text-slate-400 font-mono">← Geser untuk fasilitas lainnya (2 fasilitas) →</span>
           </div>
         </section>
 
@@ -590,11 +595,11 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
               </span>
             </div>
 
-            {/* 3 Pricing Tier Cards (Exact Layout & Visual Balance with Active State) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pt-2">
+            {/* 3 Pricing Tier Cards (Swipeable Comparison on Mobile, 3-Col on Desktop) */}
+            <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex overflow-x-auto snap-x snap-mandatory gap-3 pb-3 pt-2 no-scrollbar md:grid md:grid-cols-3 md:gap-6 md:overflow-visible">
               
               {/* Card 1: Servis Dasar */}
-              <div className={`rounded-xl p-5 flex flex-col justify-between shadow-none transition-all relative ${
+              <div className={`w-[84vw] max-w-[315px] shrink-0 snap-center md:w-auto rounded-xl p-5 flex flex-col justify-between shadow-none transition-all relative ${
                 recommendedPackage === 'Servis Dasar'
                   ? 'border-2 border-emerald-500 bg-slate-50 dark:bg-slate-900 ring-2 ring-emerald-500/20'
                   : 'border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:border-slate-400 dark:hover:border-slate-600'
@@ -655,7 +660,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
               </div>
 
               {/* Card 2: Servis Menengah (Populer/Recommended) */}
-              <div className={`rounded-xl p-5 flex flex-col justify-between shadow-none relative transition-all ${
+              <div className={`w-[84vw] max-w-[315px] shrink-0 snap-center md:w-auto rounded-xl p-5 flex flex-col justify-between shadow-none relative transition-all ${
                 recommendedPackage === 'Servis Menengah'
                   ? 'border-2 border-emerald-500 bg-slate-50 dark:bg-slate-900 ring-2 ring-emerald-500/20'
                   : 'border-2 border-blue-600/70 dark:border-blue-500/70 bg-slate-50 dark:bg-slate-900'
@@ -716,7 +721,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
               </div>
 
               {/* Card 3: Servis Lengkap */}
-              <div className={`rounded-xl p-5 flex flex-col justify-between shadow-none transition-all relative ${
+              <div className={`w-[84vw] max-w-[315px] shrink-0 snap-center md:w-auto rounded-xl p-5 flex flex-col justify-between shadow-none transition-all relative ${
                 recommendedPackage === 'Servis Lengkap'
                   ? 'border-2 border-emerald-500 bg-slate-50 dark:bg-slate-900 ring-2 ring-emerald-500/20'
                   : 'border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:border-slate-400 dark:hover:border-slate-600'
@@ -776,6 +781,16 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                 </div>
               </div>
 
+            </div>
+
+            {/* Mobile Package Indicator & Swipe Hint */}
+            <div className="md:hidden flex flex-col items-center justify-center space-y-1.5 pt-1 text-center">
+              <div className="flex items-center space-x-1.5">
+                <span className={`h-1.5 rounded-full transition-all ${recommendedPackage === 'Servis Dasar' ? 'bg-emerald-500 w-5' : 'bg-slate-300 dark:bg-slate-700 w-1.5'}`} />
+                <span className={`h-1.5 rounded-full transition-all ${recommendedPackage === 'Servis Menengah' ? 'bg-emerald-500 w-5' : 'bg-slate-300 dark:bg-slate-700 w-1.5'}`} />
+                <span className={`h-1.5 rounded-full transition-all ${recommendedPackage === 'Servis Lengkap' ? 'bg-emerald-500 w-5' : 'bg-slate-300 dark:bg-slate-700 w-1.5'}`} />
+              </div>
+              <span className="text-[10px] text-slate-400 font-mono">← Geser untuk membandingkan 3 paket servis →</span>
             </div>
 
           </div>

@@ -56,12 +56,12 @@ export default function TestimonialsSection({ tenant }) {
           </p>
         </div>
 
-        {/* Testimonials Grid (Authentic Case Reviews) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Testimonials Grid (Swipeable Horizontal Snap on Mobile, 2x2 Grid on Desktop) */}
+        <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex overflow-x-auto snap-x snap-mandatory gap-3.5 pb-3 no-scrollbar md:grid md:grid-cols-2 md:gap-6 md:overflow-visible">
           {TESTIMONIALS.map((item) => (
             <div
               key={item.id}
-              className="rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
+              className="w-[85vw] max-w-[340px] shrink-0 snap-center md:w-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 sm:p-6 flex flex-col justify-between hover:border-slate-400 dark:hover:border-slate-600 transition-colors shadow-none"
             >
               <div>
                 {/* Job Tag & Rating Header */}
@@ -77,28 +77,38 @@ export default function TestimonialsSection({ tenant }) {
                 </div>
 
                 {/* Comment Text */}
-                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
                   "{item.comment}"
                 </p>
               </div>
 
               {/* Vehicle & Customer Info */}
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+              <div className="pt-3.5 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
                     <span>{item.name}</span>
                     <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" title="Pelanggan Terverifikasi" />
                   </div>
-                  <div className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                  <div className="text-[11px] sm:text-xs font-mono font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                     {item.car} • {item.location}
                   </div>
                 </div>
-                <div className="text-xs font-medium text-slate-400 dark:text-slate-500">
+                <div className="text-[11px] sm:text-xs font-medium text-slate-400 dark:text-slate-500">
                   {item.date}
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Mobile Swipe Hint & Indicator Dots */}
+        <div className="md:hidden flex flex-col items-center justify-center space-y-1.5 pt-1 text-center">
+          <div className="flex items-center space-x-1.5">
+            {TESTIMONIALS.map((_, i) => (
+              <span key={i} className={`h-1.5 rounded-full transition-all ${i === 0 ? 'bg-emerald-500 w-4' : 'bg-slate-300 dark:bg-slate-700 w-1.5'}`} />
+            ))}
+          </div>
+          <span className="text-[10px] text-slate-400 font-mono">← Geser untuk ulasan lainnya (4 ulasan) →</span>
         </div>
 
       </div>
