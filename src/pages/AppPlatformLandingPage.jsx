@@ -124,9 +124,10 @@ export default function AppPlatformLandingPage({
               onClick={handleLoginClick}
               disabled={loading}
               className="touch-target inline-flex items-center space-x-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#0c2b5e] hover:bg-blue-900 text-white text-xs sm:text-sm font-bold shadow-xs transition-colors whitespace-nowrap shrink-0"
+              title={user ? 'Buka Dashboard' : 'Masuk / Login ke Akun Bengkel'}
             >
               <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
-              <span>{user ? 'Buka Dashboard' : 'Portal Bengkel'}</span>
+              <span>{user ? 'Buka Dashboard' : 'Masuk'}</span>
             </button>
           </div>
 
@@ -887,7 +888,7 @@ export default function AppPlatformLandingPage({
               onClick={handleLoginClick}
               className="touch-target px-6 py-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-sm tracking-wide transition-colors"
             >
-              Masuk Portal Staf / Owner
+              Masuk ke Akun Bengkel
             </button>
           </div>
         </div>
