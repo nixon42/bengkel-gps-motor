@@ -165,7 +165,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                     className="touch-target inline-flex items-center justify-center px-5 sm:px-6 py-3.5 sm:py-4 rounded border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-colors"
                   >
                     <Search className="w-4 h-4 mr-2 text-blue-300" />
-                    Cek Status Plat Nomor
+                    Cek Status Servis Kendaraan
                   </a>
                 </div>
 

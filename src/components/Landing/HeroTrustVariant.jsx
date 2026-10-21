@@ -132,7 +132,7 @@ export default function HeroTrustVariant({ onSearchPlate, defaultPlate = '' }) {
                   className="touch-target inline-flex items-center justify-center px-5 py-3.5 rounded border border-blue-400/60 bg-blue-900/40 hover:bg-blue-800 text-white font-bold text-sm tracking-wider transition-colors"
                 >
                   <Search className="w-4 h-4 mr-2 text-blue-300" />
-                  <span>Cek Status Plat Nomor</span>
+                  <span>Cek Status Servis Kendaraan</span>
                 </a>
               </div>
 
