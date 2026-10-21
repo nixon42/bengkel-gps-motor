@@ -19,6 +19,7 @@ import VehicleInfoCard from '../components/Tracking/VehicleInfoCard';
 import PhotoGallery from '../components/Tracking/PhotoGallery';
 import PartsListCard from '../components/Tracking/PartsListCard';
 import ActionButtons from '../components/Tracking/ActionButtons';
+import { updateMetaTags } from '../utils/meta';
 
 export default function PublicTrackingPage({ 
   initialPlate = '', 
@@ -105,6 +106,17 @@ export default function PublicTrackingPage({
         const safeQuery = trkToken ? `token=${encodeURIComponent(trkToken)}` : queryString;
         const newUrl = `${window.location.pathname}?${safeQuery}`;
         window.history.replaceState(null, '', newUrl);
+      }
+      // Update dynamic metadata & Open Graph title for vehicle tracking
+      if (json.plate_masked || json.repairOrder) {
+        const pNum = json.plate_masked || json.repairOrder?.plate_number || '';
+        const cModel = json.repairOrder ? `${json.repairOrder.car_brand || ''} ${json.repairOrder.car_model || ''}`.trim() : '';
+        const st = json.repairOrder?.status ? `[${json.repairOrder.status}]` : '';
+        const shopName = json.workshop?.name || 'Bengkel Mobil Mitra';
+        updateMetaTags({
+          title: `Status Servis ${pNum} ${st} - ${shopName}`,
+          description: `Status servis kendaraan ${pNum}${cModel ? ' (' + cModel + ')' : ''} di ${shopName}. Cek tahapan pengerjaan, estimasi biaya, & foto dokumentasi real-time.`
+        });
       }
     } catch (err) {
       setData(null);

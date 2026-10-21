@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext';
+import { updateMetaTags } from './utils/meta';
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const AppPlatformLandingPage = lazy(() => import('./pages/AppPlatformLandingPage'));
 const PublicTrackingPage = lazy(() => import('./pages/PublicTrackingPage'));
@@ -91,33 +92,68 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, [tenant]);
 
-  // Dynamic document.title per active route & tenant
+  // Dynamic document.title & Open Graph meta tags per active route & tenant
   useEffect(() => {
     if (typeof document === 'undefined') return;
     const workshopName = tenant?.name || 'Bengkel Mobil Mitra';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://bengkel.ueeee.my.id';
+    const slug = tenant?.slug || 'bengkel-gps-motor';
+
     switch (currentRoute.view) {
       case 'platform':
-        document.title = 'BengkelOS - Platform Cloud Manajemen & Tracking Servis Bengkel Mobil';
+        updateMetaTags({
+          title: 'BengkelOS - Platform Cloud Manajemen & Tracking Servis Bengkel Mobil',
+          description: 'Sistem operasi bengkel mobil modern: SPK digital, tracking servis real-time WhatsApp tanpa login, inventori suku cadang FIFO, dan kasir transparan.',
+          image: `${origin}/images/og/og-landing.jpg`,
+          url: `${origin}/`
+        });
         break;
       case 'tenant':
       case 'landing':
-        document.title = `${workshopName} - Layanan Servis & Tracking Online`;
+        updateMetaTags({
+          title: `${workshopName} - Layanan Servis & Tracking Online`,
+          description: `Bengkel mobil terpercaya di ${tenant?.address || 'Kediri'}: servis berkala, tune up, ganti oli, overhaul, dan tracking pengerjaan real-time via WhatsApp.`,
+          image: `${origin}/images/og/og-landing.jpg`,
+          url: `${origin}/${slug}`
+        });
         break;
       case 'tracking':
-        document.title = `Tracking Servis Mobil - ${workshopName}`;
+        updateMetaTags({
+          title: `Cek Status Servis Kendaraan - ${workshopName}`,
+          description: `Pantau progres perbaikan mobil Anda di ${workshopName} secara real-time: status pengerjaan stall lift, suku cadang, & dokumentasi foto tanpa perlu login.`,
+          image: `${origin}/images/og/og-tracking.jpg`,
+          url: `${origin}/${slug}/cek-status`
+        });
         break;
       case 'admin':
-        document.title = `Portal Bengkel - ${workshopName}`;
+        updateMetaTags({
+          title: `Portal Bengkel - ${workshopName}`,
+          description: `Portal manajemen internal bengkel ${workshopName}.`,
+          url: `${origin}/admin`
+        });
         break;
       case 'superadmin':
-        document.title = 'Superadmin Control Center - BengkelOS';
+        updateMetaTags({
+          title: 'Superadmin Control Center - BengkelOS',
+          description: 'Pusat kontrol multi-tenant sistem bengkel mobil.',
+          url: `${origin}/superadmin`
+        });
         break;
       case 'docs':
       case 'panduan':
-        document.title = 'Panduan & Dokumentasi - BengkelOS';
+        updateMetaTags({
+          title: 'Panduan & Dokumentasi - BengkelOS',
+          description: 'Dokumentasi lengkap alur operasional dan integrasi sistem bengkel mobil BengkelOS.',
+          url: `${origin}/panduan`
+        });
         break;
       default:
-        document.title = 'BengkelOS - Platform Cloud Manajemen Bengkel Mobil';
+        updateMetaTags({
+          title: 'BengkelOS - Platform Cloud Manajemen Bengkel Mobil',
+          description: 'Sistem operasi bengkel modern dengan tracking servis transparan & pembukuan kas terintegrasi.',
+          image: `${origin}/images/og/og-landing.jpg`,
+          url: `${origin}/`
+        });
     }
   }, [currentRoute.view, tenant]);
 
