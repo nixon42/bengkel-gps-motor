@@ -137,12 +137,12 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             SECTION 1: HERO SECTION (AUTHORITATIVE ROYAL BLUE WORKSHOP CANOPY)
             ========================================================================= */}
         <section aria-labelledby="hero-heading" className="w-full">
-          <div className="rounded-2xl border border-blue-900/60 bg-[#0c2b5e] text-white p-6 sm:p-10 lg:p-12 overflow-hidden shadow-sm">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          <div className="-mx-4 sm:mx-0 px-4 py-8 sm:p-10 lg:p-12 sm:rounded-2xl border-y sm:border border-blue-900/60 bg-[#0c2b5e] text-white overflow-hidden shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
               
               {/* Left Column: Headline, Subheading, Action CTAs */}
-              <div className="lg:col-span-7 space-y-5">
-                <h1 id="hero-heading" className="text-3xl sm:text-5xl lg:text-5xl font-black text-white leading-tight uppercase tracking-tight font-sans">
+              <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+                <h1 id="hero-heading" className="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-snug sm:leading-tight tracking-tight font-sans">
                   {tagline}
                 </h1>
 
@@ -150,43 +150,47 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   Servis mobil tanpa rasa was-was di <strong className="text-white font-bold">{tenantName}</strong>. Estimasi transparan di awal, foto pengerjaan dikirimkan live via WhatsApp, dan suku cadang bekas wajib dikembalikan ke tangan Anda.
                 </p>
 
-                <div className="pt-2 flex flex-wrap items-center gap-3">
+                <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
                   <button
                     type="button"
                     onClick={handleGeneralBooking}
-                    className="touch-target inline-flex items-center justify-center px-6 sm:px-8 py-3.5 sm:py-4 rounded bg-[#00a86b] hover:bg-[#00925d] text-white font-black text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md"
+                    className="touch-target inline-flex items-center justify-center px-6 py-3.5 sm:py-4 rounded-lg bg-[#00a86b] hover:bg-[#00925d] active:bg-emerald-800 text-white font-bold text-sm tracking-wide uppercase transition-all shadow-md text-center"
                   >
-                    <Phone className="w-4 h-4 mr-2" />
+                    <Phone className="w-4 h-4 mr-2 shrink-0" />
                     Booking via WhatsApp
                   </button>
 
                   <a
                     href="#pantau-ro"
-                    className="touch-target inline-flex items-center justify-center px-5 sm:px-6 py-3.5 sm:py-4 rounded border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-colors"
+                    className="touch-target inline-flex items-center justify-center px-5 py-3 sm:py-4 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm tracking-wide uppercase transition-colors text-center"
                   >
-                    <Search className="w-4 h-4 mr-2 text-blue-300" />
+                    <Search className="w-4 h-4 mr-2 text-blue-300 shrink-0" />
                     Cek Status Servis Kendaraan
                   </a>
                 </div>
 
-                <div className="pt-2 flex flex-wrap items-center gap-2 text-xs text-blue-200 font-sans">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-blue-950/70 border border-blue-400/20">
-                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Suku cadang bekas dikembalikan
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-blue-950/70 border border-blue-400/20">
-                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Dokumentasi foto WhatsApp
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-blue-950/70 border border-blue-400/20">
-                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Garansi servis tertulis
-                  </span>
+                {/* 3-Point Trust Guarantee Checklist */}
+                <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-blue-100 font-sans">
+                  <div className="flex items-center space-x-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Suku cadang bekas dikembalikan</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Dokumentasi foto WhatsApp</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>Garansi servis tertulis</span>
+                  </div>
                 </div>
               </div>
 
               {/* Right Column: High-Res Real Workshop Showcase Card */}
               <div className="lg:col-span-5">
-                <div className="rounded-2xl border border-blue-400/30 overflow-hidden bg-slate-950 shadow-xl flex flex-col">
+                <div className="rounded-xl sm:rounded-2xl border border-blue-400/30 overflow-hidden bg-slate-950 shadow-xl flex flex-col">
                   {/* Photo Container */}
-                  <div className="aspect-[16/10] sm:aspect-[4/3] overflow-hidden bg-slate-950 relative group">
+                  <div className="aspect-[16/9] sm:aspect-[4/3] overflow-hidden bg-slate-950 relative group">
                     <img 
                       src={heroImage} 
                       alt={`Workshop ${tenantName} melayani servis mobil`}
@@ -197,7 +201,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   </div>
 
                   {/* Workshop Location & Hours Bar */}
-                  <div className="p-4 sm:p-5 bg-blue-950/80 border-t border-blue-900/70 space-y-3 font-sans">
+                  <div className="p-3.5 sm:p-5 bg-blue-950/80 border-t border-blue-900/70 space-y-2.5 sm:space-y-3 font-sans">
                     <a
                       href="#lokasi"
                       className="flex items-start gap-3 group/loc transition-colors"
@@ -221,7 +225,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                       </div>
                     </a>
 
-                    <div className="flex items-start gap-3 pt-3 border-t border-blue-900/60">
+                    <div className="flex items-start gap-3 pt-2.5 sm:pt-3 border-t border-blue-900/60">
                       <div className="w-7 h-7 rounded-lg bg-blue-500/15 border border-blue-400/30 flex items-center justify-center shrink-0 mt-0.5">
                         <Clock className="w-4 h-4 text-blue-300" />
                       </div>
@@ -243,10 +247,10 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
         </section>
 
         {/* =========================================================================
-            SECTION 2: INTEGRITAS KAMI & JAMINAN TRANSPARANSI (4 CARDS FULL WIDTH)
+            SECTION 2: INTEGRITAS KAMI & JAMINAN TRANSPARANSI (4 CARDS RESPONSIVE GRID)
             ========================================================================= */}
-        <section id="integritas" aria-labelledby="integritas-heading" className="w-full space-y-6">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
+        <section id="integritas" aria-labelledby="integritas-heading" className="w-full space-y-5 sm:space-y-6">
+          <div className="text-center max-w-3xl mx-auto space-y-1.5 sm:space-y-2">
             <h2 id="integritas-heading" className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
               INTEGRITAS KAMI &amp; JAMINAN TRANSPARANSI
             </h2>
@@ -255,23 +259,23 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
             {INTEGRITY_PILLARS.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <div 
                   key={idx}
-                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-5 sm:p-6 flex flex-col items-center text-center hover:border-blue-600 dark:hover:border-blue-400 transition-colors shadow-none"
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-3.5 sm:p-6 flex flex-col items-center text-center hover:border-blue-600 dark:hover:border-blue-400 transition-colors shadow-none"
                 >
-                  <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3.5 shrink-0">
-                    <Icon className="w-6 h-6" />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2.5 sm:mb-3.5 shrink-0">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
 
-                  <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight leading-snug mb-2">
+                  <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight leading-snug mb-1 sm:mb-2">
                     {item.title}
                   </h3>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
@@ -283,7 +287,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
         {/* =========================================================================
             SECTION 3: PANTAU PROSES PERBAIKAN ANDA (STAGING REPAIR ORDER)
             ========================================================================= */}
-        <section id="pantau-ro" aria-labelledby="pantau-heading" className="w-full space-y-6">
+        <section id="pantau-ro" aria-labelledby="pantau-heading" className="w-full space-y-5 sm:space-y-6">
           <div className="text-center max-w-3xl mx-auto space-y-1">
             <h2 id="pantau-heading" className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
               PANTAU PROSES PERBAIKAN ANDA
@@ -296,11 +300,11 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 sm:p-8 space-y-8 shadow-none">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-4 sm:p-8 space-y-6 sm:space-y-8 shadow-none">
             
-            {/* 6-Stage Progress Stepper Bar (Horizontal across width) */}
-            <div className="pt-2">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-2 items-start text-center">
+            {/* 6-Stage Progress Stepper Bar (Horizontal on mobile via overflow-x) */}
+            <div className="pt-1">
+              <div className="flex overflow-x-auto pb-2 sm:pb-0 gap-2 sm:gap-2 sm:grid sm:grid-cols-6 items-stretch sm:items-start text-center snap-x no-scrollbar">
                 {RO_STAGES.map((stg) => {
                   const Icon = stg.icon;
                   const isCompleted = stg.status === 'completed';
@@ -309,50 +313,61 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   return (
                     <div 
                       key={stg.id} 
-                      className={`flex flex-col items-center p-2 rounded-lg transition-colors ${
-                        isActive ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80' : ''
+                      className={`min-w-[110px] sm:min-w-0 snap-center flex-1 flex flex-col items-center justify-between p-2.5 sm:p-2 rounded-lg transition-colors ${
+                        isActive 
+                          ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80' 
+                          : 'bg-slate-50 dark:bg-slate-700/30 sm:bg-transparent'
                       }`}
                     >
-                      <div 
-                        className={`w-11 h-11 rounded-full flex items-center justify-center mb-2 transition-colors border-2 ${
-                          isActive
-                            ? 'bg-[#00a86b] border-emerald-500 text-white shadow-none ring-2 ring-emerald-200 dark:ring-emerald-950'
-                            : isCompleted
-                            ? 'bg-[#0c2b5e] border-[#0c2b5e] text-white'
-                            : 'bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400'
-                        }`}
-                      >
-                        <Icon className="w-5 h-5" />
+                      <div className="flex flex-col items-center">
+                        <div 
+                          className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-1.5 sm:mb-2 transition-colors border-2 ${
+                            isActive
+                              ? 'bg-[#00a86b] border-emerald-500 text-white shadow-none ring-2 ring-emerald-200 dark:ring-emerald-950'
+                              : isCompleted
+                              ? 'bg-[#0c2b5e] border-[#0c2b5e] text-white'
+                              : 'bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400'
+                          }`}
+                        >
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </div>
+
+                        <span className="font-mono text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400">
+                          Tahap {stg.id}
+                        </span>
+
+                        <strong className={`text-[11px] sm:text-xs leading-tight block mt-0.5 sm:mt-1 ${
+                          isActive 
+                            ? 'text-emerald-700 dark:text-emerald-300 font-extrabold' 
+                            : isCompleted 
+                            ? 'text-slate-900 dark:text-white' 
+                            : 'text-slate-500 dark:text-slate-400'
+                        }`}>
+                          {stg.name}
+                        </strong>
                       </div>
 
-                      <span className="font-mono text-xs font-bold text-slate-500 dark:text-slate-400">
-                        Tahap {stg.id}
-                      </span>
-
-                      <strong className={`text-xs leading-tight block mt-1 ${
-                        isActive 
-                          ? 'text-emerald-700 dark:text-emerald-300 font-extrabold' 
-                          : isCompleted 
-                          ? 'text-slate-900 dark:text-white' 
-                          : 'text-slate-500 dark:text-slate-400'
-                      }`}>
-                        {stg.name}
-                      </strong>
-
-                      {isActive && (
-                        <span className="mt-1.5 px-2 py-0.5 rounded bg-emerald-600 text-white text-xs font-mono font-bold tracking-wider uppercase">
+                      {isActive ? (
+                        <span className="mt-1.5 px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] sm:text-xs font-mono font-bold tracking-wider uppercase">
                           Aktif
+                        </span>
+                      ) : (
+                        <span className="mt-1.5 opacity-0 text-[10px] sm:text-xs font-mono py-0.5 select-none" aria-hidden="true">
+                          -
                         </span>
                       )}
                     </div>
                   );
                 })}
               </div>
+              <div className="sm:hidden text-center mt-2">
+                <span className="text-[10px] text-slate-400 font-mono">← Geser untuk melihat 6 tahapan servis →</span>
+              </div>
             </div>
 
             {/* License Plate Tracker Input */}
-            <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
-              <div className="text-center mb-4 space-y-1">
+            <div className="pt-5 border-t border-slate-200 dark:border-slate-700">
+              <div className="text-center mb-3 sm:mb-4 space-y-1">
                 <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 uppercase font-mono block">
                   Cek Status Kendaraan Anda Tanpa Login
                 </span>
@@ -368,38 +383,38 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                     value={plateInput}
                     onChange={(e) => setPlateInput(e.target.value)}
                     placeholder="Contoh: AG 1822 AB"
-                    className="touch-target w-full uppercase px-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-base font-mono font-bold tracking-widest text-center placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:border-blue-600"
+                    className="touch-target w-full uppercase px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-base font-mono font-bold tracking-widest text-center placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 focus:outline-none focus:border-blue-600"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="touch-target px-6 py-3 rounded bg-[#0c2b5e] hover:bg-blue-900 active:bg-blue-950 text-white font-bold text-xs uppercase font-mono tracking-wider transition-colors shadow-none shrink-0 flex items-center justify-center gap-2"
+                  className="touch-target px-6 py-3 rounded-lg bg-[#0c2b5e] hover:bg-blue-900 active:bg-blue-950 text-white font-bold text-xs uppercase font-mono tracking-wider transition-colors shadow-none shrink-0 flex items-center justify-center gap-2"
                 >
                   <Search className="w-4 h-4" />
                   <span>Lacak Progres</span>
                 </button>
               </form>
 
-              <div className="flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">
-                <div className="flex items-center gap-2">
-                  <span>Uji plat:</span>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  <span className="text-[11px] text-slate-400">Uji plat:</span>
                   <button
                     type="button"
                     onClick={() => handleQuickPlate('AG 1822 AB')}
-                    className="touch-target px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-mono font-bold hover:underline"
+                    className="touch-target px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-mono font-bold hover:underline text-[11px]"
                   >
                     AG 1822 AB (Avanza)
                   </button>
                   <button
                     type="button"
                     onClick={() => handleQuickPlate('AG 1044 RK')}
-                    className="touch-target px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono font-bold hover:underline"
+                    className="touch-target px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono font-bold hover:underline text-[11px]"
                   >
                     AG 1044 RK (Innova)
                   </button>
                 </div>
-                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
-                  <ShieldCheck className="w-4 h-4" />
+                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold text-[11px]">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Nama &amp; HP Disensor</span>
                 </span>
               </div>
@@ -411,8 +426,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
         {/* =========================================================================
             SECTION 4: FASILITAS WORKSHOP & PIT LIFT (REAL WORKSHOP PHOTOS FROM MOCKUP)
             ========================================================================= */}
-        <section id="fasilitas" aria-labelledby="fasilitas-heading" className="w-full space-y-6">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
+        <section id="fasilitas" aria-labelledby="fasilitas-heading" className="w-full space-y-5 sm:space-y-6">
+          <div className="text-center max-w-3xl mx-auto space-y-1.5 sm:space-y-2">
             <h2 id="fasilitas-heading" className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
               FASILITAS WORKSHOP &amp; PIT LIFT BERSTANDAR RESMI
             </h2>
@@ -421,7 +436,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             
             {/* Feature Card 1: Hydraulic Lift Bay */}
             <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-none flex flex-col">
@@ -434,8 +449,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   decoding="async"
                 />
               </div>
-              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
+              <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
                   <span className="inline-block px-2.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-xs font-mono font-bold uppercase">
                     Stall Pengerjaan Utama
                   </span>
@@ -447,7 +462,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-wrap gap-2 text-xs font-mono text-slate-600 dark:text-slate-400">
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-wrap gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-slate-600 dark:text-slate-400">
                   <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700">✓ Kapasitas 4.000 kg</span>
                   <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700">✓ Safety lock otomatis</span>
                   <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700">✓ Area stall bersih</span>
@@ -466,8 +481,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   decoding="async"
                 />
               </div>
-              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
+              <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
                   <span className="inline-block px-2.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-bold uppercase">
                     Peralatan Diagnostik
                   </span>
@@ -479,7 +494,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-wrap gap-2 text-xs font-mono text-slate-600 dark:text-slate-400">
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-700 flex flex-wrap gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-mono text-slate-600 dark:text-slate-400">
                   <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700">✓ Scan multi-brand</span>
                   <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700">✓ Live sensor data</span>
                   <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700">✓ Reset error engine</span>
@@ -493,8 +508,8 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
         {/* =========================================================================
             SECTION 5: ESTIMASI BIAYA SERVIS TRANSPARAN (DROPDOWNS + 3 PRICING TIERS)
             ========================================================================= */}
-        <section id="estimasi-biaya" aria-labelledby="estimasi-heading" className="w-full space-y-6">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
+        <section id="estimasi-biaya" aria-labelledby="estimasi-heading" className="w-full space-y-5 sm:space-y-6">
+          <div className="text-center max-w-3xl mx-auto space-y-1.5 sm:space-y-2">
             <h2 id="estimasi-heading" className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
               ESTIMASI BIAYA SERVIS TRANSPARAN
             </h2>
@@ -503,7 +518,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </p>
           </div>
 
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-6 sm:p-8 space-y-6 shadow-none">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-none">
             
             {/* 3 Dropdown Selectors matching mockup */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -515,7 +530,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   <select
                     value={selectedModel}
                     onChange={(e) => setSelectedModel(e.target.value)}
-                    className="touch-target w-full appearance-none px-3.5 py-2.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:border-blue-600 truncate pr-8"
+                    className="touch-target w-full appearance-none px-3.5 py-3 sm:py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:border-blue-600 truncate pr-8"
                   >
                     {CAR_MODELS.map((m) => (
                       <option key={m} value={m}>{m}</option>
@@ -533,7 +548,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   <select
                     value={selectedService}
                     onChange={(e) => setSelectedService(e.target.value)}
-                    className="touch-target w-full appearance-none px-3.5 py-2.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:border-blue-600 truncate pr-8"
+                    className="touch-target w-full appearance-none px-3.5 py-3 sm:py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:border-blue-600 truncate pr-8"
                   >
                     {SERVICE_TYPES.map((s) => (
                       <option key={s} value={s}>{s}</option>
@@ -551,7 +566,7 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
                   <select
                     value={selectedSymptom}
                     onChange={(e) => setSelectedSymptom(e.target.value)}
-                    className="touch-target w-full appearance-none px-3.5 py-2.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:border-blue-600 truncate pr-8"
+                    className="touch-target w-full appearance-none px-3.5 py-3 sm:py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-bold focus:outline-none focus:border-blue-600 truncate pr-8"
                   >
                     {SYMPTOM_OPTIONS.map((sym) => (
                       <option key={sym} value={sym}>{sym}</option>
@@ -563,14 +578,14 @@ export default function MockupLandingView({ onSearchPlate, defaultPlate = '', te
             </div>
 
             {/* Dynamic Recommendation Banner linking Selectors to Cards */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-lg border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 text-xs text-emerald-950 dark:text-emerald-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 sm:p-3.5 rounded-lg border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 text-xs text-emerald-950 dark:text-emerald-100">
               <div className="flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span>
                   Rekomendasi untuk <strong>{selectedModel}</strong> ({selectedService}): Paket <strong>{recommendedPackage}</strong>
                 </span>
               </div>
-              <span className="font-mono text-emerald-700 dark:text-emerald-300 font-bold self-start sm:self-auto">
+              <span className="font-mono text-emerald-700 dark:text-emerald-300 font-bold self-start sm:self-auto text-[11px] sm:text-xs">
                 Estimasi Disetujui di Awal
               </span>
             </div>

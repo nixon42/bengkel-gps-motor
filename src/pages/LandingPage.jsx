@@ -101,11 +101,11 @@ export default function LandingPage({
             <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-[#0c2b5e] border border-blue-900/40 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm">
               <Wrench className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase font-sans">
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase font-sans truncate max-w-[140px] xs:max-w-[200px] sm:max-w-[260px] md:max-w-none">
                 {activeTenant.name || 'Bengkel Mobil Mitra'}
               </span>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-wider uppercase truncate max-w-[180px] sm:max-w-[220px]">
+              <span className="text-[11px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-wider uppercase truncate max-w-[140px] xs:max-w-[200px] sm:max-w-[240px]">
                 {activeTenant.address ? activeTenant.address.split(',')[0] : 'Mitra BengkelOS'}
               </span>
             </div>
@@ -153,11 +153,11 @@ export default function LandingPage({
               href={cleanWa ? `https://wa.me/${cleanWa}?text=${encodeURIComponent(`Halo ${activeTenant.name}, saya ingin pesan jadwal servis mobil.`)}` : '#lokasi'}
               target={cleanWa ? '_blank' : '_self'}
               rel={cleanWa ? 'noopener noreferrer' : undefined}
-              className="touch-target inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#00a86b] hover:bg-[#00925d] active:bg-emerald-800 text-white text-xs sm:text-sm font-bold tracking-wide uppercase transition-colors shadow-sm whitespace-nowrap shrink-0"
+              className="touch-target inline-flex items-center justify-center w-9 h-9 sm:w-auto px-0 sm:px-4 py-0 sm:py-2.5 rounded-lg bg-[#00a86b] hover:bg-[#00925d] active:bg-emerald-800 text-white text-xs sm:text-sm font-bold tracking-wide uppercase transition-colors shadow-sm shrink-0"
+              title="Pesan via WhatsApp"
             >
-              <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+              <Phone className="w-4 h-4 sm:mr-1.5 shrink-0" />
               <span className="hidden sm:inline">Pesan Sekarang</span>
-              <span className="sm:hidden font-bold">Pesan</span>
             </a>
 
             {/* Mobile Hamburger Toggle (Visible on < xl) */}
