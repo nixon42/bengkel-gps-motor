@@ -255,6 +255,7 @@ export default function App() {
           onOpenAdmin={() => navigateTo('admin')}
           onOpenSuperadmin={() => navigateTo('superadmin')}
           onNavigateDocs={(section) => navigateTo('docs', { section })}
+          onNavigateTracking={(plate) => navigateTo('tracking', { plate, slug: 'bengkel-gps-motor' })}
         />
       </Suspense>
     );
