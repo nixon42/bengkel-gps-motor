@@ -19,6 +19,47 @@ function errorResponse(message, status = 400) {
 }
 
 /**
+ * Helper to get active tenant ID for current request
+ */
+export async function getSessionTenantId() {
+  if (supabase) {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const cleanEmail = (session.user.email || '').toLowerCase().trim();
+        const { data: dbUser } = await supabase
+          .from('users')
+          .select('tenant_id')
+          .or(`id.eq.${session.user.id},email.eq.${cleanEmail}`)
+          .maybeSingle();
+        if (dbUser?.tenant_id) {
+          return dbUser.tenant_id;
+        }
+      }
+    } catch (e) {}
+  }
+  if (typeof sessionStorage !== 'undefined') {
+    const demoStr = sessionStorage.getItem('bengkel_demo_session');
+    if (demoStr) {
+      try {
+        const parsed = JSON.parse(demoStr);
+        if (parsed?.tenant_id) return parsed.tenant_id;
+      } catch (e) {}
+    }
+  }
+  if (typeof localStorage !== 'undefined') {
+    const sessStr = localStorage.getItem('bengkel_session');
+    if (sessStr) {
+      try {
+        const parsed = JSON.parse(sessStr);
+        if (parsed?.tenant_id) return parsed.tenant_id;
+      } catch (e) {}
+    }
+  }
+  return DEFAULT_TENANT_ID;
+}
+
+/**
  * Handle API requests by routing them directly to Supabase
  */
 export async function handleSupabaseApi(urlStr, options = {}) {
@@ -51,24 +92,133 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       }
 
       let user = null;
+      let activeTenant = null;
 
       // 1. Check native Supabase Auth session first (for Google OAuth & Email/Password)
       if (supabase) {
         try {
           const { data: { session } } = await supabase.auth.getSession();
           if (session?.user) {
-            const email = session.user.email || '';
-            const isSuper = isSuperadmin(email);
-            user = {
-              id: session.user.id,
-              email,
-              name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'User Supabase',
-              avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
-              role: isSuper ? 'superadmin' : 'admin',
-              isSuperAdmin: isSuper,
-              tenant_id: DEFAULT_TENANT_ID,
-              auth_provider: 'supabase'
-            };
+            const email = (session.user.email || '').toLowerCase().trim();
+            const isSuper = isSuperadmin(email, session.user);
+
+            // Look up existing user in public.users table
+            let { data: dbUser } = await supabase
+              .from('users')
+              .select('*')
+              .or(`id.eq.${session.user.id},email.eq.${email}`)
+              .maybeSingle();
+
+            if (dbUser) {
+              // Existing user: load their assigned tenant
+              let { data: tData } = await supabase
+                .from('tenants')
+                .select('*')
+                .eq('id', dbUser.tenant_id)
+                .maybeSingle();
+              activeTenant = tData;
+
+              const effectiveRole = isSuper ? 'superadmin' : (dbUser.role || 'admin');
+              user = {
+                id: session.user.id,
+                email,
+                name: dbUser.name || session.user.user_metadata?.full_name || email.split('@')[0],
+                avatar_url: dbUser.avatar_url || session.user.user_metadata?.avatar_url || null,
+                role: effectiveRole,
+                isSuperAdmin: isSuper,
+                tenant_id: dbUser.tenant_id,
+                auth_provider: 'supabase'
+              };
+            } else {
+              // Brand new user signing in for the first time!
+              const rawName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'Pemilik Bengkel';
+              const avatar = session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null;
+
+              if (isSuper) {
+                // Superadmin without user record: link to master tenant
+                const { data: defaultTenant } = await supabase
+                  .from('tenants')
+                  .select('*')
+                  .eq('id', DEFAULT_TENANT_ID)
+                  .maybeSingle();
+                activeTenant = defaultTenant;
+
+                const newSuperUser = {
+                  id: session.user.id,
+                  tenant_id: DEFAULT_TENANT_ID,
+                  email,
+                  name: rawName,
+                  avatar_url: avatar,
+                  role: 'superadmin',
+                  auth_provider: 'supabase'
+                };
+                await supabase.from('users').insert([newSuperUser]);
+                user = { ...newSuperUser, isSuperAdmin: true };
+              } else {
+                // New regular user / workshop owner: PROVISION NEW ISOLATED TENANT!
+                const baseSlug = (email.split('@')[0]).toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'mitra';
+                const randomHex = Math.random().toString(36).substring(2, 6);
+                const newTenantId = `tenant-${baseSlug}-${randomHex}`;
+                const newSlug = `bengkel-${baseSlug}-${randomHex}`;
+                const workshopName = `Bengkel ${rawName}`;
+
+                const newTenantObj = {
+                  id: newTenantId,
+                  slug: newSlug,
+                  name: workshopName,
+                  address: '',
+                  phone_wa: '',
+                  business_hours: 'Senin - Sabtu: 08:00 - 17:00 WIB',
+                  tagline: 'Layanan Servis Mobil Terpercaya & Bergaransi',
+                  profile_completed: 0 // Prompts OnboardingModal!
+                };
+
+                const { data: createdTenant } = await supabase
+                  .from('tenants')
+                  .insert([newTenantObj])
+                  .select()
+                  .single();
+                activeTenant = createdTenant || newTenantObj;
+
+                // Settings
+                await supabase.from('tenant_settings').insert([{
+                  tenant_id: newTenantId,
+                  monthly_revenue_target: 15000000,
+                  invoice_footer: `Terima kasih atas kepercayaan Anda pada ${workshopName}.`,
+                  auto_print_invoice: 0,
+                  notify_wa: 1
+                }]);
+
+                // Default Categories
+                const cats = [
+                  { id: `cat-inc-servis-${randomHex}`, tenant_id: newTenantId, name: 'Jasa Servis', type: 'INCOME', is_default: 1 },
+                  { id: `cat-inc-parts-${randomHex}`, tenant_id: newTenantId, name: 'Penjualan Sparepart', type: 'INCOME', is_default: 1 },
+                  { id: `cat-inc-other-${randomHex}`, tenant_id: newTenantId, name: 'Pendapatan Lain-lain', type: 'INCOME', is_default: 1 },
+                  { id: `cat-exp-parts-${randomHex}`, tenant_id: newTenantId, name: 'Beli Sparepart / Stok', type: 'EXPENSE', is_default: 1 },
+                  { id: `cat-exp-util-${randomHex}`, tenant_id: newTenantId, name: 'Listrik, Air & Internet', type: 'EXPENSE', is_default: 1 },
+                  { id: `cat-exp-wages-${randomHex}`, tenant_id: newTenantId, name: 'Gaji Karyawan', type: 'EXPENSE', is_default: 1 },
+                  { id: `cat-exp-ops-${randomHex}`, tenant_id: newTenantId, name: 'Operasional Bengkel', type: 'EXPENSE', is_default: 1 }
+                ];
+                await supabase.from('transaction_categories').insert(cats);
+
+                // Insert User
+                const newUserObj = {
+                  id: session.user.id,
+                  tenant_id: newTenantId,
+                  email,
+                  name: rawName,
+                  avatar_url: avatar,
+                  role: 'admin',
+                  auth_provider: 'supabase'
+                };
+                await supabase.from('users').insert([newUserObj]);
+                user = { ...newUserObj, isSuperAdmin: false };
+              }
+            }
+
+            if (user && typeof localStorage !== 'undefined') {
+              localStorage.setItem('bengkel_session', JSON.stringify(user));
+            }
           }
         } catch (e) {
           console.warn('Gagal membaca sesi auth Supabase:', e);
@@ -86,24 +236,31 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         if (demoStr) {
           try {
             user = JSON.parse(demoStr);
+            if (user?.tenant_id) {
+              const { data: t } = await supabase.from('tenants').select('*').eq('id', user.tenant_id).maybeSingle();
+              activeTenant = t;
+            }
           } catch (e) {}
         }
       }
 
-      // Fetch active tenant
-      let activeTenant = null;
-      try {
-        const { data: tenant } = await supabase
-          .from('tenants')
-          .select('*')
-          .limit(1)
-          .maybeSingle();
-        activeTenant = tenant;
-      } catch (e) {}
+      if (!activeTenant && user?.tenant_id) {
+        try {
+          const { data: t } = await supabase.from('tenants').select('*').eq('id', user.tenant_id).maybeSingle();
+          activeTenant = t;
+        } catch (e) {}
+      }
+
+      if (!activeTenant) {
+        try {
+          const { data: defaultT } = await supabase.from('tenants').select('*').eq('id', DEFAULT_TENANT_ID).maybeSingle();
+          activeTenant = defaultT;
+        } catch (e) {}
+      }
 
       return jsonResponse({
         user: user || null,
-        tenant: activeTenant || { id: DEFAULT_TENANT_ID, slug: 'mitra', name: 'Bengkel Mobil Mitra' }
+        tenant: activeTenant || { id: DEFAULT_TENANT_ID, slug: 'bengkel-gps-motor', name: 'Bengkel Mobil GPS Motor Kediri' }
       });
     }
 
@@ -159,11 +316,16 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // ----------------------------------------------------
     // 2. TENANT SETTINGS & LOGO
     // ----------------------------------------------------
+    // ----------------------------------------------------
+    // 2. TENANT SETTINGS & LOGO
+    // ----------------------------------------------------
     if (path === '/api/tenant/settings') {
+      const activeTenantId = await getSessionTenantId();
+
       if (method === 'GET') {
         const [{ data: sData }, { data: tData }] = await Promise.all([
-          supabase.from('tenant_settings').select('*').eq('tenant_id', DEFAULT_TENANT_ID).maybeSingle(),
-          supabase.from('tenants').select('*').eq('id', DEFAULT_TENANT_ID).maybeSingle()
+          supabase.from('tenant_settings').select('*').eq('tenant_id', activeTenantId).maybeSingle(),
+          supabase.from('tenants').select('*').eq('id', activeTenantId).maybeSingle()
         ]);
         return jsonResponse({
           success: true,
@@ -217,14 +379,14 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           const { data: tData } = await supabase
             .from('tenants')
             .update(tenantUpdates)
-            .eq('id', DEFAULT_TENANT_ID)
+            .eq('id', activeTenantId)
             .select()
             .maybeSingle();
           updatedTenant = tData;
         }
 
         const settingsUpdates = {
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           updated_at: new Date().toISOString()
         };
         if (body.monthlyRevenueTarget !== undefined || body.monthly_revenue_target !== undefined) {
@@ -242,7 +404,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
         const { data: sData } = await supabase
           .from('tenant_settings')
-          .upsert(settingsUpdates)
+          .upsert(settingsUpdates, { onConflict: 'tenant_id' })
           .select()
           .maybeSingle();
 
@@ -251,6 +413,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     }
 
     if (path === '/api/tenant/photo' && method === 'POST') {
+      const activeTenantId = await getSessionTenantId();
       const formData = options.body;
       const file = formData.get('photo') || formData.get('image');
       const target = formData.get('target') || 'logo';
@@ -262,7 +425,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       if (target === 'logo') updateData.logo_url = url;
       else if (target === 'hero') updateData.hero_image_url = url;
 
-      await supabase.from('tenants').update(updateData).eq('id', DEFAULT_TENANT_ID);
+      await supabase.from('tenants').update(updateData).eq('id', activeTenantId);
       return jsonResponse({ success: true, url });
     }
 
@@ -290,7 +453,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       }
 
       let tenantData = null;
-      if (slug && slug !== 'mitra' && slug !== 'bengkel-gps-motor') {
+      if (slug && slug !== 'mitra') {
         const { data } = await supabase
           .from('tenants')
           .select('*')
@@ -407,10 +570,11 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 4. DASHBOARD SUMMARY
     // ----------------------------------------------------
     if (path === '/api/dashboard/summary') {
+      const activeTenantId = await getSessionTenantId();
       const [roRes, partsRes, transRes] = await Promise.all([
-        supabase.from('repair_orders').select('id, status, total_cost, created_at'),
-        supabase.from('spareparts').select('id, stock, min_stock'),
-        supabase.from('transactions').select('amount, type, date')
+        supabase.from('repair_orders').select('id, status, total_cost, created_at').eq('tenant_id', activeTenantId),
+        supabase.from('spareparts').select('id, stock, min_stock').eq('tenant_id', activeTenantId),
+        supabase.from('transactions').select('amount, type, date').eq('tenant_id', activeTenantId)
       ]);
 
       const ros = roRes.data || [];
@@ -440,12 +604,14 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 5. REPAIR ORDERS
     // ----------------------------------------------------
     if (path === '/api/repair-orders' || path.startsWith('/api/repair-orders/')) {
+      const activeTenantId = await getSessionTenantId();
+
       // 5.1 Options for form
       if (path === '/api/repair-orders/form-options') {
         const [{ data: parts }, { data: customers }, { data: vehicles }] = await Promise.all([
-          supabase.from('spareparts').select('*').eq('is_active', 1).gt('stock', 0),
-          supabase.from('customers').select('*').limit(200),
-          supabase.from('vehicles').select('*').limit(200)
+          supabase.from('spareparts').select('*').eq('tenant_id', activeTenantId).eq('is_active', 1).gt('stock', 0),
+          supabase.from('customers').select('*').eq('tenant_id', activeTenantId).limit(200),
+          supabase.from('vehicles').select('*').eq('tenant_id', activeTenantId).limit(200)
         ]);
         return jsonResponse({ spareparts: parts || [], customers: customers || [], vehicles: vehicles || [] });
       }
@@ -453,6 +619,9 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       // 5.2 Upload Photo to RO
       if (path.match(/^\/api\/repair-orders\/[^/]+\/photos$/) && method === 'POST') {
         const roId = path.split('/')[3];
+        const { data: parentRo } = await supabase.from('repair_orders').select('tenant_id').eq('id', roId).maybeSingle();
+        const roTenantId = parentRo?.tenant_id || activeTenantId;
+
         const formData = options.body;
         const file = formData.get('photo');
         const stage = formData.get('stage') || 'PROGRESS';
@@ -468,7 +637,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           .from('ro_photos')
           .insert({
             id: photoId,
-            tenant_id: DEFAULT_TENANT_ID,
+            tenant_id: roTenantId,
             repair_order_id: roId,
             photo_url: photoUrl,
             stage,
@@ -493,7 +662,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       }
 
       // 5.4 Update Status of RO
-      if (path.match(/^\/api\/repair-orders\/[^/]+\/status$/) && method === 'PUT') {
+      if (path.match(/^\/api\/repair-orders\/[^/]+\/status$/) && (method === 'PUT' || method === 'POST')) {
         const roId = path.split('/')[3];
         const body = JSON.parse(options.body || '{}');
         const { status, notes, actor_name } = body;
@@ -501,11 +670,13 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         const { data: oldRo } = await supabase.from('repair_orders').select('*').eq('id', roId).single();
         if (!oldRo) return errorResponse('Repair Order tidak ditemukan.', 404);
 
+        const roTenantId = oldRo.tenant_id || activeTenantId;
+
         await Promise.all([
           supabase.from('repair_orders').update({ status, updated_at: new Date().toISOString() }).eq('id', roId),
           supabase.from('ro_status_logs').insert({
             id: crypto.randomUUID(),
-            tenant_id: DEFAULT_TENANT_ID,
+            tenant_id: roTenantId,
             repair_order_id: roId,
             previous_status: oldRo.status,
             new_status: status,
@@ -517,11 +688,49 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         return jsonResponse({ success: true, status });
       }
 
-      // 5.5 Add Sparepart to RO
-      if (path.match(/^\/api\/repair-orders\/[^/]+\/parts$/) && method === 'POST') {
+      // 5.5 Update Costs / General details of RO
+      if ((path.match(/^\/api\/repair-orders\/[^/]+\/costs$/) && (method === 'PATCH' || method === 'PUT')) ||
+          (path.match(/^\/api\/repair-orders\/[^/]+$/) && (method === 'PATCH' || method === 'PUT'))) {
+        const roId = path.split('/')[3];
+        const body = JSON.parse(options.body || '{}');
+
+        const { data: oldRo } = await supabase.from('repair_orders').select('*').eq('id', roId).single();
+        if (!oldRo) return errorResponse('Repair Order tidak ditemukan.', 404);
+
+        const serviceFee = body.service_fee !== undefined ? Number(body.service_fee) : Number(oldRo.service_fee || 0);
+        const discount = body.discount !== undefined ? Number(body.discount) : Number(oldRo.discount || 0);
+        const sparepartFee = Number(oldRo.sparepart_fee || 0);
+        const totalCost = Math.max(0, serviceFee + sparepartFee - discount);
+
+        const updatePayload = {
+          service_fee: serviceFee,
+          discount,
+          total_cost: totalCost,
+          updated_at: new Date().toISOString()
+        };
+        if (body.complaint !== undefined) updatePayload.complaint = body.complaint;
+        if (body.mechanic_name !== undefined) updatePayload.mechanic_name = body.mechanic_name;
+        if (body.notes !== undefined) updatePayload.notes = body.notes;
+
+        const { data: updatedRo, error: updateErr } = await supabase
+          .from('repair_orders')
+          .update(updatePayload)
+          .eq('id', roId)
+          .select()
+          .single();
+
+        if (updateErr) throw updateErr;
+        return jsonResponse({ success: true, repair_order: updatedRo, repairOrder: updatedRo });
+      }
+
+      // 5.6 Add Sparepart to RO
+      if ((path.match(/^\/api\/repair-orders\/[^/]+\/parts$/) || path.match(/^\/api\/repair-orders\/[^/]+\/spareparts$/)) && method === 'POST') {
         const roId = path.split('/')[3];
         const body = JSON.parse(options.body || '{}');
         const { sparepart_id, quantity, unit_price } = body;
+
+        const { data: parentRo } = await supabase.from('repair_orders').select('tenant_id, sparepart_fee, service_fee, discount').eq('id', roId).maybeSingle();
+        const roTenantId = parentRo?.tenant_id || activeTenantId;
 
         const { data: part } = await supabase.from('spareparts').select('*').eq('id', sparepart_id).single();
         const itemName = part ? part.name : 'Sparepart';
@@ -532,7 +741,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           .from('ro_spareparts')
           .insert({
             id: crypto.randomUUID(),
-            tenant_id: DEFAULT_TENANT_ID,
+            tenant_id: roTenantId,
             repair_order_id: roId,
             sparepart_id,
             item_name: itemName,
@@ -545,15 +754,68 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
         if (partErr) throw partErr;
 
-        // Decrement stock in spareparts
+        // Decrement stock in spareparts & log movement
         if (part) {
-          await supabase.from('spareparts').update({ stock: Math.max(0, part.stock - Number(quantity || 1)) }).eq('id', sparepart_id);
+          await Promise.all([
+            supabase.from('spareparts').update({ stock: Math.max(0, part.stock - Number(quantity || 1)) }).eq('id', sparepart_id),
+            supabase.from('stock_movements').insert({
+              id: crypto.randomUUID(),
+              tenant_id: roTenantId,
+              sparepart_id,
+              type: 'OUT',
+              quantity: Number(quantity || 1),
+              date: new Date().toISOString().split('T')[0],
+              notes: `Dipasang pada ${roId}`
+            })
+          ]);
+        }
+
+        // Recalculate RO sparepart_fee and total_cost
+        if (parentRo) {
+          const newPartFee = Number(parentRo.sparepart_fee || 0) + subtotal;
+          const newTotal = Math.max(0, Number(parentRo.service_fee || 0) + newPartFee - Number(parentRo.discount || 0));
+          await supabase.from('repair_orders').update({
+            sparepart_fee: newPartFee,
+            total_cost: newTotal,
+            updated_at: new Date().toISOString()
+          }).eq('id', roId);
         }
 
         return jsonResponse({ success: true, sparepart: inserted }, 201);
       }
 
-      // 5.6 Detail of RO
+      // 5.7 Delete Sparepart from RO
+      if ((path.match(/^\/api\/repair-orders\/[^/]+\/parts\/[^/]+$/) || path.match(/^\/api\/repair-orders\/[^/]+\/spareparts\/[^/]+$/)) && method === 'DELETE') {
+        const roId = path.split('/')[3];
+        const itemId = path.split('/')[5];
+
+        const { data: item } = await supabase.from('ro_spareparts').select('*').eq('id', itemId).single();
+        if (item) {
+          // Restore stock
+          if (item.sparepart_id) {
+            const { data: part } = await supabase.from('spareparts').select('stock').eq('id', item.sparepart_id).single();
+            if (part) {
+              await supabase.from('spareparts').update({ stock: (part.stock || 0) + Number(item.quantity || 1) }).eq('id', item.sparepart_id);
+            }
+          }
+          await supabase.from('ro_spareparts').delete().eq('id', itemId);
+
+          // Recalculate RO cost
+          const { data: parentRo } = await supabase.from('repair_orders').select('sparepart_fee, service_fee, discount').eq('id', roId).maybeSingle();
+          if (parentRo) {
+            const newPartFee = Math.max(0, Number(parentRo.sparepart_fee || 0) - Number(item.subtotal || 0));
+            const newTotal = Math.max(0, Number(parentRo.service_fee || 0) + newPartFee - Number(parentRo.discount || 0));
+            await supabase.from('repair_orders').update({
+              sparepart_fee: newPartFee,
+              total_cost: newTotal,
+              updated_at: new Date().toISOString()
+            }).eq('id', roId);
+          }
+        }
+        return jsonResponse({ success: true });
+      }
+
+      // 5.8 Detail of RO
       if (path.match(/^\/api\/repair-orders\/[^/]+$/) && method === 'GET') {
         const roId = path.split('/')[3];
         const { data: ro, error } = await supabase.from('repair_orders').select('*').eq('id', roId).single();
@@ -615,9 +877,9 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         });
       }
 
-      // 5.7 List ROs
+      // 5.9 List ROs
       if (path === '/api/repair-orders' && method === 'GET') {
-        let query = supabase.from('repair_orders').select('*');
+        let query = supabase.from('repair_orders').select('*').eq('tenant_id', activeTenantId);
         const statusFilter = params.get('status');
         const searchFilter = params.get('search');
         if (statusFilter && statusFilter !== 'ALL') {
@@ -650,7 +912,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         });
       }
 
-      // 5.8 Create RO
+      // 5.10 Create RO
       if (path === '/api/repair-orders' && method === 'POST') {
         const body = JSON.parse(options.body || '{}');
         const id = crypto.randomUUID();
@@ -659,7 +921,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
         const newRo = {
           id,
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           ro_number: roNumber,
           tracking_token: trackingToken,
           plate_number: body.plate_number || '',
@@ -687,7 +949,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         // Add initial status log
         await supabase.from('ro_status_logs').insert({
           id: crypto.randomUUID(),
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           repair_order_id: id,
           previous_status: null,
           new_status: 'MASUK',
@@ -703,6 +965,8 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 6. INVENTORY / SPAREPARTS
     // ----------------------------------------------------
     if (path === '/api/inventory' || path.startsWith('/api/inventory/')) {
+      const activeTenantId = await getSessionTenantId();
+
       if (path === '/api/inventory/upload' && method === 'POST') {
         const formData = options.body;
         const file = formData.get('photo');
@@ -712,7 +976,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       }
 
       if (path === '/api/inventory/reports/valuation') {
-        const { data: parts } = await supabase.from('spareparts').select('*');
+        const { data: parts } = await supabase.from('spareparts').select('*').eq('tenant_id', activeTenantId);
         const items = parts || [];
         const totalItems = items.reduce((acc, p) => acc + (p.stock || 0), 0);
         const totalValuation = items.reduce((acc, p) => acc + ((p.stock || 0) * (p.buy_price || 0)), 0);
@@ -728,7 +992,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
       }
 
       if (path === '/api/inventory' && method === 'GET') {
-        const { data, error } = await supabase.from('spareparts').select('*').order('name');
+        const { data, error } = await supabase.from('spareparts').select('*').eq('tenant_id', activeTenantId).order('name');
         if (error) throw error;
         const signedItems = await Promise.all(
           (data || []).map(async (item) => {
@@ -746,7 +1010,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         const id = crypto.randomUUID();
         const { data, error } = await supabase.from('spareparts').insert({
           id,
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           sku: body.sku || `SKU-${Date.now().toString().slice(-6)}`,
           name: body.name,
           category: body.category || 'Umum',
@@ -772,14 +1036,23 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         if (error) throw error;
         return jsonResponse({ success: true, sparepart: data });
       }
+
+      if (path.match(/^\/api\/inventory\/[^/]+$/) && method === 'DELETE') {
+        const id = path.split('/')[3];
+        const { error } = await supabase.from('spareparts').delete().eq('id', id);
+        if (error) throw error;
+        return jsonResponse({ success: true });
+      }
     }
 
     // ----------------------------------------------------
     // 7. STOCK MOVEMENTS & OPNAME
     // ----------------------------------------------------
     if (path === '/api/stock-movements' || path.startsWith('/api/stock-movements/')) {
+      const activeTenantId = await getSessionTenantId();
+
       if (path === '/api/stock-movements' && method === 'GET') {
-        const { data, error } = await supabase.from('stock_movements').select('*, spareparts(name, sku)').order('created_at', { ascending: false });
+        const { data, error } = await supabase.from('stock_movements').select('*, spareparts(name, sku)').eq('tenant_id', activeTenantId).order('created_at', { ascending: false });
         if (error) throw error;
         return jsonResponse({ movements: data || [] });
       }
@@ -791,7 +1064,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
         const { data: movement, error } = await supabase.from('stock_movements').insert({
           id,
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           sparepart_id,
           type: 'IN',
           quantity: Number(quantity),
@@ -820,7 +1093,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
         const { data: movement, error } = await supabase.from('stock_movements').insert({
           id,
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           sparepart_id,
           type: 'OUT',
           quantity: Number(quantity),
@@ -840,8 +1113,10 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     }
 
     if (path === '/api/stock-opname') {
+      const activeTenantId = await getSessionTenantId();
+
       if (method === 'GET') {
-        const { data } = await supabase.from('stock_opnames').select('*, spareparts(name, sku)').order('created_at', { ascending: false });
+        const { data } = await supabase.from('stock_opnames').select('*, spareparts(name, sku)').eq('tenant_id', activeTenantId).order('created_at', { ascending: false });
         return jsonResponse({ opnames: data || [] });
       }
 
@@ -852,7 +1127,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
         const { data: opname, error } = await supabase.from('stock_opnames').insert({
           id,
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           sparepart_id,
           system_stock: Number(system_stock),
           physical_stock: Number(physical_stock),
@@ -873,6 +1148,8 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 8. FINANCE / CASHBOOK
     // ----------------------------------------------------
     if (path === '/api/finance' || path.startsWith('/api/finance/')) {
+      const activeTenantId = await getSessionTenantId();
+
       if (path === '/api/finance/upload' && method === 'POST') {
         const formData = options.body;
         const file = formData.get('receipt') || formData.get('photo');
@@ -881,36 +1158,52 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         return jsonResponse({ success: true, url, receipt_url: url });
       }
 
-      if (path === '/api/finance/categories') {
-        if (method === 'GET') {
-          const { data } = await supabase.from('transaction_categories').select('*').order('name');
+      if (path === '/api/finance/categories' || path.startsWith('/api/finance/categories/')) {
+        if (path === '/api/finance/categories' && method === 'GET') {
+          const { data } = await supabase.from('transaction_categories').select('*').eq('tenant_id', activeTenantId).order('name');
           return jsonResponse({ categories: data || [] });
         }
-        if (method === 'POST') {
+        if (path === '/api/finance/categories' && method === 'POST') {
           const body = JSON.parse(options.body || '{}');
           const id = crypto.randomUUID();
           const { data, error } = await supabase.from('transaction_categories').insert({
             id,
-            tenant_id: DEFAULT_TENANT_ID,
+            tenant_id: activeTenantId,
             name: body.name,
             type: body.type || 'EXPENSE'
           }).select().single();
           if (error) throw error;
           return jsonResponse({ success: true, category: data }, 201);
         }
+        if (path.match(/^\/api\/finance\/categories\/[^/]+$/) && method === 'PUT') {
+          const id = path.split('/')[4];
+          const body = JSON.parse(options.body || '{}');
+          const { data, error } = await supabase.from('transaction_categories').update({
+            name: body.name,
+            type: body.type
+          }).eq('id', id).select().single();
+          if (error) throw error;
+          return jsonResponse({ success: true, category: data });
+        }
+        if (path.match(/^\/api\/finance\/categories\/[^/]+$/) && method === 'DELETE') {
+          const id = path.split('/')[4];
+          const { error } = await supabase.from('transaction_categories').delete().eq('id', id);
+          if (error) throw error;
+          return jsonResponse({ success: true });
+        }
       }
 
-      if (path === '/api/finance/transactions') {
-        if (method === 'GET') {
-          const { data } = await supabase.from('transactions').select('*, transaction_categories(name)').order('date', { ascending: false });
+      if (path === '/api/finance/transactions' || path.startsWith('/api/finance/transactions/')) {
+        if (path === '/api/finance/transactions' && method === 'GET') {
+          const { data } = await supabase.from('transactions').select('*, transaction_categories(name)').eq('tenant_id', activeTenantId).order('date', { ascending: false });
           return jsonResponse({ transactions: data || [] });
         }
-        if (method === 'POST') {
+        if (path === '/api/finance/transactions' && method === 'POST') {
           const body = JSON.parse(options.body || '{}');
           const id = crypto.randomUUID();
           const { data, error } = await supabase.from('transactions').insert({
             id,
-            tenant_id: DEFAULT_TENANT_ID,
+            tenant_id: activeTenantId,
             category_id: body.category_id,
             type: body.type || 'INCOME',
             amount: Number(body.amount),
@@ -922,6 +1215,12 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           if (error) throw error;
           return jsonResponse({ success: true, transaction: data }, 201);
         }
+        if (path.match(/^\/api\/finance\/transactions\/[^/]+$/) && method === 'DELETE') {
+          const id = path.split('/')[4];
+          const { error } = await supabase.from('transactions').delete().eq('id', id);
+          if (error) throw error;
+          return jsonResponse({ success: true });
+        }
       }
     }
 
@@ -929,8 +1228,10 @@ export async function handleSupabaseApi(urlStr, options = {}) {
     // 9. CUSTOMERS
     // ----------------------------------------------------
     if (path === '/api/customers' || path.startsWith('/api/customers/')) {
+      const activeTenantId = await getSessionTenantId();
+
       if (path === '/api/customers' && method === 'GET') {
-        const { data, error } = await supabase.from('customers').select('*').order('name');
+        const { data, error } = await supabase.from('customers').select('*').eq('tenant_id', activeTenantId).order('name');
         if (error) throw error;
         return jsonResponse({ customers: data || [] });
       }
@@ -939,7 +1240,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         const id = crypto.randomUUID();
         const { data, error } = await supabase.from('customers').insert({
           id,
-          tenant_id: DEFAULT_TENANT_ID,
+          tenant_id: activeTenantId,
           name: body.name,
           phone: body.phone,
           email: body.email || '',
@@ -948,6 +1249,26 @@ export async function handleSupabaseApi(urlStr, options = {}) {
         }).select().single();
         if (error) throw error;
         return jsonResponse({ success: true, customer: data }, 201);
+      }
+      if (path.match(/^\/api\/customers\/[^/]+$/) && method === 'PUT') {
+        const id = path.split('/')[3];
+        const body = JSON.parse(options.body || '{}');
+        const { data, error } = await supabase.from('customers').update({
+          name: body.name,
+          phone: body.phone,
+          email: body.email || '',
+          address: body.address || '',
+          notes: body.notes || '',
+          updated_at: new Date().toISOString()
+        }).eq('id', id).select().single();
+        if (error) throw error;
+        return jsonResponse({ success: true, customer: data });
+      }
+      if (path.match(/^\/api\/customers\/[^/]+$/) && method === 'DELETE') {
+        const id = path.split('/')[3];
+        const { error } = await supabase.from('customers').delete().eq('id', id);
+        if (error) throw error;
+        return jsonResponse({ success: true });
       }
     }
 
@@ -1018,25 +1339,53 @@ export async function handleSupabaseApi(urlStr, options = {}) {
 
       if (path === '/api/superadmin/tenants') {
         if (method === 'GET') {
-          const { data: tenantsList, error } = await supabase.from('tenants').select('*').order('created_at', { ascending: false });
-          if (error) {
-            return jsonResponse({
-              success: true,
-              tenants: [
-                {
-                  id: DEFAULT_TENANT_ID,
-                  name: 'Bengkel Mobil Mitra',
-                  slug: 'mitra',
-                  address: 'Jaringan Resmi BengkelOS',
-                  phone_wa: '081234567890',
-                  user_count: 1,
-                  ro_count: 0,
-                  monthly_revenue_target: 15000000
-                }
-              ]
-            });
-          }
-          return jsonResponse({ success: true, tenants: tenantsList || [] });
+          const [
+            { data: tenantsList, error: tErr },
+            { data: usersList },
+            { data: rosList },
+            { data: partsList },
+            { data: txsList },
+            { data: movementsList }
+          ] = await Promise.all([
+            supabase.from('tenants').select('*').order('created_at', { ascending: false }),
+            supabase.from('users').select('id, tenant_id, created_at'),
+            supabase.from('repair_orders').select('id, tenant_id, total_cost'),
+            supabase.from('spareparts').select('id, tenant_id'),
+            supabase.from('transactions').select('tenant_id, type, amount'),
+            supabase.from('stock_movements').select('tenant_id, type, quantity')
+          ]);
+
+          if (tErr) throw tErr;
+
+          const tenantsWithMetrics = (tenantsList || []).map(t => {
+            const uCount = (usersList || []).filter(u => u.tenant_id === t.id).length;
+            const rCount = (rosList || []).filter(r => r.tenant_id === t.id).length;
+            const pCount = (partsList || []).filter(p => p.tenant_id === t.id).length;
+
+            const tenantTxs = (txsList || []).filter(tx => tx.tenant_id === t.id);
+            const totalRev = tenantTxs
+              .filter(tx => tx.type === 'INCOME')
+              .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
+            const tenantMvs = (movementsList || []).filter(m => m.tenant_id === t.id);
+            const inMvs = tenantMvs.filter(m => m.type === 'IN');
+            const outMvs = tenantMvs.filter(m => m.type === 'OUT');
+
+            return {
+              ...t,
+              user_count: uCount,
+              ro_count: rCount,
+              sparepart_count: pCount,
+              total_revenue: totalRev,
+              stock_in_count: inMvs.length,
+              stock_in_qty: inMvs.reduce((sum, m) => sum + Number(m.quantity || 0), 0),
+              stock_out_count: outMvs.length,
+              stock_out_qty: outMvs.reduce((sum, m) => sum + Number(m.quantity || 0), 0),
+              last_login_at: t.updated_at || t.created_at
+            };
+          });
+
+          return jsonResponse({ success: true, tenants: tenantsWithMetrics });
         }
 
         if (method === 'POST') {
@@ -1081,15 +1430,26 @@ export async function handleSupabaseApi(urlStr, options = {}) {
           // 1. If Supabase table exists, query users
           if (supabase) {
             try {
-              const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .order('created_at', { ascending: false });
-              if (!error && Array.isArray(data) && data.length > 0) {
-                return jsonResponse({ success: true, users: data });
+              const [{ data: usersData, error }, { data: tenantsData }] = await Promise.all([
+                supabase.from('users').select('*').order('created_at', { ascending: false }),
+                supabase.from('tenants').select('id, name, slug')
+              ]);
+
+              if (!error && Array.isArray(usersData) && usersData.length > 0) {
+                const tenantMap = {};
+                (tenantsData || []).forEach(t => { tenantMap[t.id] = t; });
+                const enriched = usersData.map(u => {
+                  const t = tenantMap[u.tenant_id];
+                  return {
+                    ...u,
+                    tenant_name: t?.name || u.tenant_id,
+                    tenant_slug: t?.slug || ''
+                  };
+                });
+                return jsonResponse({ success: true, users: enriched });
               }
             } catch (e) {
-              // fallback below
+              console.warn('Superadmin users query error:', e);
             }
           }
 
@@ -1104,8 +1464,9 @@ export async function handleSupabaseApi(urlStr, options = {}) {
               name: activeSession.name || 'Active User',
               email: activeSession.email,
               role: activeSession.role || 'superadmin',
-              tenant_id: DEFAULT_TENANT_ID,
+              tenant_id: activeSession.tenant_id || DEFAULT_TENANT_ID,
               tenant_name: 'Semua Bengkel (Superadmin)',
+              tenant_slug: 'mitra',
               created_at: new Date().toISOString()
             });
           }
@@ -1119,6 +1480,7 @@ export async function handleSupabaseApi(urlStr, options = {}) {
                 role: 'superadmin',
                 tenant_id: DEFAULT_TENANT_ID,
                 tenant_name: 'Semua Bengkel (Superadmin)',
+                tenant_slug: 'mitra',
                 created_at: new Date().toISOString()
               });
             }
@@ -1129,10 +1491,39 @@ export async function handleSupabaseApi(urlStr, options = {}) {
             users: userList
           });
         }
+
         if (method === 'POST') {
           const body = JSON.parse(options.body || '{}');
+          if (body.email && body.tenantId) {
+            const { data, error } = await supabase.from('users').upsert({
+              id: crypto.randomUUID(),
+              email: body.email.toLowerCase().trim(),
+              name: body.name || body.email.split('@')[0],
+              role: body.role || 'operator',
+              tenant_id: body.tenantId,
+              auth_provider: 'supabase'
+            }, { onConflict: 'email' }).select().single();
+            if (error) throw error;
+            return jsonResponse({ success: true, message: `Email ${body.email} berhasil dihubungkan ke workspace bengkel.`, user: data }, 201);
+          }
           return jsonResponse({ success: true, message: `Email ${body.email} berhasil dihubungkan ke tenant.` });
         }
+      }
+
+      if (path.match(/^\/api\/superadmin\/users\/[^/]+\/role$/) && method === 'PUT') {
+        const userId = path.split('/')[4];
+        const body = JSON.parse(options.body || '{}');
+        const { data, error } = await supabase.from('users').update({ role: body.role }).eq('id', userId).select().maybeSingle();
+        if (error) throw error;
+        return jsonResponse({ success: true, message: 'Role pengguna berhasil diperbarui.', user: data });
+      }
+
+      if (path.match(/^\/api\/superadmin\/users\/[^/]+\/tenant$/) && method === 'PUT') {
+        const userId = path.split('/')[4];
+        const body = JSON.parse(options.body || '{}');
+        const { data, error } = await supabase.from('users').update({ tenant_id: body.tenantId }).eq('id', userId).select().maybeSingle();
+        if (error) throw error;
+        return jsonResponse({ success: true, message: 'Tenant pengguna berhasil dipindahkan.', user: data });
       }
 
       if (path.startsWith('/api/superadmin/users/')) {

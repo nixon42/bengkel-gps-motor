@@ -709,14 +709,26 @@ export default function SuperadminDashboard({ onNavigateAdmin, onNavigateLanding
                             {formatRupiah(t.total_revenue)}
                           </td>
                           <td className="p-3 text-center">
-                            <button
-                              onClick={() => handleOpenAssignModal(t.id)}
-                              className="touch-target px-2.5 py-1.5 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-[#0c2b5e] dark:text-emerald-400 border border-slate-300 dark:border-slate-600 text-xs font-bold flex items-center space-x-1 mx-auto"
-                              title="Hubungkan email baru ke bengkel ini"
-                            >
-                              <UserPlus className="w-3.5 h-3.5" />
-                              <span>+ Email</span>
-                            </button>
+                            <div className="flex items-center justify-center space-x-1.5">
+                              <a
+                                href={`${typeof window !== 'undefined' && window.location.hostname.endsWith('github.io') ? '/bengkel-gps-motor' : ''}${t.slug === 'bengkel-gps-motor' ? '/bengkel-gps-motor' : `/bengkel/${t.slug}`}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="touch-target px-2 py-1.5 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 text-xs font-semibold flex items-center space-x-1"
+                                title="Buka Website Landing Page Publik Bengkel ini"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                                <span className="hidden sm:inline">Web</span>
+                              </a>
+                              <button
+                                onClick={() => handleOpenAssignModal(t.id)}
+                                className="touch-target px-2.5 py-1.5 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-[#0c2b5e] dark:text-emerald-400 border border-slate-300 dark:border-slate-600 text-xs font-bold flex items-center space-x-1"
+                                title="Hubungkan email baru ke bengkel ini"
+                              >
+                                <UserPlus className="w-3.5 h-3.5" />
+                                <span>+ Email</span>
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

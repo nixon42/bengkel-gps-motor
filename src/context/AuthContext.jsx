@@ -55,34 +55,13 @@ export function AuthProvider({ children }) {
     if (supabase) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
-          const email = session.user.email || '';
-          let isSuper = isSuperadmin(email, session.user);
-
-          if (!isSuper && supabase) {
-            try {
-              const { data: dbUser } = await supabase
-                .from('users')
-                .select('role')
-                .eq('email', email)
-                .maybeSingle();
-              if (dbUser?.role === 'superadmin') {
-                isSuper = true;
-              }
-            } catch (e) {
-              // Ignore table error
-            }
+          await refreshAuth();
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setTenant(null);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('bengkel_session');
           }
-          const authUser = {
-            id: session.user.id,
-            email,
-            name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || 'User Google',
-            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
-            role: isSuper ? 'superadmin' : 'admin',
-            isSuperAdmin: isSuper,
-            tenant_id: DEFAULT_TENANT_ID
-          };
-          setUser(authUser);
-          localStorage.setItem('bengkel_session', JSON.stringify(authUser));
         }
       });
       return () => subscription?.unsubscribe();
