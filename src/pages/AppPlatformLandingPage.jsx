@@ -206,14 +206,14 @@ export default function AppPlatformLandingPage({
               disabled={loading}
               className="touch-target px-3 py-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition-colors whitespace-nowrap"
             >
-              {user ? 'Dashboard' : 'Masuk'}
+              Masuk
             </button>
 
             {/* Mulai Sekarang (Green Emerald Pill Button) */}
             <button
               type="button"
               onClick={handleLoginClick}
-              className="touch-target inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg bg-[#10b981] hover:bg-[#059669] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 active:scale-98 transition-all whitespace-nowrap"
+              className="touch-target inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg bg-[#00b865] hover:bg-[#00a359] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 active:scale-98 transition-all whitespace-nowrap"
             >
               Mulai Sekarang
             </button>
@@ -238,72 +238,90 @@ export default function AppPlatformLandingPage({
           }}
         />
 
-        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center">
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 xl:gap-12">
             
             {/* Left Column: Badge + H1 + Subtitle + Action Buttons + 3 Checks */}
-            <div className="lg:col-span-5 space-y-6 text-left">
+            <div className="w-full lg:w-[470px] xl:w-[510px] shrink-0 space-y-5 sm:space-y-6 text-left">
               
               {/* Badge: Platform Manajemen Bengkel Terpercaya */}
-              <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-[#0d1c2d] border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#0a1827] border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                 <span>Platform Manajemen Bengkel Terpercaya</span>
               </div>
 
-              {/* H1 Heading */}
-              <h1 className="text-3xl sm:text-5xl lg:text-[46px] font-extrabold tracking-tight text-white leading-[1.15] font-sans">
+              {/* H1 Heading (Clean 3-Line Wrap matching Canva) */}
+              <h1 className="text-3xl sm:text-4xl lg:text-[38px] xl:text-[44px] font-black tracking-tight text-white leading-[1.12] font-sans">
                 Software Manajemen<br />
                 Bengkel Mobil Modern<br />
-                <span className="text-white">& Transparan</span>
+                <span className="text-white">&amp; Transparan</span>
               </h1>
 
               {/* Subheading */}
-              <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-lg">
+              <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-md">
                 Kelola operasional, pantau kinerja, dan bangun kepercayaan pelanggan dalam satu platform.
               </p>
 
               {/* Dual Action CTAs: Mulai Sekarang & Lihat Demo */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3.5 pt-1">
                 <button
                   type="button"
                   onClick={handleLoginClick}
-                  className="touch-target inline-flex items-center justify-center px-6 py-3.5 rounded-lg bg-[#10b981] hover:bg-[#059669] text-white font-bold text-sm tracking-wide transition-all shadow-lg shadow-emerald-500/20 active:scale-98 group"
+                  className="touch-target inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-lg bg-[#00b865] hover:bg-[#00a359] text-white font-bold text-sm tracking-wide transition-all shadow-lg shadow-emerald-500/25 active:scale-98 group"
                 >
                   <span>Mulai Sekarang</span>
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
                 <button
                   type="button"
                   onClick={handleDemoClick}
-                  className="touch-target inline-flex items-center justify-center px-6 py-3.5 rounded-lg border border-slate-700 bg-[#0c1524] hover:bg-[#111e33] hover:border-slate-500 text-white font-bold text-sm tracking-wide transition-all active:scale-98"
+                  className="touch-target inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-lg border border-slate-700/80 bg-[#08101e] hover:bg-[#0c1628] hover:border-slate-500 text-white font-bold text-sm tracking-wide transition-all active:scale-98 group"
                 >
-                  <Play className="w-3.5 h-3.5 mr-2 text-emerald-400 fill-emerald-400" />
                   <span>Lihat Demo</span>
+                  <div className="w-5 h-5 rounded-full border border-slate-400 flex items-center justify-center text-white pl-0.5 group-hover:border-white transition-colors">
+                    <Play className="w-2.5 h-2.5 fill-white text-white" />
+                  </div>
                 </button>
               </div>
 
-              {/* 3 Trust Signals Checkmarks */}
-              <div className="pt-4 flex flex-wrap items-center gap-5 sm:gap-6 text-xs text-slate-300 font-medium">
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              {/* 3 Trust Signals Checkmarks (Single Row matching Canva) */}
+              <div className="pt-2 flex flex-wrap sm:flex-nowrap items-center gap-4 lg:gap-5 text-[11px] xl:text-xs text-slate-200 font-semibold">
+                <div className="flex items-center space-x-1.5 shrink-0">
+                  <div className="w-4 h-4 rounded-full border border-[#00b865] flex items-center justify-center shrink-0">
+                    <Check className="w-2.5 h-2.5 text-[#00b865] stroke-[3]" />
+                  </div>
                   <span>Mudah Digunakan</span>
                 </div>
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Data Aman & Tersinkron</span>
+                <div className="flex items-center space-x-1.5 shrink-0">
+                  <div className="w-4 h-4 rounded-full border border-[#00b865] flex items-center justify-center shrink-0">
+                    <Check className="w-2.5 h-2.5 text-[#00b865] stroke-[3]" />
+                  </div>
+                  <span>Data Aman &amp; Tersinkron</span>
                 </div>
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div className="flex items-center space-x-1.5 shrink-0">
+                  <div className="w-4 h-4 rounded-full border border-[#00b865] flex items-center justify-center shrink-0">
+                    <Check className="w-2.5 h-2.5 text-[#00b865] stroke-[3]" />
+                  </div>
                   <span>Dukungan Responsif</span>
                 </div>
               </div>
 
             </div>
 
-            {/* Right Column: 100% Crisp Vector Hero Mockup (Ultra Sharp, Zero Blur) */}
-            <div className="lg:col-span-7 relative mt-4 lg:mt-0">
-              <BengkelOSHeroMockup onOpenDemo={handleDemoClick} />
+            {/* Right Column: 100% Crisp Vector Hero Mockup (Ultra Sharp, Zero Blur) with Ambient Glow */}
+            <div className="w-full lg:flex-1 max-w-[840px] relative mt-6 lg:mt-0">
+              {/* Vibrant Ambient Glow Behind Mockup */}
+              <div 
+                className="absolute -inset-4 sm:-inset-10 pointer-events-none opacity-85 blur-3xl"
+                style={{
+                  background: 'radial-gradient(circle at 60% 50%, rgba(37, 99, 235, 0.45) 0%, rgba(6, 182, 212, 0.28) 45%, transparent 75%)'
+                }}
+              />
+
+              <div className="relative">
+                <BengkelOSHeroMockup onOpenDemo={handleDemoClick} />
+              </div>
             </div>
 
           </div>
