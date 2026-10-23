@@ -199,16 +199,6 @@ export default function AppPlatformLandingPage({
 
           {/* Right Action Controls: Masuk & Mulai Sekarang */}
           <div className="flex items-center space-x-3 shrink-0">
-            {/* Quick Dark/Light Toggle */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label="Ganti Tema Tampilan"
-              className="touch-target w-9 h-9 flex items-center justify-center rounded-lg border border-slate-800 bg-[#0c1524] text-slate-300 hover:text-white hover:border-slate-700 transition-colors"
-            >
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-300" />}
-            </button>
-
             {/* Masuk (Text Button) */}
             <button
               type="button"
@@ -248,11 +238,11 @@ export default function AppPlatformLandingPage({
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center">
             
             {/* Left Column: Badge + H1 + Subtitle + Action Buttons + 3 Checks */}
-            <div className="lg:col-span-6 space-y-6 text-left">
+            <div className="lg:col-span-5 space-y-6 text-left">
               
               {/* Badge: Platform Manajemen Bengkel Terpercaya */}
               <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-[#0d1c2d] border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
@@ -312,7 +302,7 @@ export default function AppPlatformLandingPage({
             </div>
 
             {/* Right Column: 100% Crisp Vector Hero Mockup (Ultra Sharp, Zero Blur) */}
-            <div className="lg:col-span-6 relative mt-4 lg:mt-0">
+            <div className="lg:col-span-7 relative mt-4 lg:mt-0">
               <BengkelOSHeroMockup onOpenDemo={handleDemoClick} />
             </div>
 
@@ -704,7 +694,7 @@ export default function AppPlatformLandingPage({
       </section>
 
       {/* =========================================================================
-          6. PRICING SECTION (#harga)
+          6. PRICING SECTION (#harga) - TO BE ANNOUNCED
          ========================================================================= */}
       <section id="harga" className="py-16 sm:py-20 bg-[#060b17] border-b border-slate-800/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-10">
@@ -717,7 +707,7 @@ export default function AppPlatformLandingPage({
               Investasi Terjangkau, Hasil Maksimal
             </h2>
             <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-              Pilih paket sesuai skala bengkel Anda. Tanpa biaya tersembunyi, dapat di-upgrade kapan saja.
+              Pilihan paket fleksibel untuk mendukung efisiensi bengkel Anda. Skema harga resmi akan segera diumumkan.
             </p>
           </div>
 
@@ -730,7 +720,7 @@ export default function AppPlatformLandingPage({
                   STARTER
                 </span>
                 <div>
-                  <div className="text-3xl font-extrabold text-white font-mono">Gratis</div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">To Be Announced</div>
                   <p className="text-xs text-slate-400 mt-1">Untuk bengkel mandiri yang baru merintis</p>
                 </div>
                 <ul className="text-xs text-slate-300 space-y-2.5 border-t border-slate-800 pt-4">
@@ -745,21 +735,21 @@ export default function AppPlatformLandingPage({
                 onClick={handleLoginClick}
                 className="touch-target mt-6 w-full py-2.5 rounded-lg border border-slate-700 bg-[#080e1b] hover:bg-slate-800 text-white font-bold text-xs transition-colors"
               >
-                Mulai Gratis
+                Gabung Waitlist
               </button>
             </div>
 
             {/* Plan 2: Pro (Recommended) */}
             <div className="bg-[#0c1525] border-2 border-emerald-500 rounded-2xl p-6 flex flex-col justify-between relative shadow-xl shadow-emerald-950/30">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold tracking-wider uppercase">
-                Paling Diminati
+                Segera Diumumkan
               </div>
               <div className="space-y-4">
                 <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
                   BENGKEL PRO
                 </span>
                 <div>
-                  <div className="text-3xl font-extrabold text-white font-mono">Rp 199.000<span className="text-xs font-normal text-slate-400">/bln</span></div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">To Be Announced</div>
                   <p className="text-xs text-slate-400 mt-1">Operasional lengkap tanpa batas kuota</p>
                 </div>
                 <ul className="text-xs text-slate-300 space-y-2.5 border-t border-slate-800 pt-4">
@@ -776,7 +766,7 @@ export default function AppPlatformLandingPage({
                 onClick={handleLoginClick}
                 className="touch-target mt-6 w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-md transition-colors"
               >
-                Pilih Paket Pro
+                Daftar Early Access
               </button>
             </div>
 
@@ -787,7 +777,7 @@ export default function AppPlatformLandingPage({
                   MULTI-CABANG
                 </span>
                 <div>
-                  <div className="text-3xl font-extrabold text-white font-mono">Kustom</div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">To Be Announced</div>
                   <p className="text-xs text-slate-400 mt-1">Untuk jaringan bengkel waralaba / 3+ cabang</p>
                 </div>
                 <ul className="text-xs text-slate-300 space-y-2.5 border-t border-slate-800 pt-4">
@@ -803,7 +793,7 @@ export default function AppPlatformLandingPage({
                 onClick={handleLoginClick}
                 className="touch-target mt-6 w-full py-2.5 rounded-lg border border-slate-700 bg-[#080e1b] hover:bg-slate-800 text-white font-bold text-xs transition-colors"
               >
-                Hubungi Kami
+                Konsultasi Kebutuhan
               </button>
             </div>
 
