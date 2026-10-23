@@ -41,7 +41,9 @@ export default function AppPlatformLandingPage({
   };
 
   const handleDemoClick = () => {
-    if (onNavigateTenant) {
+    if (onOpenAdmin) {
+      onOpenAdmin();
+    } else if (onNavigateTenant) {
       onNavigateTenant('bengkel-gps-motor');
     }
   };
@@ -320,7 +322,7 @@ export default function AppPlatformLandingPage({
               />
 
               <div className="relative">
-                <BengkelOSHeroMockup onOpenDemo={handleDemoClick} />
+                <BengkelOSHeroMockup />
               </div>
             </div>
 
