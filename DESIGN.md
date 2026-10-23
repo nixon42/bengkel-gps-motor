@@ -164,3 +164,39 @@ Sistem mengadopsi prinsip **Pure Flat Tonal Layering**. Tidak menggunakan drop-s
 - **Don't** gunakan bayangan kabur tebal atau bayangan warna neon dekoratif.
 - **Don't** gunakan teks abu-abu di atas latar berwarna (*gray-on-color antipattern*); selalu gunakan varian gelap/terang senada dari warna latar.
 - **Don't** gunakan pustaka charting pihak ketiga yang berat jika visualisasi dapat dicapai dengan SVG murni yang ringan.
+
+---
+
+# Design Benchmark: BengkelOS SaaS Platform (Canva Deconstruction)
+
+Berdasarkan dekonstruksi 100% dari Master Design Canva (`https://www.canva.com/design/DAHYzkaQLeM/IGapsq2jGHRFfBEWEF-jIA/view`), landing page platform SaaS mengadopsi standar visual modern berkarakter *High-Tech Workshop & SaaS Excellence*.
+
+## 1. Palette & Surface Tokens
+- **Canvas Base**: `#060b17` (Deep Cosmic Navy), transisi gradien halus ke `#080f1e` dan `#0c1527`.
+- **Primary Brand Glow**: Emerald Green `#10b981` (Hover `#059669`) — melambangkan profit, efisiensi, dan keandalan.
+- **Secondary Accent**: Electric Cyan `#00c4cc` / `#06b6d4`, Cobalt `#2563eb`, Royal Purple `#8b5cf6`, Amber `#f59e0b`.
+- **Card Containers**: `#0c1525` dengan border solid `1px solid #1e293b` (hover `border-slate-700`).
+- **Typography Tone**:
+  - Headings: Crisp White `#ffffff` / `#f4f4f4` dengan tight tracking (`-0.04em`).
+  - Secondary Copy: Soft Cool Slate `#9098a6` / `#94a3b8` dengan line-height rileks ($1.6$).
+  - Badges: `#0e1c2e` dengan border `#10b981/30` dan teks emerald `#34d399`.
+
+## 2. Graphic Assets (`/public/assets/bengkelos/`)
+- `logo-icon.png`: Diamond mark hijau kebanggaan BengkelOS.
+- `dashboard-mockup.png`: Mockup window dashboard operasional real-time dengan border neon.
+- `blueprint-car.png`: Ilustrasi siluet blueprint mobil presisi tinggi pada kartu banner CTA bawah.
+- `icon-operational.png`: Gear hijau glowing (Manfaat Operasional).
+- `icon-financial.png`: Perisai biru glowing (Transparansi Finansial).
+- `icon-workflow.png`: Papan SOP ungu glowing (Alur Kerja Standard).
+- `icon-reports.png`: Grafik analitik oranye glowing (Laporan Operasional).
+- `icon-satisfaction.png`: Komunitas pelanggan teal glowing (Kepuasan Pelanggan).
+- `metric-workshops.png`, `metric-jobs.png`, `metric-rating.png`, `metric-security.png`: Ikon metrik sosial proof.
+
+## 3. Structural Sections
+1. **Header**: Logo + Tagline ("Kelola, Pantau, Tumbuh"), nav links (`Fitur`, `Solusi`, `Harga`, `Integrasi`, `Sumber Daya`), tombol `Masuk` dan `Mulai Sekarang`.
+2. **Hero**: Headline berani, subheadline, CTA ganda (`Mulai Sekarang →` dan `Lihat Demo ▶`), 3 trust checks (`Mudah Digunakan`, `Data Aman & Tersinkron`, `Dukungan Responsif`), dan showcase window mockup.
+3. **Pilar Manfaat (5 Cards)**: Grid 5 kartu manfaat operasional, finansial, SOP, laporan, dan kepuasan pelanggan dengan ikon glowing.
+4. **Stats Strip**: 4 pilar metrik (2.500+ Bengkel Aktif, 120K+ Pekerjaan Selesai, 98% Kepuasan, 99.9% Keamanan Data).
+5. **Interactive FAQ Accordion**: 2 kolom pertanyaan seputar keamanan data, aplikasi mobile, multi-cabang, integrasi WA, aktivasi akun, dan support.
+6. **Bottom CTA Banner**: Banner biru kosmik lebar berpadu ilustrasi blueprint mobil dengan CTA aktivasi gratis.
+
