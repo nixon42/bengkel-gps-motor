@@ -58,7 +58,7 @@ function TabFallback() {
   );
 }
 
-export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, onNavigateSuperadmin, onNavigateDocs }) {
+export default function AdminDashboard({ onNavigateLanding, onNavigatePlatform, onNavigateTracking, onNavigateSuperadmin, onNavigateDocs }) {
   const { user, tenant, loading, logout, updateSettings, loginWithGoogle, refreshAuth } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
@@ -198,7 +198,7 @@ export default function AdminDashboard({ onNavigateLanding, onNavigateTracking, 
   if (!user) {
     return (
       <LoginPage
-        onNavigateHome={onNavigateLanding}
+        onNavigateHome={onNavigatePlatform || onNavigateLanding}
         onLoginSuccess={() => refreshAuth()}
       />
     );

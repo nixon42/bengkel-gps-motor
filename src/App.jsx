@@ -239,6 +239,7 @@ export default function App() {
       <Suspense fallback={<PageFallback />}>
         <AdminDashboard
           onNavigateLanding={() => navigateTo('tenant', { slug: tenant?.slug || 'bengkel-gps-motor' })}
+          onNavigatePlatform={() => navigateTo('platform')}
           onNavigateTracking={(plate) => navigateTo('tracking', { plate })}
           onNavigateSuperadmin={() => navigateTo('superadmin')}
           onNavigateDocs={(section) => navigateTo('docs', { section })}

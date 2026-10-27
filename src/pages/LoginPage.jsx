@@ -104,7 +104,7 @@ export default function LoginPage({ onNavigateHome, onLoginSuccess }) {
       {/* Back button */}
       <div className="absolute top-6 left-6 z-10">
         <button
-          onClick={onNavigateHome}
+          onClick={onNavigateHome || (() => { window.location.href = '/'; })}
           className="flex items-center space-x-2 text-xs font-mono font-bold text-slate-400 hover:text-white transition-colors px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800"
         >
           <ArrowLeft className="w-4 h-4" />

@@ -313,11 +313,11 @@ export default function AppPlatformLandingPage({
 
             {/* Right Column: 100% Crisp Vector Hero Mockup (Ultra Sharp, Zero Blur) with Ambient Glow */}
             <div className="w-full lg:flex-1 max-w-[840px] relative mt-6 lg:mt-0">
-              {/* Vibrant Ambient Glow Behind Mockup */}
+              {/* Vibrant Ambient Glow Behind Mockup - Smooth Elliptical Halo Without Edge Clipping */}
               <div 
-                className="absolute -inset-4 sm:-inset-10 pointer-events-none opacity-85 blur-3xl"
+                className="absolute -inset-6 sm:-inset-12 md:-inset-16 rounded-full pointer-events-none opacity-75 blur-2xl sm:blur-3xl -z-10"
                 style={{
-                  background: 'radial-gradient(circle at 60% 50%, rgba(37, 99, 235, 0.45) 0%, rgba(6, 182, 212, 0.28) 45%, transparent 75%)'
+                  background: 'radial-gradient(ellipse at 50% 50%, rgba(37, 99, 235, 0.38) 0%, rgba(6, 182, 212, 0.22) 35%, rgba(6, 182, 212, 0.04) 55%, transparent 70%)'
                 }}
               />
 

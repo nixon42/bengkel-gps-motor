@@ -26,7 +26,7 @@ export default function BengkelOSHeroMockup() {
   ];
 
   return (
-    <div className="relative rounded-2xl border border-cyan-500/30 bg-[#091120] shadow-[0_0_0_1px_rgba(56,189,248,0.2),0_0_50px_rgba(37,99,235,0.4),0_0_90px_rgba(6,182,212,0.25),0_25px_50px_-12px_rgba(0,0,0,0.85)] overflow-hidden text-left select-none transition-all group hover:border-cyan-400/50">
+    <div className="relative rounded-2xl border border-cyan-500/30 bg-[#091120] shadow-[0_0_0_1px_rgba(56,189,248,0.25),0_0_35px_rgba(37,99,235,0.3),0_0_65px_rgba(6,182,212,0.18),0_25px_50px_-12px_rgba(0,0,0,0.85)] overflow-hidden text-left select-none transition-all group hover:border-cyan-400/50">
       
       {/* Window Body: Flex Layout matching Canva Slide 1 */}
       <div className="flex flex-row min-h-[460px] sm:min-h-[490px]">
