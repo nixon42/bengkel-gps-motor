@@ -144,7 +144,7 @@ export default function BengkelOSHeroMockup() {
                         <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Toyota Innova</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">Servis Berkala</div>
-                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#1e3a8a]/70 text-[#93c5fd] border border-blue-600/30 whitespace-nowrap shrink-0">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-md font-mono text-[8.5px] sm:text-[9px] font-bold bg-[#1e3a8a]/70 text-[#93c5fd] border border-blue-600/30 whitespace-nowrap shrink-0">
                         Sedang Dikerjakan
                       </span>
                     </div>
@@ -155,7 +155,7 @@ export default function BengkelOSHeroMockup() {
                         <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Honda Brio</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">Ganti Oli</div>
-                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#78350f]/70 text-[#fde047] border border-amber-600/30 whitespace-nowrap shrink-0">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-md font-mono text-[8.5px] sm:text-[9px] font-bold bg-[#78350f]/70 text-[#fde047] border border-amber-600/30 whitespace-nowrap shrink-0">
                         Menunggu Part
                       </span>
                     </div>
@@ -166,7 +166,7 @@ export default function BengkelOSHeroMockup() {
                         <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Mitsubishi Xpander</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">Rem &amp; Kaki-kaki</div>
-                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#064e3b]/70 text-[#6ee7b7] border border-emerald-600/30 whitespace-nowrap shrink-0">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-md font-mono text-[8.5px] sm:text-[9px] font-bold bg-[#064e3b]/70 text-[#6ee7b7] border border-emerald-600/30 whitespace-nowrap shrink-0">
                         Selesai
                       </span>
                     </div>
@@ -177,7 +177,7 @@ export default function BengkelOSHeroMockup() {
                         <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Suzuki Ertiga</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">AC Service</div>
-                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#581c87]/70 text-[#d8b4fe] border border-purple-600/30 whitespace-nowrap shrink-0">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-md font-mono text-[8.5px] sm:text-[9px] font-bold bg-[#581c87]/70 text-[#d8b4fe] border border-purple-600/30 whitespace-nowrap shrink-0">
                         Pemeriksaan
                       </span>
                     </div>
@@ -352,7 +352,7 @@ export default function BengkelOSHeroMockup() {
                       <span className="font-mono font-bold text-white">RO-2026-0042</span> · Avanza Veloz (AG 1822 AB)
                       <div className="text-slate-400 text-[9px]">Mekanik: Mas Hendra · Stall Lift 01</div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 font-semibold text-[9px]">
+                    <span className="px-2 py-0.5 rounded-md font-mono font-bold text-[9px] bg-blue-900/60 text-blue-300">
                       Pengerjaan (Tahap 3/6)
                     </span>
                   </div>
@@ -361,7 +361,7 @@ export default function BengkelOSHeroMockup() {
                       <span className="font-mono font-bold text-white">RO-2026-0043</span> · Xpander Ultimate (AG 1945 CD)
                       <div className="text-slate-400 text-[9px]">Mekanik: Mas Budi · Stall Lift 02</div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-900/60 text-amber-300 font-semibold text-[9px]">
+                    <span className="px-2 py-0.5 rounded-md font-mono font-bold text-[9px] bg-amber-900/60 text-amber-300">
                       Menunggu Part
                     </span>
                   </div>
@@ -370,7 +370,7 @@ export default function BengkelOSHeroMockup() {
                       <span className="font-mono font-bold text-white">RO-2026-0044</span> · Civic RS Turbo (AG 1001 EF)
                       <div className="text-slate-400 text-[9px]">Mekanik: Mas Joko · Stall Lift 03</div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-900/60 text-emerald-300 font-semibold text-[9px]">
+                    <span className="px-2 py-0.5 rounded-md font-mono font-bold text-[9px] bg-emerald-900/60 text-emerald-300">
                       Selesai QC (Siap Ambil)
                     </span>
                   </div>

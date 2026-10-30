@@ -514,7 +514,7 @@ export default function HeroTrustVariant({ onSearchPlate, defaultPlate = '' }) {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-slate-900 dark:text-white font-bold">•</span>
-                    <span>Servis komprehensif + garansi 30 hari</span>
+                    <span>Pemeriksaan menyeluruh + garansi 30 hari</span>
                   </li>
                 </ul>
               </div>

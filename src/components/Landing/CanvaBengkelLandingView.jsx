@@ -63,27 +63,27 @@ export default function CanvaBengkelLandingView({
   const FACILITY_ITEMS = [
     {
       title: 'Pengembalian Suku Cadang',
-      subtitle: 'Jaminan Integritas 100% Asli',
+      subtitle: 'Part Bekas Selalu Diserahkan',
       icon: PackageCheck,
-      description: 'Seluruh suku cadang bekas yang telah diganti selalu dikemas rapi dan diserahkan kembali ke tangan Anda saat pengambilan mobil sebagai bukti otentik keaslian penggantian barang baru.'
+      description: 'Suku cadang lama yang telah diganti kami kemas rapi dan diserahkan kembali ke Anda saat pengambilan mobil sebagai bukti fisik penggantian part baru.'
     },
     {
-      title: 'Estimasi Harga Transparan',
-      subtitle: 'Tanpa Biaya Siluman & Tersembunyi',
+      title: 'Persetujuan Biaya di Awal',
+      subtitle: 'Rincian Jelas Sebelum Dikerjakan',
       icon: Receipt,
-      description: 'Rincian estimasi biaya jasa mekanik dan harga suku cadang disampaikan jelas di awal sebelum pengerjaan dimulai. Setiap tindakan perbaikan tambahan wajib dikonfirmasi terlebih dahulu ke Anda.'
+      description: 'Estimasi biaya jasa mekanik dan suku cadang diinfokan jelas di awal. Jika ditemukan kendala tambahan saat pembongkaran, mekanik wajib konfirmasi ke Anda terlebih dahulu.'
     },
     {
-      title: 'Fasilitas Workshop & Pit Lift',
-      subtitle: 'Peralatan Standar Pabrikan',
+      title: 'Peralatan & Stall Pit Lift',
+      subtitle: 'Lift Hidrolik 4 Ton & Scanner OBD-II',
       icon: Wrench,
-      description: 'Didukung fasilitas lift hidrolik 4 ton, scanner diagnostik OBD-II canggih untuk mobil injeksi, engine crane, dan toolset mekanik lengkap untuk hasil servis presisi dan aman.'
+      description: 'Didukung fasilitas lift hidrolik 4 ton, scanner diagnostik injeksi komputer, engine crane, dan toolset mekanik lengkap untuk pengerjaan yang presisi dan aman.'
     },
     {
-      title: 'Pantau Proses Perbaikan Anda',
-      subtitle: 'Dokumentasi Foto Live WhatsApp',
+      title: 'Pantau Progres dari HP',
+      subtitle: 'Foto Bukti Pengerjaan via WA',
       icon: Smartphone,
-      description: 'Mekanik mendokumentasikan foto tahapan sebelum, saat, dan sesudah perbaikan. Progres terhubung langsung ke portal pelacakan publik tanpa login atau update live via WhatsApp.'
+      description: 'Mekanik mengambil foto kondisi sebelum, saat, dan sesudah perbaikan. Anda bisa memantau progres pengerjaan langsung lewat link WhatsApp tanpa harus membuat akun.'
     }
   ];
 
@@ -160,7 +160,7 @@ export default function CanvaBengkelLandingView({
 
               {/* Subheading */}
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-                Servis mobil tanpa rasa was-was di <strong className="text-white font-bold">{tenantName}</strong>. Estimasi transparan &amp; pasti di awal, 100% pengerjaan disertai dokumentasi foto via WhatsApp, dan suku cadang berkualitas, jadwalkan kunjungan Anda.
+                Servis mobil tanpa was-was di <strong className="text-white font-bold">{tenantName}</strong>. Estimasi biaya jelas di awal sebelum dikerjakan, foto bukti penggantian part via WhatsApp, dan suku cadang bergaransi.
               </p>
 
               {/* Action Buttons (Booking via WhatsApp & Cek Status Servis Side-by-Side) */}
@@ -189,17 +189,17 @@ export default function CanvaBengkelLandingView({
               <div className="pt-2 flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-6 text-xs text-slate-300 font-medium">
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <Check className="w-4 h-4 text-[#20a62f] stroke-[3]" />
-                  <span>Suku cadang berkualitas</span>
+                  <span>Suku cadang asli &amp; bergaransi</span>
                 </div>
 
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <Check className="w-4 h-4 text-[#20a62f] stroke-[3]" />
-                  <span>Dokumentasi foto WhatsApp</span>
+                  <span>Foto pengerjaan via WhatsApp</span>
                 </div>
 
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <Check className="w-4 h-4 text-[#20a62f] stroke-[3]" />
-                  <span>Garansi servis terus</span>
+                  <span>Garansi pengerjaan servis</span>
                 </div>
               </div>
 
@@ -278,10 +278,10 @@ export default function CanvaBengkelLandingView({
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 space-y-3">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase font-sans">
-              Fasilitas Workshop &amp; Pelayanan (Berstandar Resmi)
+              Standar Kerja &amp; Fasilitas Bengkel
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl mx-auto">
-              Kami menghadirkan perpaduan transparansi total, kejujuran teknisi, dan fasilitas workshop modern untuk memberikan rasa tenang bagi setiap pemilik mobil.
+              Pengerjaan teratur dengan peralatan lengkap, mekanik berpengalaman, dan bukti fisik suku cadang yang diganti.
             </p>
           </div>
 
@@ -327,10 +327,10 @@ export default function CanvaBengkelLandingView({
           
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 space-y-3">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase font-sans">
-              Pilihan Paket Servis Berkala Mobil
+              Pilihan Paket Servis Berkala
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
-              Perawatan terprogram dengan harga terjangkau dan garansi resmi pengerjaan.
+              Perawatan rutin untuk menjaga performa mesin tetap prima dan konsumsi BBM efisien.
             </p>
           </div>
 
@@ -396,10 +396,10 @@ export default function CanvaBengkelLandingView({
             
             <div className="text-center space-y-2 mb-8 relative z-10">
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase font-sans">
-                Cek Status Kendaraan Anda Tanpa Login
+                Cek Status Servis Kendaraan
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto">
-                Cukup masukkan nomor polisi kendaraan Anda untuk memantau tahapan perbaikan, foto suku cadang, dan rincian nota secara transparan.
+                Masukkan nomor polisi kendaraan Anda untuk melihat progres pengerjaan, foto penggantian part, dan rincian nota.
               </p>
             </div>
 
@@ -467,7 +467,7 @@ export default function CanvaBengkelLandingView({
               {/* Privacy Assurance Banner */}
               <div className="pt-2 flex items-center justify-center space-x-2 text-xs text-slate-400 font-mono">
                 <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Data Anda aman dan hanya digunakan untuk pengecekan status servis kendaraan.</span>
+                <span>Data nomor polisi hanya digunakan untuk menampilkan status pengerjaan kendaraan Anda.</span>
               </div>
             </form>
 
@@ -487,11 +487,11 @@ export default function CanvaBengkelLandingView({
             {/* Workshop Address & Hours Card */}
             <div className="lg:col-span-5 space-y-6 text-left">
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase font-sans">
-                Kunjungi Workshop Kami
+                Lokasi Bengkel
               </h2>
 
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Lokasi strategis dan mudah dijangkau dengan area parkir luas serta ruang tunggu ber-AC yang nyaman saat kendaraan Anda dirawat.
+                Mudah dijangkau dengan area parkir luas dan ruang tunggu yang nyaman saat mobil Anda diservis.
               </p>
 
               <div className="space-y-4 bg-[#0b172a] border border-slate-800 p-5 rounded-2xl">
@@ -537,7 +537,7 @@ export default function CanvaBengkelLandingView({
                   className="touch-target inline-flex items-center justify-center space-x-2 py-3 px-5 rounded-xl border border-slate-700 bg-[#0d1829] hover:bg-[#122238] text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
                 >
                   <Phone className="w-4 h-4 text-emerald-400" />
-                  <span>Hubungi via WA</span>
+                  <span>Chat WhatsApp Bengkel</span>
                 </button>
               </div>
 
@@ -618,7 +618,7 @@ export default function CanvaBengkelLandingView({
                 onClick={() => onNavigatePlatform()} 
                 className="hover:text-emerald-400 font-bold transition-colors cursor-pointer"
               >
-                Platform SaaS
+                Software Bengkel
               </button>
             )}
             {onNavigateDocs ? (

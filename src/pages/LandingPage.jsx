@@ -69,12 +69,12 @@ export default function LandingPage({
 
   const navLinks = [
     { label: 'Beranda', href: '#hero' },
-    { label: 'Fasilitas & Integritas', href: '#fasilitas' },
+    { label: 'Fasilitas & Standar', href: '#fasilitas' },
     { label: 'Paket Servis', href: '#layanan' },
-    { label: 'Lacak Status', href: '#lacak-status' },
-    { label: 'Lokasi Workshop', href: '#lokasi' },
+    { label: 'Cek Status', href: '#lacak-status' },
+    { label: 'Lokasi Bengkel', href: '#lokasi' },
     ...(onNavigatePlatform ? [{ 
-      label: 'Platform SaaS', 
+      label: 'Software Bengkel', 
       onClick: () => {
         setMobileMenuOpen(false);
         onNavigatePlatform();

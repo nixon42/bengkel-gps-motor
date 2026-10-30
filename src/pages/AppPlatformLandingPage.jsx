@@ -56,90 +56,90 @@ export default function AppPlatformLandingPage({
     }
   };
 
-  // 5 Feature Cards data directly matching Canva deconstruction
+  // 5 Practical Feature Cards: real workshop operations without marketing jargon
   const FEATURE_CARDS = [
     {
-      title: 'Manfaat Operasional',
-      desc: 'Kelola pekerjaan, teknis, dan inventori dengan lebih efisien untuk meningkatkan produktivitas bengkel.',
+      title: 'Antrean & Perintah Kerja (SPK)',
+      desc: 'Catat keluhan pelanggan, bagi tugas ke mekanik, dan pantau posisi mobil di stall dari mulai masuk sampai diserahkan.',
       iconComponent: IconOperational
     },
     {
-      title: 'Transparansi Finansial',
-      desc: 'Pantau pemasukan, pengeluaran, dan profit secara real-time untuk keputusan bisnis yang lebih percaya diri.',
+      title: 'Kasir & Buku Kas Harian',
+      desc: 'Catat pembayaran tunai atau transfer QRIS, cetak struk thermal kasir, dan rekap otomatis laba bersih harian.',
       iconComponent: IconFinancial
     },
     {
-      title: 'Alur Kerja Standard',
-      desc: 'Gunakan SOP digital untuk memastikan kualitas layanan konsisten di setiap proses pekerjaan.',
+      title: 'Inventori & Suku Cadang',
+      desc: 'Stok sparepart otomatis terpotong saat dipasang ke mobil. Dilengkapi peringatan saat stok sudah menipis.',
       iconComponent: IconWorkflow
     },
     {
-      title: 'Laporan Operasional',
-      desc: 'Dapatkan laporan lengkap dan visual untuk memantau kinerja bengkel kapan pun dan di mana pun.',
+      title: 'Update Progres via WhatsApp',
+      desc: 'Kirim link estimasi biaya dan foto part lama vs baru langsung ke chat pelanggan tanpa ribet simpan nomor.',
       iconComponent: IconReports
     },
     {
-      title: 'Kepuasan Pelanggan',
-      desc: 'Update status pekerjaan secara transparan dan bangun kepercayaan pelanggan lebih mudah.',
+      title: 'Riwayat Servis Pelanggan',
+      desc: 'Simpan histori servis tiap mobil dan nomor kontak pemilik untuk pengingat jadwal servis atau ganti oli berikutnya.',
       iconComponent: IconSatisfaction
     }
   ];
 
-  // 4 Social Proof Metrics directly matching Canva deconstruction
+  // 4 Grounded operational metrics
   const METRICS = [
     {
       val: '2.500+',
-      label: 'Bengkel Aktif',
+      label: 'Bengkel Terdaftar',
       iconComponent: MetricWorkshops
     },
     {
       val: '120K+',
-      label: 'Pekerjaan Terselesaikan',
+      label: 'SPK Selesai Dikerjakan',
       iconComponent: MetricJobs
     },
     {
       val: '98%',
-      label: 'Pelanggan Puas',
+      label: 'Kepuasan Pemilik Bengkel',
       iconComponent: MetricRating
     },
     {
       val: '99.9%',
-      label: 'Keamanan Data',
+      label: 'Uptime Server Cloud',
       iconComponent: MetricSecurity
     }
   ];
 
-  // 6 FAQ Questions in 2 Columns matching Canva deconstruction
+  // 6 Clear, practical FAQ answers written in human tone
   const FAQ_ITEMS = [
     {
       id: 0,
-      q: 'Apakah data bengkel saya aman?',
-      a: 'Sangat aman. Setiap bengkel memiliki workspace database yang terisolasi secara multi-tenant. Komunikasi data diamankan dengan sertifikat enkripsi SSL/TLS 256-bit standar enterprise dan dicadangkan (backup) secara otomatis setiap hari.'
+      q: 'Apakah data transaksi dan pelanggan bengkel saya aman?',
+      a: 'Aman. Database setiap bengkel terisolasi dan tidak bercampur dengan bengkel lain. Seluruh komunikasi data dienkripsi dengan SSL/TLS dan sistem mencadangkan (backup) data secara otomatis setiap hari ke cloud.'
     },
     {
       id: 1,
-      q: 'Apakah bisa digunakan di banyak cabang?',
-      a: 'Ya, arsitektur cloud BengkelOS didesain native multi-tenant. Anda dapat mengelola beberapa cabang bengkel sekaligus dalam satu dashboard dengan hak akses terpisah untuk Owner, Kasir, dan Mekanik.'
+      q: 'Apakah bisa digunakan untuk mengelola beberapa cabang?',
+      a: 'Bisa. Dari satu akun pemilik, Anda bisa memantau beberapa cabang bengkel sekaligus. Masing-masing cabang tetap memiliki kasir, daftar mekanik, gudang stok, dan pembukuan terpisah.'
     },
     {
       id: 2,
-      q: 'Bagaimana cara memulai menggunakan BengkelOS?',
-      a: 'Sangat mudah dan tanpa instalasi. Cukup klik tombol "Mulai Sekarang", daftarkan profil bengkel Anda, masukkan katalog suku cadang awal, dan sistem langsung dapat digunakan melalui browser di laptop kasir maupun smartphone mekanik.'
+      q: 'Bagaimana cara mulai menggunakan BengkelOS?',
+      a: 'Tidak perlu instal aplikasi apa pun. Cukup klik tombol "Mulai Sekarang", daftarkan nama bengkel Anda, masukkan katalog suku cadang awal, dan sistem langsung bisa dipakai melalui laptop kasir maupun HP mekanik.'
     },
     {
       id: 3,
-      q: 'Apakah ada aplikasi mobile?',
-      a: 'BengkelOS berbasis Progressive Web Application (PWA) responsif yang dapat dibuka dari smartphone Android maupun iOS tanpa perlu mengunduh aplikasi berat dari Play Store/App Store. Ringan dan ramah untuk smartphone teknisi di area bengkel.'
+      q: 'Apakah bisa dibuka dari HP mekanik di area bengkel?',
+      a: 'Bisa. BengkelOS bisa langsung dibuka dari browser HP Android maupun iPhone tanpa harus download aplikasi besar dari Play Store. Ringan, responsif, dan hemat kuota internet.'
     },
     {
       id: 4,
-      q: 'Bisa integrasi dengan WhatsApp?',
-      a: 'Tentu. Sistem kami terintegrasi dengan tautan tracking WhatsApp. Mekanik dapat membagikan status estimasi biaya, foto dokumentasi part aus vs baru, dan link pelacakan langsung ke nomor WA pelanggan dalam satu klik.'
+      q: 'Bagaimana cara kirim estimasi biaya ke WhatsApp pelanggan?',
+      a: 'Saat kasir atau mekanik selesai mendata pekerjaan, klik tombol WhatsApp di SPK. Sistem akan membuat pesan otomatis berisi ringkasan biaya dan link foto bukti pengerjaan yang langsung terbuka di WhatsApp pelanggan.'
     },
     {
       id: 5,
-      q: 'Apakah ada dukungan dan pelatihan?',
-      a: 'Ya, kami menyediakan dokumentasi operasional lengkap di menu Panduan, video panduan alur kerja 6 tahap, serta tim support teknis melalui WhatsApp resmi untuk membantu proses onboarding bengkel Anda.'
+      q: 'Apakah ada panduan jika staf kasir saya masih awam?',
+      a: 'Ada. Kami sediakan panduan alur kerja lengkap di menu Panduan, serta tim bantuan teknis via WhatsApp yang siap membantu jika kasir atau mekanik Anda membutuhkan bantuan penggunaan sistem.'
     }
   ];
 
@@ -243,10 +243,9 @@ export default function AppPlatformLandingPage({
             {/* Left Column: Badge + H1 + Subtitle + Action Buttons + 3 Checks */}
             <div className="w-full lg:w-[470px] xl:w-[510px] shrink-0 space-y-5 sm:space-y-6 text-left">
               
-              {/* Badge: Platform Manajemen Bengkel Terpercaya */}
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#0a1827] border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>Platform Manajemen Bengkel Terpercaya</span>
+              {/* Clean Eyebrow Category */}
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+                Software Operasional Bengkel Mobil
               </div>
 
               {/* H1 Heading (Clean 3-Line Wrap matching Canva) */}
@@ -258,7 +257,7 @@ export default function AppPlatformLandingPage({
 
               {/* Subheading */}
               <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-md">
-                Kelola operasional, pantau kinerja, dan bangun kepercayaan pelanggan dalam satu platform.
+                Catat antrean servis, pantau keluar-masuk suku cadang, dan kirim progres pengerjaan langsung ke WhatsApp pelanggan.
               </p>
 
               {/* Dual Action CTAs: Mulai Sekarang & Lihat Demo */}
@@ -284,25 +283,25 @@ export default function AppPlatformLandingPage({
                 </button>
               </div>
 
-              {/* 3 Trust Signals Checkmarks (Single Row matching Canva) */}
+              {/* 3 Practical Trust Signals (Single Row matching Canva) */}
               <div className="pt-2 flex flex-wrap sm:flex-nowrap items-center gap-4 lg:gap-5 text-[11px] xl:text-xs text-slate-200 font-semibold">
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <div className="w-4 h-4 rounded-full border border-[#00b865] flex items-center justify-center shrink-0">
                     <Check className="w-2.5 h-2.5 text-[#00b865] stroke-[3]" />
                   </div>
-                  <span>Mudah Digunakan</span>
+                  <span>Bisa di HP &amp; Laptop Kasir</span>
                 </div>
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <div className="w-4 h-4 rounded-full border border-[#00b865] flex items-center justify-center shrink-0">
                     <Check className="w-2.5 h-2.5 text-[#00b865] stroke-[3]" />
                   </div>
-                  <span>Data Aman &amp; Tersinkron</span>
+                  <span>Stok &amp; Kasir Otomatis</span>
                 </div>
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <div className="w-4 h-4 rounded-full border border-[#00b865] flex items-center justify-center shrink-0">
                     <Check className="w-2.5 h-2.5 text-[#00b865] stroke-[3]" />
                   </div>
-                  <span>Dukungan Responsif</span>
+                  <span>Bantuan Teknis via WhatsApp</span>
                 </div>
               </div>
 
@@ -405,13 +404,13 @@ export default function AppPlatformLandingPage({
           
           <div className="space-y-3 max-w-3xl mx-auto">
             <span className="text-xs font-mono font-bold uppercase text-emerald-400 tracking-wider">
-              Konsol Kerja Interaktif
+              Simulasi Alur Kerja
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Satu Sistem Terpadu untuk Seluruh Tim Bengkel
+              Coba Langsung Sistem Operasional Bengkel
             </h2>
             <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-              Uji coba langsung antarmuka operasional BengkelOS: dari penerimaan SPK di meja kasir, link tracking WhatsApp ponsel pelanggan, hingga stok suku cadang otomatis.
+              Pilih tab di bawah untuk melihat alur kerja kasir mencatat SPK, pelanggan memantau progres dari WhatsApp, dan pemotongan stok otomatis di gudang.
             </p>
           </div>
 
@@ -544,15 +543,14 @@ export default function AppPlatformLandingPage({
             {activePreviewTab === 'tracking' && (
               <div className="p-5 sm:p-7 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 text-xs font-bold">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Tautan Dikirim Otomatis ke WhatsApp Pemilik</span>
+                  <div className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
+                    Link Tracking WhatsApp
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black text-white leading-snug">
-                    Pelanggan Tidak Butuh Akun, Cukup Buka Link dari Ponsel
+                    Pelanggan Cukup Buka Link dari WhatsApp
                   </h3>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    Setiap kali mobil masuk dan diestimasi, sistem menghasilkan tautan pelacakan instan. Pemilik mobil dapat melihat tahapan servis, foto kondisi part lama vs baru, dan rincian biaya yang transparan.
+                    Saat mobil selesai diestimasi, kasir cukup kirim tautan ke nomor WA pemilik mobil. Pelanggan bisa melihat tahapan pengerjaan, foto suku cadang lama vs baru, dan rincian biaya tanpa harus download aplikasi atau buat akun.
                   </p>
                   <ul className="text-xs text-slate-300 space-y-2">
                     <li className="flex items-center">
@@ -718,13 +716,13 @@ export default function AppPlatformLandingPage({
           
           <div className="space-y-3 max-w-2xl mx-auto">
             <span className="text-xs font-mono font-bold uppercase text-emerald-400 tracking-wider">
-              Paket Berlangganan
+              Paket Langganan
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Investasi Terjangkau, Hasil Maksimal
+              Pilihan Paket Sesuai Skala Bengkel
             </h2>
             <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-              Pilihan paket fleksibel untuk mendukung efisiensi bengkel Anda. Skema harga resmi akan segera diumumkan.
+              Mulai dari bengkel mandiri 1 stall hingga jaringan multi-cabang. Rincian skema harga resmi akan segera dibuka.
             </p>
           </div>
 
@@ -743,8 +741,8 @@ export default function AppPlatformLandingPage({
                   STARTER
                 </span>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">To Be Announced</div>
-                  <p className="text-xs text-slate-400 mt-1">Untuk bengkel mandiri yang baru merintis</p>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">Segera Dibuka</div>
+                  <p className="text-xs text-slate-400 mt-1">Untuk bengkel mandiri 1-2 mekanik</p>
                 </div>
                 <ul className="text-xs text-slate-300 space-y-2.5 border-t border-slate-800 pt-4">
                   <li className="flex items-center"><Check className="w-4 h-4 text-emerald-400 mr-2 shrink-0" /> Maks. 30 SPK / bulan</li>
@@ -764,16 +762,16 @@ export default function AppPlatformLandingPage({
 
             {/* Plan 2: Pro (Recommended) */}
             <div className="w-[85vw] max-w-[320px] shrink-0 snap-center md:w-auto bg-[#0c1525] border-2 border-emerald-500 rounded-2xl p-5 sm:p-6 flex flex-col justify-between relative shadow-xl shadow-emerald-950/30">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold tracking-wider uppercase">
-                Segera Diumumkan
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-mono font-bold tracking-wider uppercase">
+                Paling Diminati
               </div>
               <div className="space-y-4">
                 <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
                   BENGKEL PRO
                 </span>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">To Be Announced</div>
-                  <p className="text-xs text-slate-400 mt-1">Operasional lengkap tanpa batas kuota</p>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">Segera Dibuka</div>
+                  <p className="text-xs text-slate-400 mt-1">Untuk bengkel aktif 3+ mekanik & kasir</p>
                 </div>
                 <ul className="text-xs text-slate-300 space-y-2.5 border-t border-slate-800 pt-4">
                   <li className="flex items-center"><Check className="w-4 h-4 text-emerald-400 mr-2 shrink-0" /> Unlimited SPK & Repair Orders</li>
@@ -800,8 +798,8 @@ export default function AppPlatformLandingPage({
                   MULTI-CABANG
                 </span>
                 <div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">To Be Announced</div>
-                  <p className="text-xs text-slate-400 mt-1">Untuk jaringan bengkel waralaba / 3+ cabang</p>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">Segera Dibuka</div>
+                  <p className="text-xs text-slate-400 mt-1">Untuk pemilik dengan 2 cabang atau lebih</p>
                 </div>
                 <ul className="text-xs text-slate-300 space-y-2.5 border-t border-slate-800 pt-4">
                   <li className="flex items-center"><Check className="w-4 h-4 text-emerald-400 mr-2 shrink-0" /> Konsolidasi Laporan Multi-Cabang</li>
@@ -837,7 +835,7 @@ export default function AppPlatformLandingPage({
               Pertanyaan yang Sering Diajukan
             </h2>
             <p className="text-xs sm:text-sm text-slate-400">
-              Informasi lengkap seputar implementasi dan fitur platform BengkelOS.
+              Jawaban singkat seputar implementasi dan penggunaan BengkelOS di bengkel Anda.
             </p>
           </div>
 
@@ -929,10 +927,10 @@ export default function AppPlatformLandingPage({
               {/* Right Column: CTA Content */}
               <div className="lg:col-span-6 space-y-4 text-left">
                 <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                  Siap Mengelola Bengkel Anda Lebih Baik?
+                  Siap Buat Operasional Bengkel Lebih Rapi?
                 </h2>
                 <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-                  Bergabung dengan ribuan bengkel yang telah merasakan manfaat BengkelOS.
+                  Tinggalkan pencatatan manual di buku nota. Mulai kelola antrean servis, stok suku cadang, dan kasir dengan BengkelOS.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3 pt-3">
@@ -941,7 +939,7 @@ export default function AppPlatformLandingPage({
                     onClick={handleLoginClick}
                     className="touch-target inline-flex items-center justify-center px-6 py-3.5 rounded-lg bg-[#10b981] hover:bg-[#059669] text-white font-bold text-sm tracking-wide transition-all shadow-lg shadow-emerald-500/20 active:scale-98 group"
                   >
-                    <span>Mulai Sekarang Gratis</span>
+                    <span>Mulai Pakai Sekarang</span>
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </button>
 
@@ -972,7 +970,7 @@ export default function AppPlatformLandingPage({
           <div className="flex items-center space-x-2.5">
             <BengkelOSLogoIcon className="w-5 h-5" />
             <span className="font-bold text-white tracking-tight text-sm">BengkelOS</span>
-            <span className="text-slate-500">· Software Manajemen Bengkel Modern</span>
+            <span className="text-slate-500">· Software Kasir &amp; Operasional Bengkel Mobil</span>
           </div>
 
           <div className="flex items-center space-x-6 text-slate-400">
@@ -993,7 +991,7 @@ export default function AppPlatformLandingPage({
 
           <div className="flex items-center space-x-2 text-slate-400 font-mono text-[11px]">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Semua Sistem Normal (100% Uptime)</span>
+            <span>Status Server Normal · Cloud Aktif</span>
           </div>
 
         </div>
