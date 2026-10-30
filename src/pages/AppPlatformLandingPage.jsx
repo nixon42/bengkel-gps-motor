@@ -730,10 +730,16 @@ export default function AppPlatformLandingPage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          {/* Mobile swipe hint */}
+          <div className="flex md:hidden items-center justify-center space-x-2 text-xs text-slate-400 font-mono -mt-4 pb-1">
+            <span>Geser untuk melihat paket lain</span>
+            <ArrowRight className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          </div>
+
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 pt-2 no-scrollbar md:grid md:grid-cols-3 md:gap-6 md:overflow-visible text-left">
             
             {/* Plan 1: Starter */}
-            <div className="bg-[#0c1525] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all">
+            <div className="w-[85vw] max-w-[320px] shrink-0 snap-center md:w-auto bg-[#0c1525] border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-slate-700 transition-all">
               <div className="space-y-4">
                 <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-800 text-slate-300">
                   STARTER
@@ -759,7 +765,7 @@ export default function AppPlatformLandingPage({
             </div>
 
             {/* Plan 2: Pro (Recommended) */}
-            <div className="bg-[#0c1525] border-2 border-emerald-500 rounded-2xl p-6 flex flex-col justify-between relative shadow-xl shadow-emerald-950/30">
+            <div className="w-[85vw] max-w-[320px] shrink-0 snap-center md:w-auto bg-[#0c1525] border-2 border-emerald-500 rounded-2xl p-5 sm:p-6 flex flex-col justify-between relative shadow-xl shadow-emerald-950/30">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold tracking-wider uppercase">
                 Segera Diumumkan
               </div>
@@ -790,7 +796,7 @@ export default function AppPlatformLandingPage({
             </div>
 
             {/* Plan 3: Enterprise */}
-            <div className="bg-[#0c1525] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all">
+            <div className="w-[85vw] max-w-[320px] shrink-0 snap-center md:w-auto bg-[#0c1525] border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-slate-700 transition-all">
               <div className="space-y-4">
                 <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-blue-950 text-blue-400 border border-blue-800">
                   MULTI-CABANG

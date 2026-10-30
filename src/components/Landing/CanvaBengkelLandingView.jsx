@@ -334,11 +334,17 @@ export default function CanvaBengkelLandingView({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Mobile swipe hint */}
+          <div className="flex md:hidden items-center justify-center space-x-2 text-xs text-slate-400 font-mono -mt-4 pb-1">
+            <span>Geser untuk melihat paket lain</span>
+            <ArrowRight className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          </div>
+
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 pt-2 no-scrollbar md:grid md:grid-cols-3 md:gap-6 md:overflow-visible">
             {SERVICE_PACKAGES.map((pkg, idx) => (
               <div 
                 key={idx}
-                className="bg-[#0c182b] border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-6 sm:p-7 flex flex-col justify-between transition-all hover:shadow-xl group"
+                className="w-[85vw] max-w-[320px] shrink-0 snap-center md:w-auto bg-[#0c182b] border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all hover:shadow-xl group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
