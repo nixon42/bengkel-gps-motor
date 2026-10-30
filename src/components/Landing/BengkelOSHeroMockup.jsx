@@ -29,15 +29,15 @@ export default function BengkelOSHeroMockup() {
     <div className="relative rounded-2xl border border-cyan-500/30 bg-[#091120] shadow-[0_0_0_1px_rgba(56,189,248,0.25),0_0_35px_rgba(37,99,235,0.3),0_0_65px_rgba(6,182,212,0.18),0_25px_50px_-12px_rgba(0,0,0,0.85)] overflow-hidden text-left select-none transition-all group hover:border-cyan-400/50">
       
       {/* Window Body: Flex Layout matching Canva Slide 1 */}
-      <div className="flex flex-row min-h-[460px] sm:min-h-[490px]">
+      <div className="flex flex-row min-h-[420px] sm:min-h-[490px]">
         
         {/* Left Sidebar (Full Height from Top to Bottom) */}
-        <div className="w-[140px] sm:w-[155px] lg:w-[165px] shrink-0 bg-[#070e1a] border-r border-slate-800/80 p-2.5 sm:p-3 flex flex-col justify-between">
+        <div className="w-11 sm:w-[155px] lg:w-[165px] shrink-0 bg-[#070e1a] border-r border-slate-800/80 p-1.5 sm:p-3 flex flex-col justify-between">
           <div>
             {/* BengkelOS Brand Header in Sidebar */}
-            <div className="flex items-center space-x-2 px-1 pt-1 pb-3.5">
+            <div className="flex items-center justify-center sm:justify-start space-x-0 sm:space-x-2 px-0 sm:px-1 pt-1 pb-3">
               <BengkelOSLogoIcon className="w-5 h-5 shrink-0" />
-              <span className="font-bold text-white text-sm tracking-tight font-sans">BengkelOS</span>
+              <span className="hidden sm:inline font-bold text-white text-sm tracking-tight font-sans">BengkelOS</span>
             </div>
 
             {/* Menu Items (Interactive Module Switching) */}
@@ -50,14 +50,15 @@ export default function BengkelOSHeroMockup() {
                     key={item.id}
                     type="button"
                     onClick={() => setActiveMenu(item.id)}
-                    className={`w-full rounded-lg px-2.5 py-1.5 flex items-center space-x-2 text-[11px] sm:text-xs font-semibold transition-all text-left cursor-pointer ${
+                    title={item.label}
+                    className={`w-full rounded-lg px-2 sm:px-2.5 py-1.5 flex items-center justify-center sm:justify-start space-x-0 sm:space-x-2 text-[11px] sm:text-xs font-semibold transition-all text-left cursor-pointer ${
                       isActive
                         ? 'bg-[#1d4ed8] text-white shadow-xs'
                         : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span>{item.label}</span>
+                    <span className="hidden sm:inline">{item.label}</span>
                   </button>
                 );
               })}
@@ -66,117 +67,117 @@ export default function BengkelOSHeroMockup() {
         </div>
 
         {/* Right Main Workspace Area */}
-        <div className="flex-1 min-w-0 p-3 sm:p-4 lg:p-4.5 space-y-3 bg-[#0a1220] flex flex-col justify-between">
+        <div className="flex-1 min-w-0 p-2.5 sm:p-4 lg:p-4.5 space-y-2.5 sm:space-y-3 bg-[#0a1220] flex flex-col justify-between">
           
           {/* TAB 1: RINGKASAN (100% Exact Canva Slide 1 Benchmark) */}
           {activeMenu === 'Ringkasan' && (
             <>
               {/* Top Header Row */}
-              <div className="flex items-center justify-between gap-2 pb-0.5">
-                <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight">
+              <div className="flex items-center justify-between gap-1.5 pb-0.5">
+                <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight truncate">
                   Ringkasan Hari Ini
                 </h3>
 
-                <div className="flex items-center space-x-2 sm:space-x-2.5">
+                <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
                   <div className="hidden sm:flex items-center space-x-1.5 text-slate-400 text-[10px] sm:text-[11px] font-medium">
                     <Calendar className="w-3 h-3 text-slate-400" />
                     <span>Selasa, 21 Mei 2024</span>
                   </div>
 
-                  <div className="flex items-center space-x-1 bg-[#0e1828] border border-slate-800 rounded px-1.5 py-0.5 text-[10px] text-slate-300 font-medium">
+                  <div className="flex items-center space-x-1 bg-[#0e1828] border border-slate-800 rounded px-1.5 py-0.5 text-[9px] sm:text-[10px] text-slate-300 font-medium">
                     <span>Hari Ini</span>
                     <ChevronDown className="w-2.5 h-2.5 text-slate-400" />
                   </div>
 
-                  <div className="text-slate-400 hover:text-white p-0.5">
-                    <Search className="w-3.5 h-3.5" />
+                  <div className="hidden xs:block text-slate-400 hover:text-white p-0.5">
+                    <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </div>
 
                   <div className="relative text-slate-400 hover:text-white p-0.5">
-                    <Bell className="w-3.5 h-3.5" />
+                    <Bell className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     <span className="absolute top-0 right-0 w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                   </div>
 
-                  <div className="w-5 h-5 rounded-full bg-emerald-950/80 border border-emerald-400 flex items-center justify-center text-emerald-300">
-                    <User className="w-3 h-3" />
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-950/80 border border-emerald-400 flex items-center justify-center text-emerald-300">
+                    <User className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   </div>
                 </div>
               </div>
 
               {/* 4 KPI Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <div className="bg-[#0e1828] p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">Pekerjaan Masuk</div>
-                  <div className="text-lg sm:text-xl font-bold text-white font-mono mt-0.5">24</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
+                <div className="bg-[#0e1828] p-2 sm:p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
+                  <div className="text-[9.5px] sm:text-[11px] text-slate-400 font-medium">Pekerjaan Masuk</div>
+                  <div className="text-base sm:text-xl font-bold text-white font-mono mt-0.5">24</div>
                 </div>
 
-                <div className="bg-[#0e1828] p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">Sedang Dikerjakan</div>
-                  <div className="text-lg sm:text-xl font-bold text-white font-mono mt-0.5">11</div>
+                <div className="bg-[#0e1828] p-2 sm:p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
+                  <div className="text-[9.5px] sm:text-[11px] text-slate-400 font-medium">Sedang Dikerjakan</div>
+                  <div className="text-base sm:text-xl font-bold text-white font-mono mt-0.5">11</div>
                 </div>
 
-                <div className="bg-[#0e1828] p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">Selesai Hari Ini</div>
-                  <div className="text-lg sm:text-xl font-bold text-white font-mono mt-0.5">18</div>
-                  <div className="text-[9px] text-emerald-400 font-mono mt-0.5">+18% dari kemarin</div>
+                <div className="bg-[#0e1828] p-2 sm:p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
+                  <div className="text-[9.5px] sm:text-[11px] text-slate-400 font-medium">Selesai Hari Ini</div>
+                  <div className="text-base sm:text-xl font-bold text-white font-mono mt-0.5">18</div>
+                  <div className="text-[8.5px] sm:text-[9px] text-emerald-400 font-mono mt-0.5">+18% kemarin</div>
                 </div>
 
-                <div className="bg-[#0e1828] p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
-                  <div className="text-[10px] sm:text-[11px] text-slate-400 font-medium">Pendapatan</div>
-                  <div className="text-[11px] sm:text-xs lg:text-[13px] font-bold text-white font-mono mt-0.5 whitespace-nowrap">
+                <div className="bg-[#0e1828] p-2 sm:p-2.5 rounded-xl border border-slate-800/60 shadow-xs">
+                  <div className="text-[9.5px] sm:text-[11px] text-slate-400 font-medium">Pendapatan</div>
+                  <div className="text-[10.5px] sm:text-xs lg:text-[13px] font-bold text-white font-mono mt-0.5 truncate">
                     Rp 36,450,000
                   </div>
-                  <div className="text-[9px] text-emerald-400 font-mono mt-0.5">+15% dari kemarin</div>
+                  <div className="text-[8.5px] sm:text-[9px] text-emerald-400 font-mono mt-0.5">+15% kemarin</div>
                 </div>
               </div>
 
               {/* Bottom 2 Columns */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 pt-0.5">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-2.5 pt-0.5">
                 {/* Left: Status Pekerjaan */}
-                <div className="lg:col-span-7 bg-[#0e1828] p-3 rounded-xl border border-slate-800/60 space-y-2 flex flex-col justify-between">
+                <div className="lg:col-span-7 bg-[#0e1828] p-2.5 sm:p-3 rounded-xl border border-slate-800/60 space-y-2 flex flex-col justify-between">
                   <div className="text-xs font-bold text-white">Status Pekerjaan</div>
 
                   <div className="space-y-1.5 divide-y divide-slate-800/40">
-                    <div className="flex items-center justify-between pt-1 first:pt-0">
-                      <div className="min-w-0 pr-2">
-                        <div className="font-mono text-[11px] font-bold text-white tracking-wide">B 1234 ABC</div>
-                        <div className="text-[9px] text-slate-400 truncate">Toyota Innova</div>
+                    <div className="flex items-center justify-between gap-1.5 pt-1 first:pt-0">
+                      <div className="min-w-0 pr-1 sm:pr-2">
+                        <div className="font-mono text-[10.5px] sm:text-[11px] font-bold text-white tracking-wide">B 1234 ABC</div>
+                        <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Toyota Innova</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">Servis Berkala</div>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#1e3a8a]/70 text-[#93c5fd] border border-blue-600/30 whitespace-nowrap">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#1e3a8a]/70 text-[#93c5fd] border border-blue-600/30 whitespace-nowrap shrink-0">
                         Sedang Dikerjakan
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1.5">
-                      <div className="min-w-0 pr-2">
-                        <div className="font-mono text-[11px] font-bold text-white tracking-wide">D 5678 DEF</div>
-                        <div className="text-[9px] text-slate-400 truncate">Honda Brio</div>
+                    <div className="flex items-center justify-between gap-1.5 pt-1.5">
+                      <div className="min-w-0 pr-1 sm:pr-2">
+                        <div className="font-mono text-[10.5px] sm:text-[11px] font-bold text-white tracking-wide">D 5678 DEF</div>
+                        <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Honda Brio</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">Ganti Oli</div>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#78350f]/70 text-[#fde047] border border-amber-600/30 whitespace-nowrap">
-                        Menunggu Sparepart
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#78350f]/70 text-[#fde047] border border-amber-600/30 whitespace-nowrap shrink-0">
+                        Menunggu Part
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1.5">
-                      <div className="min-w-0 pr-2">
-                        <div className="font-mono text-[11px] font-bold text-white tracking-wide">F 9012 GHI</div>
-                        <div className="text-[9px] text-slate-400 truncate">Mitsubishi Xpander</div>
+                    <div className="flex items-center justify-between gap-1.5 pt-1.5">
+                      <div className="min-w-0 pr-1 sm:pr-2">
+                        <div className="font-mono text-[10.5px] sm:text-[11px] font-bold text-white tracking-wide">F 9012 GHI</div>
+                        <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Mitsubishi Xpander</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">Rem &amp; Kaki-kaki</div>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#064e3b]/70 text-[#6ee7b7] border border-emerald-600/30 whitespace-nowrap">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#064e3b]/70 text-[#6ee7b7] border border-emerald-600/30 whitespace-nowrap shrink-0">
                         Selesai
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between pt-1.5">
-                      <div className="min-w-0 pr-2">
-                        <div className="font-mono text-[11px] font-bold text-white tracking-wide">L 3456 JKL</div>
-                        <div className="text-[9px] text-slate-400 truncate">Suzuki Ertiga</div>
+                    <div className="flex items-center justify-between gap-1.5 pt-1.5">
+                      <div className="min-w-0 pr-1 sm:pr-2">
+                        <div className="font-mono text-[10.5px] sm:text-[11px] font-bold text-white tracking-wide">L 3456 JKL</div>
+                        <div className="text-[8.5px] sm:text-[9px] text-slate-400 truncate">Suzuki Ertiga</div>
                       </div>
                       <div className="text-[10px] text-slate-300 font-medium hidden sm:block">AC Service</div>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#581c87]/70 text-[#d8b4fe] border border-purple-600/30 whitespace-nowrap">
+                      <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-semibold bg-[#581c87]/70 text-[#d8b4fe] border border-purple-600/30 whitespace-nowrap shrink-0">
                         Pemeriksaan
                       </span>
                     </div>

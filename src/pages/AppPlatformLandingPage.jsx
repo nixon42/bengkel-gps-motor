@@ -318,10 +318,8 @@ export default function AppPlatformLandingPage({
                 }}
               />
 
-              <div className="relative overflow-x-auto pb-2 scrollbar-none rounded-2xl">
-                <div className="min-w-[560px] lg:min-w-0">
-                  <BengkelOSHeroMockup />
-                </div>
+              <div className="relative w-full rounded-2xl">
+                <BengkelOSHeroMockup />
               </div>
             </div>
 
