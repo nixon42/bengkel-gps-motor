@@ -199,25 +199,15 @@ export default function AppPlatformLandingPage({
             )}
           </nav>
 
-          {/* Right Action Controls: Masuk & Mulai Sekarang */}
-          <div className="flex items-center space-x-3 shrink-0">
-            {/* Masuk (Text Button) */}
+          {/* Right Action Control: Mulai Sekarang / Buka Dashboard */}
+          <div className="flex items-center shrink-0">
             <button
               type="button"
               onClick={handleLoginClick}
               disabled={loading}
-              className="touch-target px-3 py-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition-colors whitespace-nowrap"
+              className="touch-target inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg bg-[#00b865] hover:bg-[#00a359] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 active:scale-98 transition-all whitespace-nowrap cursor-pointer"
             >
-              Masuk
-            </button>
-
-            {/* Mulai Sekarang (Green Emerald Pill Button) */}
-            <button
-              type="button"
-              onClick={handleLoginClick}
-              className="touch-target inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg bg-[#00b865] hover:bg-[#00a359] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 active:scale-98 transition-all whitespace-nowrap"
-            >
-              Mulai Sekarang
+              {user ? 'Buka Dashboard' : 'Mulai Sekarang'}
             </button>
           </div>
 
