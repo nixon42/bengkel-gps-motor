@@ -144,27 +144,27 @@ export default function AppPlatformLandingPage({
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#060b17] text-slate-100 font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#060b17] text-slate-100 font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden">
       
       {/* =========================================================================
           1. NAVIGATION BAR (100% Canva Layout & Branding, Razor-Sharp Vector)
          ========================================================================= */}
       <header className="sticky top-0 z-50 bg-[#060b17]/95 border-b border-slate-800/80 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Brand Identity: Logo Icon + "BengkelOS" + "Kelola, Pantau, Tumbuh." */}
           <div 
-            className="flex items-center space-x-3 cursor-pointer select-none shrink-0"
+            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer select-none shrink-0"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
-              <BengkelOSLogoIcon className="w-8 h-8 sm:w-9 sm:h-9" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
+              <BengkelOSLogoIcon className="w-7 h-7 sm:w-9 sm:h-9" />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-lg sm:text-xl font-bold tracking-tight text-white font-sans leading-none">
+              <span className="text-base sm:text-xl font-bold tracking-tight text-white font-sans leading-none">
                 BengkelOS
               </span>
-              <span className="text-[10px] font-medium text-slate-400 tracking-tight mt-0.5">
+              <span className="text-[9px] sm:text-[10px] font-medium text-slate-400 tracking-tight mt-0.5">
                 Kelola, Pantau, Tumbuh.
               </span>
             </div>
@@ -186,7 +186,7 @@ export default function AppPlatformLandingPage({
             </a>
             {onNavigateDocs ? (
               <button 
-                type="button"
+                type="button" 
                 onClick={() => onNavigateDocs()} 
                 className="hover:text-white transition-colors"
               >
@@ -199,15 +199,22 @@ export default function AppPlatformLandingPage({
             )}
           </nav>
 
-          {/* Right Action Control: Mulai Sekarang / Buka Dashboard */}
+          {/* Right Action Control: Mulai Sekarang / Dashboard (Ergonomic Compact Mobile) */}
           <div className="flex items-center shrink-0">
             <button
               type="button"
               onClick={handleLoginClick}
               disabled={loading}
-              className="touch-target inline-flex items-center justify-center px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg bg-[#00b865] hover:bg-[#00a359] text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 active:scale-98 transition-all whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center justify-center px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-lg bg-[#00b865] hover:bg-[#00a359] text-white text-xs sm:text-sm font-bold shadow-sm shadow-emerald-500/20 active:scale-98 transition-all whitespace-nowrap cursor-pointer !min-h-[34px] sm:!min-h-[40px] !min-w-0"
             >
-              {user ? 'Buka Dashboard' : 'Mulai Sekarang'}
+              {user ? (
+                <>
+                  <span className="sm:hidden">Dashboard</span>
+                  <span className="hidden sm:inline">Buka Dashboard</span>
+                </>
+              ) : (
+                'Mulai Sekarang'
+              )}
             </button>
           </div>
 
@@ -302,7 +309,7 @@ export default function AppPlatformLandingPage({
             </div>
 
             {/* Right Column: 100% Crisp Vector Hero Mockup (Ultra Sharp, Zero Blur) with Ambient Glow */}
-            <div className="w-full lg:flex-1 max-w-[840px] relative mt-6 lg:mt-0">
+            <div className="w-full lg:flex-1 max-w-[840px] relative mt-6 lg:mt-0 overflow-hidden">
               {/* Vibrant Ambient Glow Behind Mockup - Smooth Elliptical Halo Without Edge Clipping */}
               <div 
                 className="absolute -inset-6 sm:-inset-12 md:-inset-16 rounded-full pointer-events-none opacity-75 blur-2xl sm:blur-3xl -z-10"
@@ -311,8 +318,10 @@ export default function AppPlatformLandingPage({
                 }}
               />
 
-              <div className="relative">
-                <BengkelOSHeroMockup />
+              <div className="relative overflow-x-auto pb-2 scrollbar-none rounded-2xl">
+                <div className="min-w-[560px] lg:min-w-0">
+                  <BengkelOSHeroMockup />
+                </div>
               </div>
             </div>
 
