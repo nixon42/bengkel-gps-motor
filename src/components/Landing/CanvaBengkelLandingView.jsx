@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { resolveAssetUrl } from '../../utils/assetUrl';
 import { formatWhatsAppNumber } from '../../utils/config';
+import { WorkshopLogoIcon } from './BengkelOSIcons';
 
 export default function CanvaBengkelLandingView({ 
   tenant, 
@@ -144,61 +145,59 @@ export default function CanvaBengkelLandingView({
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl 2xl:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
             {/* Left Column: Headline, Highlight, Subheadline, Buttons, 3 Checkmarks */}
             <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
               
-              {/* H1 Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black tracking-tight text-white leading-[1.15] font-sans">
-                Tune Up, Injeksi, Kaki-kaki &amp; Perawatan Berkala{' '}
-                <span className="text-[#20a62f] block sm:inline">
-                  Terpercaya
-                </span>
+              {/* H1 Headline (3 distinct lines matching Canva) */}
+              <h1 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[46px] font-black tracking-tight text-white leading-[1.12] font-sans">
+                <span className="block whitespace-nowrap">Tune Up, Injeksi, Kaki-kaki &amp;</span>
+                <span className="block">Perawatan Berkala</span>
+                <span className="block text-[#20a62f]">Terpercaya</span>
               </h1>
 
               {/* Subheading */}
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-                Servis mobil tanpa rasa was-was di <strong className="text-white font-bold">{tenantName}</strong>. Estimasi transparan &amp; pasti di awal, 100% pengerjaan disertai dokumentasi foto via WhatsApp, dan suku cadang berkualitas tinggi untuk performa mobil terbaik Anda.
+                Servis mobil tanpa rasa was-was di <strong className="text-white font-bold">{tenantName}</strong>. Estimasi transparan &amp; pasti di awal, 100% pengerjaan disertai dokumentasi foto via WhatsApp, dan suku cadang berkualitas, jadwalkan kunjungan Anda.
               </p>
 
-              {/* Action Buttons (Booking via WhatsApp & Cek Status Servis) */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-1">
-                {/* 1. Booking via WhatsApp */}
+              {/* Action Buttons (Booking via WhatsApp & Cek Status Servis Side-by-Side) */}
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3.5 pt-1">
+                {/* 1. Booking via WhatsApp (No trailing arrow, uppercase, matches Canva) */}
                 <button
                   type="button"
                   onClick={() => handleBookingWa()}
-                  className="touch-target inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-[#20a62f] hover:bg-[#1b8c27] text-white font-bold text-sm tracking-wide transition-all shadow-lg shadow-emerald-950/60 active:scale-98 group cursor-pointer"
+                  className="touch-target inline-flex items-center justify-center space-x-2.5 px-5 sm:px-6 py-3.5 rounded-xl bg-[#20a62f] hover:bg-[#1b8c27] text-white font-black text-xs sm:text-sm tracking-wider uppercase transition-all shadow-lg shadow-emerald-950/60 active:scale-98 cursor-pointer whitespace-nowrap"
                 >
                   <Phone className="w-4 h-4 fill-white shrink-0" />
-                  <span>Booking via WhatsApp</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                  <span>BOOKING VIA WHATSAPP</span>
                 </button>
 
-                {/* 2. Cek Status Servis Kendaraan */}
+                {/* 2. Cek Status Servis Kendaraan (Clean dark button, uppercase, matches Canva) */}
                 <a
                   href="#lacak-status"
-                  className="touch-target inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl border border-slate-700 bg-[#0d1829] hover:bg-[#122238] hover:border-slate-500 text-white font-bold text-sm tracking-wide transition-all active:scale-98 group"
+                  className="touch-target inline-flex items-center justify-center space-x-2.5 px-5 sm:px-6 py-3.5 rounded-xl border border-slate-600/80 bg-[#0d1829]/90 hover:bg-[#122238] hover:border-slate-400 text-white font-black text-xs sm:text-sm tracking-wider uppercase transition-all active:scale-98 whitespace-nowrap"
                 >
-                  <Search className="w-4 h-4 text-slate-300 shrink-0" />
-                  <span>Cek Status Servis Kendaraan</span>
+                  <Search className="w-4 h-4 text-white shrink-0 stroke-[2.5]" />
+                  <span>CEK STATUS SERVIS KENDARAAN</span>
                 </a>
               </div>
 
-              {/* 3 Trust Signals Checkmarks (Clean inline list, zero pill badges) */}
+              {/* 3 Trust Signals Checkmarks (Clean single-line list, zero pill badges) */}
               <div className="pt-2 flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-6 text-xs text-slate-300 font-medium">
-                <div className="flex items-center space-x-2 shrink-0">
+                <div className="flex items-center space-x-1.5 shrink-0">
                   <Check className="w-4 h-4 text-[#20a62f] stroke-[3]" />
                   <span>Suku cadang berkualitas</span>
                 </div>
 
-                <div className="flex items-center space-x-2 shrink-0">
+                <div className="flex items-center space-x-1.5 shrink-0">
                   <Check className="w-4 h-4 text-[#20a62f] stroke-[3]" />
                   <span>Dokumentasi foto WhatsApp</span>
                 </div>
 
-                <div className="flex items-center space-x-2 shrink-0">
+                <div className="flex items-center space-x-1.5 shrink-0">
                   <Check className="w-4 h-4 text-[#20a62f] stroke-[3]" />
                   <span>Garansi servis terus</span>
                 </div>
@@ -207,56 +206,61 @@ export default function CanvaBengkelLandingView({
             </div>
 
             {/* Right Column: Hero Workshop Bay Visual & Floating Location Card */}
-            <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
               
-              {/* Workshop Bay Mechanic Visual with feathered edges */}
-              <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-[#0c1626] shadow-2xl">
+              {/* Workshop Bay Mechanic Visual with feathered edges, seamless dark backdrop */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={resolveAssetUrl('/images/canva-landing/workshop-bay-hero.png')} 
                   alt="Mekanik Bengkel Sedang Melakukan Servis Mobil" 
-                  className="w-full h-auto object-cover max-h-[340px] filter contrast-105"
+                  className="w-full h-auto object-cover max-h-[380px] filter contrast-105"
                   loading="eager"
                   fetchpriority="high"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070e1c] via-transparent to-transparent opacity-80 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070e1c] via-transparent to-transparent opacity-75 pointer-events-none" />
               </div>
 
-              {/* Floating Workshop Location & Business Hours Card (Matches Canva Slide 1) */}
-              <div className="mt-3.5 relative z-10 bg-[#0a1526] border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
-                <div className="space-y-1 min-w-0 flex-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold text-[#20a62f] uppercase tracking-wider font-mono">
-                      LOKASI WORKSHOP
-                    </span>
+              {/* Floating Workshop Location & Business Hours Card (Overlapping bottom-left of bay image, leaving right side visible) */}
+              <div className="relative -mt-16 sm:-mt-22 lg:-mt-26 z-10 mr-auto max-w-sm sm:max-w-md bg-[#081220]/95 border border-slate-800/90 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3 text-left">
+                {/* Item 1: Lokasi */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-[#20a62f] shrink-0">
+                        <MapPin className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-xs font-bold text-[#20a62f] uppercase tracking-wider font-mono">
+                        LOKASI WORKSHOP
+                      </span>
+                    </div>
                     <a 
                       href={mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs font-semibold text-blue-400 hover:text-blue-300 inline-flex items-center space-x-0.5 ml-1 transition-colors"
+                      className="text-xs font-semibold text-blue-400 hover:text-blue-300 inline-flex items-center space-x-0.5 transition-colors"
                     >
                       <span>Lihat Peta &gt;</span>
                     </a>
                   </div>
-                  <p className="text-xs text-white truncate max-w-full font-medium">
+                  <p className="text-xs sm:text-sm text-white font-medium pl-8 truncate">
                     {address}
                   </p>
-                  <div className="pt-0.5">
-                    <span className="text-[11px] font-bold text-[#20a62f] uppercase tracking-wider font-mono block">
-                      JAM OPERASIONAL
-                    </span>
-                    <span className="text-xs text-slate-300 font-medium">
-                      {businessHours}
-                    </span>
-                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => handleBookingWa()}
-                  className="w-full sm:w-auto touch-target px-4 py-2.5 rounded-lg bg-[#20a62f] hover:bg-[#1b8c27] text-white text-xs font-bold uppercase tracking-wider shrink-0 shadow-sm transition-all text-center cursor-pointer"
-                >
-                  Pesan Sekarang
-                </button>
+                {/* Item 2: Jam Operasional */}
+                <div className="space-y-1 pt-2 border-t border-slate-800/60">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 shrink-0">
+                      <Clock className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-bold text-[#20a62f] uppercase tracking-wider font-mono">
+                      JAM OPERASIONAL
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-200 font-medium pl-8">
+                    {businessHours}
+                  </p>
+                </div>
               </div>
 
             </div>
@@ -589,11 +593,7 @@ export default function CanvaBengkelLandingView({
           
           {/* Brand & Copyright */}
           <div className="flex items-center space-x-3">
-            <img 
-              src={resolveAssetUrl('/images/canva-landing/workshop-logo.png')} 
-              alt="Logo" 
-              className="w-5 h-5 object-contain"
-            />
+            <WorkshopLogoIcon className="w-5 h-5 shrink-0" />
             <span>
               &copy; 2026 <strong className="text-slate-200">{tenantName}</strong>. Semua hak dilindungi.
             </span>

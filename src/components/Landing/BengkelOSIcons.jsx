@@ -47,6 +47,60 @@ export function BengkelOSLogoIcon({ className = "w-8 h-8" }) {
   );
 }
 
+// 1b. Workshop / Bengkel Vector Crossed Wrench Brandmark (Ultra Crisp SVG)
+export function WorkshopLogoIcon({ className = "w-6 h-6" }) {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <defs>
+        <linearGradient id="emWrench1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#4ade80" />
+          <stop offset="50%" stopColor="#20a62f" />
+          <stop offset="100%" stopColor="#15803d" />
+        </linearGradient>
+        <linearGradient id="emWrench2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#86efac" />
+          <stop offset="50%" stopColor="#16a34a" />
+          <stop offset="100%" stopColor="#14532d" />
+        </linearGradient>
+        <filter id="neonWrench" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="0" stdDeviation="0.8" floodColor="#22c55e" floodOpacity="0.7" />
+        </filter>
+      </defs>
+
+      <g filter="url(#neonWrench)">
+        {/* Wrench Left to Right */}
+        <path 
+          d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" 
+          fill="url(#emWrench1)" 
+          stroke="#10b981" 
+          strokeWidth="0.5" 
+          strokeLinejoin="round" 
+        />
+
+        {/* Wrench Right to Left (Mirrored horizontally around center x=12) */}
+        <g transform="translate(24, 0) scale(-1, 1)">
+          <path 
+            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" 
+            fill="url(#emWrench2)" 
+            stroke="#10b981" 
+            strokeWidth="0.5" 
+            strokeLinejoin="round" 
+          />
+        </g>
+
+        {/* Center Pivot Accent with Star Sparkle */}
+        <circle cx="12" cy="12" r="2.5" fill="#041a10" stroke="#4ade80" strokeWidth="1" />
+        <polygon points="12,9.2 12.7,11.3 14.8,12 12.7,12.7 12,14.8 11.3,12.7 9.2,12 11.3,11.3" fill="#ffffff" />
+      </g>
+    </svg>
+  );
+}
+
 // 2. Feature Icons (5 Cards matching Canva exactly)
 
 // 2a. Manfaat Operasional (Emerald Glowing Gear)

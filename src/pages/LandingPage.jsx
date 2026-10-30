@@ -5,6 +5,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { resolveAssetUrl } from '../utils/assetUrl';
 import CanvaBengkelLandingView from '../components/Landing/CanvaBengkelLandingView';
+import { WorkshopLogoIcon } from '../components/Landing/BengkelOSIcons';
 import { 
   DEFAULT_WORKSHOP_NAME, 
   DEFAULT_WORKSHOP_TAGLINE, 
@@ -99,12 +100,7 @@ export default function LandingPage({
             }}
           >
             <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#0d1f30] border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm p-1.5">
-              <img 
-                src={resolveAssetUrl('/images/canva-landing/workshop-logo.png')} 
-                alt="Logo" 
-                className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
-                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-              />
+              <WorkshopLogoIcon className="w-6 h-6 sm:w-7 sm:h-7" />
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm sm:text-base font-black tracking-tight text-white leading-tight uppercase font-sans truncate max-w-[140px] xs:max-w-[200px] sm:max-w-[260px] md:max-w-none">
